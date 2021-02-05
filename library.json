@@ -1,0 +1,67 @@
+{
+  "name": "WiFiManager_Generic_Lite",
+  "version": "1.0.0",
+  "keywords": "wifi, wi-fi, MutiWiFi, WiFiNINA, U-Blox, W101, W102, shield, Mega, Teensy, SAM DUE, SAMD21, SAMD51, STM32, nRF52, Credentials, Manager, Config Portal, Double, Reset, Detector",
+  "description": "Library to configure MultiWiFi/Credentials at runtime for AVR Mega, Teensy, SAM DUE, SAMD21, SAMD51, STM32F/L/H/G/WB/MP1, nRF52, etc. boards running Generic WiFi (WiFiNINA, WiFi101, WiFiEsp, etc.) modules/shields. You can also specify DHCP HostName, static AP and STA IP. Use much less memory compared to full-fledge WiFiManager. Config Portal will be auto-adjusted to match the number of dynamic custom parameters. Optional default Credentials to be autoloaded into Config Portal to use or change instead of manually input. Credentials are saved in LittleFS/InternalFS, (emulated-)EEPROM, FlashStorage_SAMD, FlashStorage_STM32 or DueFlashStorage. New powerful-yet-simple-to-use feature to enable adding dynamic custom parameters from sketch and input using the same Config Portal. DoubleDetectDetector as well as Virtual Switches feature permits entering Config Portal as requested.",
+  "authors":
+  {
+    "name":  "Khoi Hoang",
+    "url":   "https://github.com/khoih-prog",
+    "maintainer": true
+  },
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/khoih-prog/WiFiManager_Generic_Lite"
+  },
+  "homepage": "https://github.com/khoih-prog/WiFiManager_Generic_Lite",
+  "export": {
+    "exclude": [
+      "linux",
+      "extras",
+      "tests"
+    ]
+  },
+  "dependencies": 
+  [
+    {
+      "owner": "khoih.prog",
+      "name": "WiFiNINA_Generic",
+      "version": "^1.8.0",
+      "platforms": ["*"]
+    },
+    {
+      "owner": "khoih-prog",
+      "name": "DoubleResetDetector_Generic",
+      "version": "^1.0.2",
+      "platforms": ["*"]
+    },
+    {
+      "owner": "khoih.prog",
+      "name": "FlashStorage_SAMD",
+      "version": "^1.0.0",
+      "platforms": ["*"]
+    },
+    {
+      "owner": "sebnil",
+      "name": "DueFlashStorage",
+      "version": "^1.0.0",
+      "platforms": ["*"]
+    },
+    {
+      "owner": "khoih-prog",
+      "name": "WiFiWebServer",
+      "version": "^1.1.0",
+      "platforms": ["*"]
+    },
+    {
+      "owner": "khoih-prog",
+      "name": "Functional-Vlpp",
+      "version": "^1.0.1",
+      "platforms": ["*"]
+    }
+  ],
+  "frameworks": "*",
+  "platforms": "*",
+  "examples": "examples/*/*/*.ino"
+}

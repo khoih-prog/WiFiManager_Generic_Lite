@@ -1,0 +1,55 @@
+##########################################
+# Syntax Coloring Map For ESP_WifiManager
+##########################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+WiFiManager_Generic_Lite	KEYWORD1
+WIFI_GENERIC_Configuration KEYWORD1
+MenuItem  KEYWORD1
+WiFi_Credentials  KEYWORD1
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+connectWiFi KEYWORD2
+begin KEYWORD2
+run KEYWORD2
+setHostname
+setConfigPortalIP KEYWORD2
+setConfigPortalChannel KEYWORD2
+setConfigPortal KEYWORD2
+setSTAStaticIPConfig	KEYWORD2
+getWiFiSSID KEYWORD2
+getWiFiPW KEYWORD2
+getWiFiStatus KEYWORD2
+getFullConfigData KEYWORD2
+localIP KEYWORD2
+clearConfigData KEYWORD2
+isConfigDataValid KEYWORD2
+resetFunc KEYWORD2
+resetAndEnterConfigPortal KEYWORD2
+resetAndEnterConfigPortalPersistent KEYWORD2
+IPAddressToString KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+#	LITERAL1
+
+CONFIG_DATA_SIZE  LITERAL1
+NUM_MENU_ITEMS  LITERAL1
+WIFI_GENERIC_HTML_HEAD  LITERAL1
+WIFI_GENERIC_FLDSET_START LITERAL1
+WIFI_GENERIC_FLDSET_END LITERAL1
+WIFI_GENERIC_HTML_PARAM LITERAL1
+WIFI_GENERIC_HTML_BUTTON  LITERAL1
+WIFI_GENERIC_HTML_SCRIPT  LITERAL1
+WIFI_GENERIC_HTML_SCRIPT_ITEM LITERAL1
+WIFI_GENERIC_HTML_SCRIPT_END  LITERAL1
+WIFI_GENERIC_HTML_END LITERAL1
