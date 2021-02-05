@@ -16,6 +16,7 @@
   * [Currently supported Boards](#currently-supported-boards)
   * [Currently supported WiFi shields/modules](#currently-supported-wifi-shieldsmodules)
 * [Changelog](#changelog)
+  * [Release v1.0.1](#release-v101)
   * [Release v1.0.0](#release-v100)
 * [Prerequisites](#prerequisites)
 * [Installation](#installation)
@@ -35,19 +36,18 @@
 * [How It Works](#how-it-works)
 * [How to use](#how-to-use)
 * [Examples](#examples)
-  * [ 1. Mega_WiFi](examples/Mega_WiFi)
-  * [ 2. MKR1000_WiFi101](examples/MKR1000_WiFi101)
-  * [ 3. MKR1000_WiFi101_MQTT](examples/MKR1000_WiFi101_MQTT)
-  * [ 4. nRF52_WiFi](examples/nRF52_WiFi)
-  * [ 5. nRF52_WiFi_MQTT](examples/nRF52_WiFi_MQTT)
-  * [ 6. SAM_DUE_WiFi](examples/SAM_DUE_WiFi)
-  * [ 7. SAM_DUE_WiFi_MQTT](examples/SAM_DUE_WiFi_MQTT) 
-  * [ 8. SAMD_WiFi](examples/SAMD_WiFi)
-  * [ 9. SAMD_WiFi_MQTT](examples/SAMD_WiFi_MQTT)
-  * [10. STM32_WiFi](examples/STM32_WiFi)
-  * [11. STM32_WiFi_MQTT](examples/STM32_WiFi_MQTT)
-  * [12. Teensy_WiFi](examples/Teensy_WiFi)
-  * [13. Teensy_WiFi_MQTT](examples/Teensy_WiFi_MQTT)
+  * [ 1. MKR1000_WiFi101](examples/MKR1000_WiFi101)
+  * [ 2. MKR1000_WiFi101_MQTT](examples/MKR1000_WiFi101_MQTT)
+  * [ 3. nRF52_WiFi](examples/nRF52_WiFi)
+  * [ 4. nRF52_WiFi_MQTT](examples/nRF52_WiFi_MQTT)
+  * [ 5. SAM_DUE_WiFi](examples/SAM_DUE_WiFi)
+  * [ 6. SAM_DUE_WiFi_MQTT](examples/SAM_DUE_WiFi_MQTT) 
+  * [ 7. SAMD_WiFi](examples/SAMD_WiFi)
+  * [ 8. SAMD_WiFi_MQTT](examples/SAMD_WiFi_MQTT)
+  * [ 9. STM32_WiFi](examples/STM32_WiFi)
+  * [10. STM32_WiFi_MQTT](examples/STM32_WiFi_MQTT)
+  * [11. Teensy_WiFi](examples/Teensy_WiFi)
+  * [12. Teensy_WiFi_MQTT](examples/Teensy_WiFi_MQTT)
 * [So, how it works?](#so-how-it-works)
 * [Important Notes](#important-notes)
 * [How to use default Credentials and have them pre-loaded onto Config Portal](#how-to-use-default-credentials-and-have-them-pre-loaded-onto-config-portal)
@@ -93,11 +93,11 @@ If you have used the full-fledge WiFiManager such as :
 2. [`Ken Taylor WiFiManager`](https://github.com/kentaylor/WiFiManager)
 3. [`Khoi Hoang ESP_WiFiManager`](https://github.com/khoih-prog/ESP_WiFiManager)
 
-and have to write **complicated callback functions** to save custom parameters in SPIFFS/LittlFS/EEPROM, you'd appreciate the simplicity of this Light-Weight Credentials / WiFiManager.
+and have to write **complicated callback functions** to save custom parameters in SPIFFS/LittleFS/EEPROM, you'd appreciate the simplicity of this Light-Weight Credentials / WiFiManager.
 
 This library is a Light Weight Credentials / WiFi Manager for Generic WiFi (WiFiNINA, WINC1500/WiFi101, WiFiEsp, etc.) modules/shields, specially designed to support **Teensy, SAM DUE, SAMD21 (Nano-33 IoT, Itsy-Bitsy M0, etc), SAMD51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.), STM32F/L/H/G/WB/MP1 (F1, F2, F3, F4, F7, Nucleo-144, etc.), nRF52 (Adafruit NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, NINA_B302_ublox, NINA_B112_ublox, etc.), etc. boards running Generic WiFi modules/shields.** with smaller memory (64+K bytes)
 
-The AVR-family boards (UNO, Nano, etc.) are **not supported** as they don't have enough memory to run Config Portal WebServer.
+The AVR-family boards (UNO, Nano, Mega, etc.) are **not supported** as they don't have enough memory to run Config Portal WebServer.
 
 This is a Credentials / WiFi Connection Manager, permitting the addition of custom parameters to be configured in Config Portal. The parameters then will be saved automatically, **without the complicated callback functions** to handle data saving / retrieving.
 
@@ -111,7 +111,7 @@ New recent features:
 - **DoubleDetectDetector** feature to force Config Portal when double reset is detected within predetermined time, default 10s.
 - **Powerful-yet-simple-to-use feature to enable adding dynamic custom parameters** from sketch and input using the same Config Portal. Config Portal will be auto-adjusted to match the number of dynamic parameters.
 - Optional default **Credentials as well as Dynamic parameters to be optionally autoloaded into Config Portal** to use or change instead of manually input.
-- Dynamic custom parameters to be saved **automatically in non-volatile memory, such as Mega, Teensy EEPROM, SAMD EEPROM-emulated FlashStorage_SAMD, STM32F/L/H/G/WB/MP1 EEPROM-emulated FlashStorage_STM32 or SAM DUE DueFlashStorage**.
+- Dynamic custom parameters to be saved **automatically in non-volatile memory, such as Teensy EEPROM, SAMD EEPROM-emulated FlashStorage_SAMD, STM32F/L/H/G/WB/MP1 EEPROM-emulated FlashStorage_STM32 or SAM DUE DueFlashStorage**.
 - Configurable **Config Portal Title** to be either BoardName or default undistinguishable names.
 - Examples are designed to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device.
 - Control Config Portal from software or Virtual Switches
@@ -136,8 +136,7 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
   
  4. **SAM DUE** 
  5. **Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0)**
- 6. **AVR Mega1280, 2560, ADK.**
- 7. **STM32F/L/H/G/WB/MP1 boards (with 32+K Flash)**
+ 6. **STM32F/L/H/G/WB/MP1 boards (with 32+K Flash)**
   - Nucleo-144
   - Nucleo-64
   - Discovery
@@ -159,12 +158,17 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
 2. WiFi101 using [`WiFi101 library v0.16.1+`](https://github.com/arduino-libraries/WiFi101)
 3. U-Blox W101, W102 using [`WiFiNINA_Generic library`](https://github.com/khoih-prog/WiFiNINA_Generic)
 4. ESP826-AT command using [`WiFiEspAT library v1.3.0+`](https://github.com/jandrassy/WiFiEspAT)
-5. ESP8266/ESP32-AT command using [`ESP_AT_Lib library v1.0.0+`](https://github.com/khoih-prog/ESP_AT_Lib)
+5. ESP8266/ESP32-AT command using [`ESP_AT_Lib library v1.0.0+`](https://github.com/khoih-prog/ESP_AT_Lib) and [`ESP8266_AT_WebServer`](ESP8266_AT_WebServer)
 
 ---
 ---
 
 ## Changelog
+
+### Release v1.0.1
+
+1. Fix bug.
+2. Drop support to Mega due to marginal memory issue.
 
 ### Release v1.0.0
 
@@ -506,19 +510,18 @@ Once Credentials / WiFi network information is saved in the host non-volatile me
 
 ### Examples
 
- 1. [Mega_WiFi](examples/Mega_WiFi)
- 2. [MKR1000_WiFi101](examples/MKR1000_WiFi101)
- 3. [MKR1000_WiFi101_MQTT](examples/MKR1000_WiFi101_MQTT)
- 4. [nRF52_WiFi](examples/nRF52_WiFi)
- 5. [nRF52_WiFi_MQTT](examples/nRF52_WiFi_MQTT)
- 6. [SAM_DUE_WiFi](examples/SAM_DUE_WiFi)
- 7. [SAM_DUE_WiFi_MQTT](examples/SAM_DUE_WiFi_MQTT) 
- 8. [SAMD_WiFi](examples/SAMD_WiFi)
- 9. [SAMD_WiFi_MQTT](examples/SAMD_WiFi_MQTT)
-10. [STM32_WiFi](examples/STM32_WiFi)
-11. [STM32_WiFi_MQTT](examples/STM32_WiFi_MQTT) 
-12. [Teensy_WiFi](examples/Teensy_WiFi)
-13. [Teensy_WiFi_MQTT](examples/Teensy_WiFi_MQTT)
+ 1. [MKR1000_WiFi101](examples/MKR1000_WiFi101)
+ 2. [MKR1000_WiFi101_MQTT](examples/MKR1000_WiFi101_MQTT)
+ 3. [nRF52_WiFi](examples/nRF52_WiFi)
+ 4. [nRF52_WiFi_MQTT](examples/nRF52_WiFi_MQTT)
+ 5. [SAM_DUE_WiFi](examples/SAM_DUE_WiFi)
+ 6. [SAM_DUE_WiFi_MQTT](examples/SAM_DUE_WiFi_MQTT) 
+ 7. [SAMD_WiFi](examples/SAMD_WiFi)
+ 8. [SAMD_WiFi_MQTT](examples/SAMD_WiFi_MQTT)
+ 9. [STM32_WiFi](examples/STM32_WiFi)
+10. [STM32_WiFi_MQTT](examples/STM32_WiFi_MQTT) 
+11. [Teensy_WiFi](examples/Teensy_WiFi)
+12. [Teensy_WiFi_MQTT](examples/Teensy_WiFi_MQTT)
 
 ---
 ---
@@ -1240,7 +1243,7 @@ This is the terminal output when running [**SAMD_WiFi**](examples/SAMD_WiFi) exa
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.0.0
+WiFiManager_Generic_Lite v1.0.1
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xffffffff
 No doubleResetDetected
@@ -1341,7 +1344,7 @@ FFFFFFFFF
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.0.0
+WiFiManager_Generic_Lite v1.0.1
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1405,7 +1408,7 @@ HHHHHHHHHH HHHHHHHHHH
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.0.0
+WiFiManager_Generic_Lite v1.0.1
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1469,7 +1472,7 @@ FF
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.0.0
+WiFiManager_Generic_Lite v1.0.1
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1525,7 +1528,7 @@ HHHHHHHHH HHHHHHHHHH
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.0.0
+WiFiManager_Generic_Lite v1.0.1
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d01234
 doubleResetDetected
@@ -1597,6 +1600,11 @@ Sometimes, the library will only work if you update the `Generic WiFi module/shi
 ---
 
 ## Releases
+
+### Release v1.0.1
+
+1. Fix bug.
+2. Drop support to AVR Mega due to marginal memory issue.
  
 ### Release v1.0.0
 
@@ -1628,7 +1636,7 @@ Submit issues to: [WiFiManager_Generic_Lite issues](https://github.com/khoih-pro
  6. Change Synch XMLHttpRequest to Async
  7. Add configurable Static IP, GW, Subnet Mask and 2 DNS Servers' IP Addresses.
  8. Add checksums
- 9. Add support to **nRF52, SAMD21/SAMD51, STM32F/L/H/G/WB/MP1, Teensy, SAM-DUE, Mega**
+ 9. Add support to **nRF52, SAMD21/SAMD51, STM32F/L/H/G/WB/MP1, Teensy, SAM-DUE**
 10. Add support to **WiFiNINA, WINC1500/WiFi101, ESP8266/ESP32-AT, etc.** shields.
 11. Add MultiWiFi features with auto(re)connect
 12. Easy-to-use **Dynamic Parameters** without the necessity to write complicated ArduinoJSon functions

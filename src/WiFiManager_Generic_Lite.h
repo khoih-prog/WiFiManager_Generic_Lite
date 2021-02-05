@@ -8,11 +8,12 @@
 
    Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
    Licensed under MIT license
-   Version: 1.0.0
+   Version: 1.0.1
    
    Version Modified By   Date        Comments
    ------- -----------  ----------   -----------
-   1.0.0   K Hoang      26/03/2020  Initial coding for generic boards using generic WiFi.
+   1.0.0   K Hoang      04/02/2021  Initial coding for generic boards using generic WiFi.
+   1.0.1   K Hoang      05/02/2021  Fix bug. Drop Mega support due to marginal memory.
  *****************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_h
@@ -22,13 +23,14 @@
   #error This code is intended to run on the Mega2560 platform! Please check your Tools->Board setting.
 #endif
 
-#if !( (TEENSYDUINO==150) ||  (TEENSYDUINO==151) )
-  #warning (error) This code is intended to run only on the Teensy code v1.51 ! Please check your Teensy core.
+#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.0.1"
+
+#if (USE_WIFI_NINA || USE_WIFI101)
+  #include <WiFiWebServer.h>
+#else
+  #warning You have to include another WiFiWebServer, such as ESP8266_AT_WebServer.
 #endif
 
-#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.0.0"
-
-#include <WiFiWebServer.h>
 #include <EEPROM.h>
 #include <WiFiManager_Generic_Lite_Debug.h>
 
@@ -402,7 +404,7 @@ class WiFiManager_Generic_Lite
       {
 #if USE_WIFI101
         WiFi.hostname(RFC952_hostname);
-#else      
+#elif USE_WIFI_NINA    
         WiFi.setHostname(RFC952_hostname);
 #endif        
       }
@@ -1432,9 +1434,13 @@ udVal('nm',document.getElementById('nm').value);";
       WG_LOGERROR3(F("SSID="), portal_ssid, F(",PW="), portal_pass);
       WG_LOGERROR3(F("IP="), portal_apIP, F(",CH="), channel);
 
+#if USE_ESP_AT_SHIELD
+      // start access point, AP only,default channel 10
+      WiFi.beginAP(portal_ssid.c_str(), channel, portal_pass.c_str(), ENC_TYPE_WPA2_PSK, true);
+#else
       // start access point, AP only,default channel 10
       WiFi.beginAP(portal_ssid.c_str(), portal_pass.c_str(), channel);
-      
+#endif
 
       if (!server)
       {
@@ -1463,6 +1469,8 @@ udVal('nm',document.getElementById('nm').value);";
                
         WG_LOGDEBUG(F("s:configTimeout = 0"));    
       }
+
+      configuration_mode = true;
     }
 };
 #endif    //WiFiManager_Generic_Lite_h

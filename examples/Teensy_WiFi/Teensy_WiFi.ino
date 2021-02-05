@@ -8,11 +8,12 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.0.0
+  Version: 1.0.1
   
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
-  1.0.0   K Hoang      26/03/2020  Initial coding for generic boards using generic WiFi. 
+  1.0.0   K Hoang      04/02/2021  Initial coding for generic boards using generic WiFi.
+  1.0.1   K Hoang      05/02/2021  Fix bug. Drop Mega support due to marginal memory. 
  *****************************************************************************************************************************/
  
 #include "defines.h"

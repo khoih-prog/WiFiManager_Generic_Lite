@@ -1,6 +1,7 @@
 /****************************************************************************************************************************
    WiFiManager_Generic_Lite_Debug.h
-   For Mega, Teensy, SAM DUE, SAMD and STM32 boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
+   For Mega, Teensy, SAM DUE, SAMD and STM32 boards using WIFI_GENERIC modules/shields, 
+   using much less code to support boards with smaller memory
 
    WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
    (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 
@@ -8,11 +9,12 @@
 
    Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
    Licensed under MIT license
-   Version: 1.0.0
+   Version: 1.0.1
    
    Version Modified By   Date        Comments
    ------- -----------  ----------   -----------
-   1.0.0   K Hoang      26/03/2020  Initial coding for generic boards using generic WiFi. 
+   1.0.0   K Hoang      04/02/2021  Initial coding for generic boards using generic WiFi.
+   1.0.1   K Hoang      05/02/2021  Fix bug. Drop Mega support due to marginal memory. 
  *****************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_Debug_h

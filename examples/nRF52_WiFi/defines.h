@@ -7,12 +7,7 @@
   configuration/reconfiguration and autoconnect/autoreconnect of WiFi and other services without Hardcoding.
   
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
-  Licensed under MIT license
-  Version: 1.0.0
-  
-  Version Modified By   Date        Comments
-  ------- -----------  ----------   -----------
-  1.0.0   K Hoang      26/03/2020  Initial coding for generic boards using generic WiFi.          
+  Licensed under MIT license        
  *****************************************************************************************************************************/
 
 #ifndef defines_h

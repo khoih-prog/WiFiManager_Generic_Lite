@@ -96,9 +96,9 @@
 
 /////////////////////////////////////////////
 
-#define USE_WIFI_NINA             false
+#define USE_WIFI_NINA             true
 #define USE_WIFI101               false
-#define USE_WIFI_CUSTOM           true
+#define USE_WIFI_CUSTOM           false
 
 #if USE_WIFI_NINA
 
@@ -140,8 +140,6 @@
 
   #define SHIELD_TYPE     "Custom using Custom WiFi Library"
   #warning Using Custom WiFi Library. You must include here or compile error
-
-  #include "WiFiEspAT.h"
   
 #else
 
