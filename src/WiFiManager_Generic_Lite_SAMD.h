@@ -1,19 +1,20 @@
 /****************************************************************************************************************************
-   WiFiManager_Generic_Lite_SAMD.h
-   For SAMD boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
+  WiFiManager_Generic_Lite_SAMD.h
+  For SAMD boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
 
-   WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
-   (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 
-   configuration/reconfiguration and autoconnect/autoreconnect of WiFi and other services without Hardcoding.
+  WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
+  (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 
+  configuration/reconfiguration and autoconnect/autoreconnect of WiFi and other services without Hardcoding.
 
-   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
-   Licensed under MIT license
-   Version: 1.0.1
-   
-   Version Modified By   Date        Comments
-   ------- -----------  ----------   -----------
-   1.0.0   K Hoang      04/02/2021  Initial coding for generic boards using generic WiFi.
-   1.0.1   K Hoang      05/02/2021  Fix bug. Drop Mega support due to marginal memory.
+  Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
+  Licensed under MIT license
+  Version: 1.0.2
+
+  Version Modified By   Date        Comments
+  ------- -----------  ----------   -----------
+  1.0.0   K Hoang      04/02/2021  Initial coding for generic boards using generic WiFi.
+  1.0.1   K Hoang      05/02/2021  Fix bug. Drop Mega support due to marginal memory. 
+  1.0.2   K Hoang      06/02/2021  Add support to STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101
   *****************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_SAMD_h
@@ -32,7 +33,7 @@
   #error This code is intended to run on the SAMD platform! Please check your Tools->Board setting.  
 #endif
 
-#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.0.1"
+#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.0.2"
 
 #if (USE_WIFI_NINA || USE_WIFI101)
   #include <WiFiWebServer.h>

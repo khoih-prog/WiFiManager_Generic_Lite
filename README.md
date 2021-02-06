@@ -16,6 +16,7 @@
   * [Currently supported Boards](#currently-supported-boards)
   * [Currently supported WiFi shields/modules](#currently-supported-wifi-shieldsmodules)
 * [Changelog](#changelog)
+  * [Release v1.0.2](#release-v102)
   * [Release v1.0.1](#release-v101)
   * [Release v1.0.0](#release-v100)
 * [Prerequisites](#prerequisites)
@@ -164,6 +165,10 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
 ---
 
 ## Changelog
+
+### Release v1.0.2
+
+1. Add support to STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101. Thanks to Max Gerhardt in [**attachInterrupt() on wifi101 unidentified**](https://community.platformio.org/t/attachinterrupt-on-wifi101-unidentified/17543)
 
 ### Release v1.0.1
 
@@ -1601,6 +1606,10 @@ Sometimes, the library will only work if you update the `Generic WiFi module/shi
 
 ## Releases
 
+### Release v1.0.2
+
+1. Add support to STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101. Thanks to Max Gerhardt in [attachInterrupt() on wifi101 unidentified**](https://community.platformio.org/t/attachinterrupt-on-wifi101-unidentified/17543)
+
 ### Release v1.0.1
 
 1. Fix bug.
@@ -1655,6 +1664,14 @@ Submit issues to: [WiFiManager_Generic_Lite issues](https://github.com/khoih-pro
 ### Contributions and Thanks
 
 Please help contribute to this project and add your name here.
+
+1. Thanks to [Max Gerhardt in GitHub](https://github.com/maxgerhardt) and [in PIO](https://community.platformio.org/u/maxgerhardt) for the useful fix [**attachInterrupt() on wifi101 unidentified**](https://community.platformio.org/t/attachinterrupt-on-wifi101-unidentified/17543) to enable STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101, leading to new v1.0.2
+
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/maxgerhardt"><img src="https://github.com/maxgerhardt.png" width="100px;" alt="maxgerhardt"/><br /><sub><b>Maximilian Gerhardt</b></sub></a><br /></td>
+  </tr> 
+</table>
 
 ---
 

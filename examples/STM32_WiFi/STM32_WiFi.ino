@@ -8,16 +8,32 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.0.1
-  
+  Version: 1.0.2
+   
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
   1.0.0   K Hoang      04/02/2021  Initial coding for generic boards using generic WiFi.
-  1.0.1   K Hoang      05/02/2021  Fix bug. Drop Mega support due to marginal memory.
+  1.0.1   K Hoang      05/02/2021  Fix bug. Drop Mega support due to marginal memory. 
+  1.0.2   K Hoang      06/02/2021  Add support to STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101
  *****************************************************************************************************************************/
 #include "defines.h"
 #include "Credentials.h"
 #include "dynamicParams.h"
+
+#if USE_WIFI101
+  // Fix only for STM32 using WiFi101, thanks to Max Gerhardt in
+  // https://community.platformio.org/t/attachinterrupt-on-wifi101-unidentified/17543
+  extern "C" void attachInterruptMultiArch(uint32_t pin, void *chip_isr, uint32_t mode)
+  {
+    void (*_c)(void) = (void(*)(void))(chip_isr);
+    attachInterrupt(pin, _c, mode);
+  }
+  
+  extern "C" void detachInterruptMultiArch(uint32_t pin)
+  {
+    detachInterrupt(pin);
+  }
+#endif
 
 void heartBeatPrint()
 {

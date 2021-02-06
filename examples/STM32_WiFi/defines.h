@@ -96,8 +96,8 @@
 
 /////////////////////////////////////////////
 
-#define USE_WIFI_NINA             true
-#define USE_WIFI101               false
+#define USE_WIFI_NINA             false
+#define USE_WIFI101               true
 #define USE_WIFI_CUSTOM           false
 
 #if USE_WIFI_NINA
@@ -122,7 +122,6 @@
   #define USE_WIFI_NINA           false
 
   #define SHIELD_TYPE     "WINC1500 using WiFi101 Library"
-  #error Using WiFi101 Library not yet supported for STM32
 
 #elif USE_WIFI_CUSTOM
 
