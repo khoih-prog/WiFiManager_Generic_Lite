@@ -16,6 +16,7 @@
   * [Currently supported Boards](#currently-supported-boards)
   * [Currently supported WiFi shields/modules](#currently-supported-wifi-shieldsmodules)
 * [Changelog](#changelog)
+  * [Major Release v1.1.0](#major-release-v110)
   * [Release v1.0.2](#release-v102)
   * [Release v1.0.1](#release-v101)
   * [Release v1.0.0](#release-v100)
@@ -36,6 +37,16 @@
   * [7. For STM32 boards](#7-for-stm32-boards) 
 * [How It Works](#how-it-works)
 * [How to use](#how-to-use)
+  * [1. Basic usage](#1-basic-usage)
+  * [2. Add custom parameters](#2-add-custom-parameters)
+  * [3. Not using custom parameters](#3-not-using-custom-parameters)
+  * [4. To open Config Portal](#4-to-open-config-portal)
+  * [5. To use different AP WiFi Channel](#5-to-use-different-ap-wifi-channel)
+  * [6. To use different static AP IP from default](#6-to-use-different-static-ap-ip-from-default)
+  * [7. To use custom DHCP HostName](#7-to-use-custom-dhcp-hostname)
+  * [8. To use custom HTML Style](#8-to-use-custom-html-style)
+  * [9. To use custom Head Elements](#9-to-use-custom-head-elements)
+  * [10. To use CORS Header](#10-to-use-cors-header)
 * [Examples](#examples)
   * [ 1. MKR1000_WiFi101](examples/MKR1000_WiFi101)
   * [ 2. MKR1000_WiFi101_MQTT](examples/MKR1000_WiFi101_MQTT)
@@ -166,6 +177,16 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
 
 ## Changelog
 
+### Major Release v1.1.0
+
+1. Configurable **Customs HTML Headers**, including Customs Style, Customs Head Elements, CORS Header.
+2. Fix Config Portal Bug. 
+3. Add functions to control Config Portal from software or Virtual Switches. Check [How to trigger a Config Portal from code #25](https://github.com/khoih-prog/Blynk_WM/issues/25)
+4. Use more efficient [FlashStorage_SAMD v1.1.0](https://github.com/khoih-prog/FlashStorage_SAMD) and [FlashStorage_STM32 v1.0.0](https://github.com/khoih-prog/FlashStorage_STM32)
+5. Optimize code. 
+6. Update examples
+
+
 ### Release v1.0.2
 
 1. Add support to STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101. Thanks to Max Gerhardt in [**attachInterrupt() on wifi101 unidentified**](https://community.platformio.org/t/attachinterrupt-on-wifi101-unidentified/17543)
@@ -185,22 +206,22 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
 ## Prerequisites
 
  1. [`Arduino IDE 1.8.13+` for Arduino](https://www.arduino.cc/en/Main/Software)
- 2. [`Arduino Core for STM32 v1.9.0+`](https://github.com/khoih-prog/Arduino_Core_STM32) for STM32 boards
+ 2. [`Arduino Core for STM32 v1.9.0+`](https://github.com/stm32duino/Arduino_Core_STM32) for STM32 boards. [![GitHub release](https://img.shields.io/github/release/stm32duino/Arduino_Core_STM32.svg)](https://github.com/stm32duino/Arduino_Core_STM32/releases/latest)
  3. [`Teensy core 1.51`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0, LC) boards
- 4. [`Arduino SAM DUE core 1.6.12+`](https://www.arduino.cc/en/Guide/ArduinoDue) for SAM DUE ARM Cortex-M3 boards
- 5. [`Arduino SAMD core 1.8.11+`](https://www.arduino.cc/en/Guide/ArduinoM0) for SAMD ARM Cortex-M0+ boards
- 6. [`Adafruit SAMD core 1.6.5+`](https://www.adafruit.com/) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.)
- 7. [`Seeeduino SAMD core 1.8.1+`](https://www.seeedstudio.com/) for SAMD21/SAMD51 boards (XIAO M0, Wio Terminal, etc.) 
- 8. [`Adafruit nRF52 v0.21.0+`](www.adafruit.com) for nRF52 boards such as Adafruit NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, **NINA_B302_ublox**, etc.
- 9. [`Functional-VLPP library v1.0.1+`](https://github.com/khoih-prog/functional-vlpp) to use server's lambda function. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/Functional-Vlpp.svg?)](https://www.ardu-badge.com/Functional-Vlpp)
+ 4. [`Arduino SAM DUE core 1.6.12+`](https://github.com/arduino/ArduinoCore-sam) for SAM DUE ARM Cortex-M3 boards
+ 5. [`Arduino SAMD core 1.8.11+`](https://www.arduino.cc/en/Guide/ArduinoM0) for SAMD ARM Cortex-M0+ boards. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-samd.svg)](https://github.com/arduino/ArduinoCore-samd/releases/latest)
+ 6. [`Adafruit SAMD core 1.6.5+`](https://www.adafruit.com/) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.). [![GitHub release](https://img.shields.io/github/release/adafruit/ArduinoCore-samd.svg)](https://github.com/adafruit/ArduinoCore-samd/releases/latest)
+ 7. [`Seeeduino SAMD core 1.8.1+`](https://github.com/Seeed-Studio/ArduinoCore-samd) for SAMD21/SAMD51 boards (XIAO M0, Wio Terminal, etc.). [![Latest release](https://img.shields.io/github/release/Seeed-Studio/ArduinoCore-samd.svg)](https://github.com/Seeed-Studio/ArduinoCore-samd/releases/latest/)
+ 8. [`Adafruit nRF52 v0.21.0+`](https://www.adafruit.com) for nRF52 boards such as Adafruit NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, **NINA_B302_ublox**, etc. [![GitHub release](https://img.shields.io/github/release/adafruit/Adafruit_nRF52_Arduino.svg)](https://github.com/adafruit/Adafruit_nRF52_Arduino/releases/latest)
+ 9. [`Functional-VLPP library v1.0.2+`](https://github.com/khoih-prog/functional-vlpp) to use server's lambda function. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/Functional-Vlpp.svg?)](https://www.ardu-badge.com/Functional-Vlpp)
 10. [`WiFiNINA_Generic library v1.8.2+`](https://github.com/khoih-prog/WiFiNINA_Generic). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiNINA_Generic.svg?)](https://www.ardu-badge.com/WiFiNINA_Generic)
 11. [`WiFiWebServer library v1.1.1+`](https://github.com/khoih-prog/WiFiWebServer). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiWebServer.svg?)](https://www.ardu-badge.com/WiFiWebServer)
 12. [`ESP_AT_Lib library v1.0.0+`](https://github.com/khoih-prog/ESP_AT_Lib) if using ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_AT_Lib.svg?)](https://www.ardu-badge.com/ESP_AT_Lib).
-13. [`WiFi101 library v0.16.1+`](https://www.arduino.cc/en/Reference/WiFi101) if using WINC1500/WiFi101 shields (MKR1000, etc.)
-14. [`WiFiEspAT library v1.3.0+`](https://github.com/jandrassy/WiFiEspAT) if using ESP8288/ESP32-AT shields.
-15. [`FlashStorage_SAMD library v1.1.0+`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD21 and SAMD51 boards (ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit Itsy-Bitsy M4, etc.)
-16. [`FlashStorage_STM32 library v1.0.0+`](https://github.com/khoih-prog/FlashStorage_STM32) for STM32F/L/H/G/WB/MP1 boards.
-17. [`DueFlashStorage library v1.0.0+`](https://github.com/sebnil/DueFlashStorage) for SAM DUE
+13. [`WiFi101 library v0.16.1+`](https://github.com/arduino-libraries/WiFi101) if using WINC1500/WiFi101 shields (MKR1000, etc.). [![GitHub release](https://img.shields.io/github/release/arduino-libraries/WiFi101.svg)](https://github.com/arduino-libraries/WiFi101/releases/latest)
+14. [`WiFiEspAT library v1.3.0+`](https://github.com/jandrassy/WiFiEspAT) if using ESP8288/ESP32-AT shields. [![GitHub release](https://img.shields.io/github/release/jandrassy/WiFiEspAT.svg)](https://github.com/jandrassy/WiFiEspAT/releases/latest)
+15. [`FlashStorage_SAMD library v1.1.0+`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD21 and SAMD51 boards (ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit Itsy-Bitsy M4, etc.). [![GitHub release](https://img.shields.io/github/release/khoih-prog/FlashStorage_SAMD.svg)](https://github.com/khoih-prog/FlashStorage_SAMD/releases/latest)
+16. [`FlashStorage_STM32 library v1.0.0+`](https://github.com/khoih-prog/FlashStorage_STM32) for STM32F/L/H/G/WB/MP1 boards. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/FlashStorage_STM32.svg?)](https://www.ardu-badge.com/FlashStorage_STM32)
+17. [`DueFlashStorage library v1.0+`](https://github.com/sebnil/DueFlashStorage) for SAM DUE. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/DueFlashStorage.svg?)](https://www.ardu-badge.com/DueFlashStorage)
 18. [`Adafruit's LittleFS/InternalFS`](www.adafruit.com) for nRF52
 19. [`DoubleResetDetector_Generic v1.0.3+`](https://github.com/khoih-prog/DoubleResetDetector_Generic). To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/DoubleResetDetector_Generic.svg?)](https://www.ardu-badge.com/DoubleResetDetector_Generic)
 
@@ -391,6 +412,8 @@ theses files must be copied into the corresponding directory:
 
 ### How to use
 
+#### 1. Basic usage
+
 - Include in your sketch
 
 ```cpp
@@ -403,6 +426,8 @@ theses files must be copied into the corresponding directory:
 
 WiFiManager_Generic_Lite* WiFiManager_Generic;
 ```
+
+#### 2. Add custom parameters
 
 - To add custom parameters, just add
 
@@ -466,11 +491,15 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 ```
 
+#### 3. Not using custom parameters
+
 - If you don't need to add dynamic parameters, use the following in sketch
 
 ```
 #define USE_DYNAMIC_PARAMETERS      false
 ```
+
+#### 4. To open Config Portal
 
 - When you want to open a config portal, just add
 
@@ -479,11 +508,21 @@ WiFiManager_Generic = new WiFiManager_Generic_Lite();
 WiFiManager_Generic->begin();
 ```
 
-- To not use default AP WiFi Channel 10 to avoid conflict with other WiFi APs, call 
+#### 5. To use different AP WiFi Channel
+
+- To not use default AP WiFi Channel 10 to avoid conflict with other WiFi APs : 
 
 ```cpp
 WiFiManager_Generic->setConfigPortalChannel(newChannel);
 ```
+
+- To use random AP WiFi Channel to avoid conflict with other WiFi APs : 
+
+```cpp
+WiFiManager_Generic->setConfigPortalChannel(0);
+```
+
+#### 6. To use different static AP IP from default
 
 - To use different static AP IP (not use default `192.168.4.1`), call
 
@@ -491,7 +530,9 @@ WiFiManager_Generic->setConfigPortalChannel(newChannel);
 WiFiManager_Generic->setConfigPortalIP(IPAddress(xxx,xxx,xxx,xxx));
 ```
 
-- To set custom DHCP HostName, cal
+#### 7. To use custom DHCP HostName
+
+- To set custom DHCP HostName :
  
 ```
   // Set customized DHCP HostName
@@ -503,6 +544,30 @@ or just use the default Hostname, for example "SAMD_XXXXXX" for SAMD
 ```
   //Or use default Hostname "WIFI_GENERIC_XXXXXX"
   //WiFiManager_Generic->begin();
+```
+
+#### 8. To use custom HTML Style
+
+```
+const char NewCustomsStyle[] /*PROGMEM*/ = "<style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}\
+button{background-color:blue;color:white;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>";
+
+...
+
+WiFiManager_Generic->setCustomsStyle(NewCustomsStyle);
+```
+
+#### 9. To use custom Head Elements
+
+
+```
+WiFiManager_Generic->setCustomsHeadElement("<style>html{filter: invert(10%);}</style>");
+```
+
+#### 10. To use CORS Header
+
+```
+WiFiManager_Generic->setCORSHeader("Your Access-Control-Allow-Origin");
 ```
 
 While in AP mode, connect to it using its `SSID` (WIFI_GENERIC_XXXXXX) / `Password` ("MyWIFI_GENERIC_XXXXXX"), then open a browser to the Portal AP IP, default `192.168.4.1`, configure wifi then click **Save**. The Credentials / WiFi connection information will be saved in non-volatile memory. It will then autoconnect.
@@ -810,6 +875,11 @@ void check_status()
 
 WiFiManager_Generic_Lite* WiFiManager_Generic;
 
+#if USING_CUSTOMS_STYLE
+const char NewCustomsStyle[] /*PROGMEM*/ = "<style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}\
+button{background-color:blue;color:white;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>";
+#endif
+
 void setup()
 {
   // Debug console
@@ -822,12 +892,40 @@ void setup()
   Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
   Serial.println(WIFI_MANAGER_GENERIC_LITE_VERSION);
 
+#if ( USE_WIFI_CUSTOM && USE_ESP_AT_SHIELD )
+    // initialize serial for ESP module
+  EspSerial.begin(115200);
+  // initialize ESP module
+  WiFi.init(&EspSerial);
+
+  Serial.println(F("WiFi shield init done"));
+
+  // check for the presence of the shield
+  if (WiFi.status() == WL_NO_SHIELD)
+  {
+    Serial.println(F("WiFi shield not present"));
+    // don't continue
+    while (true);
+  }
+#endif
 
   WiFiManager_Generic = new WiFiManager_Generic_Lite();
 
   // Optional to change default AP IP(192.168.4.1) and channel(10)
   //WiFiManager_Generic->setConfigPortalIP(IPAddress(192, 168, 120, 1));
-  //WiFiManager_Generic->setConfigPortalChannel(1);
+  WiFiManager_Generic->setConfigPortalChannel(0);
+
+#if USING_CUSTOMS_STYLE
+  WiFiManager_Generic->setCustomsStyle(NewCustomsStyle);
+#endif
+
+#if USING_CUSTOMS_HEAD_ELEMENT
+  WiFiManager_Generic->setCustomsHeadElement("<style>html{filter: invert(10%);}</style>");
+#endif
+
+#if USING_CORS_FEATURE  
+  WiFiManager_Generic->setCORSHeader("Your Access-Control-Allow-Origin");
+#endif
 
   // Set customized DHCP HostName
   WiFiManager_Generic->begin(HOST_NAME);
@@ -837,28 +935,25 @@ void setup()
 }
 
 #if USE_DYNAMIC_PARAMETERS
-void displayCredentials(void)
+void displayCredentials()
 {
-  Serial.println("\nYour stored Credentials :");
+  Serial.println(F("\nYour stored Credentials :"));
 
   for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
   {
-    Serial.println(String(myMenuItems[i].displayName) + " = " + myMenuItems[i].pdata);
+    Serial.print(myMenuItems[i].displayName);
+    Serial.print(F(" = "));
+    Serial.println(myMenuItems[i].pdata);
   }
 }
-#endif
 
-void loop()
+void displayCredentialsInLoop()
 {
-  WiFiManager_Generic->run();
-  check_status();
-
-#if USE_DYNAMIC_PARAMETERS
   static bool displayedCredentials = false;
 
   if (!displayedCredentials)
   {
-    for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
+    for (int i = 0; i < NUM_MENU_ITEMS; i++)
     {
       if (!strlen(myMenuItems[i].pdata))
       {
@@ -872,7 +967,18 @@ void loop()
       }
     }
   }
+}
+
 #endif
+
+void loop()
+{
+  WiFiManager_Generic->run();
+  check_status();
+
+#if USE_DYNAMIC_PARAMETERS
+  displayCredentialsInLoop();
+#endif  
 }
 ```
 ---
@@ -887,7 +993,7 @@ void loop()
 #define DEBUG_WIFI_WEBSERVER_PORT     Serial
 #define WIFI_GENERIC_DEBUG_OUTPUT     Serial
 
-#define _WIFI_GENERIC_LOGLEVEL_       1
+#define _WIFI_GENERIC_LOGLEVEL_       4
 
 #define DRD_GENERIC_DEBUG             true
 
@@ -1015,6 +1121,13 @@ void loop()
 
 /////////////////////////////////////////////
 
+// Add customs headers from v1.1.0
+#define USING_CUSTOMS_STYLE           true
+#define USING_CUSTOMS_HEAD_ELEMENT    true
+#define USING_CORS_FEATURE            true
+
+/////////////////////////////////////////////
+
 #define USE_WIFI_NINA             true
 #define USE_WIFI101               false
 #define USE_WIFI_CUSTOM           false
@@ -1053,6 +1166,14 @@ void loop()
 
   #define SHIELD_TYPE     "Custom using Custom WiFi Library"
   #warning Using Custom WiFi Library. You must include here or compile error
+
+  // For SAMD
+  #define EspSerial Serial1
+
+  #include "ESP8266_AT_WebServer.h"
+
+  #define USE_ESP_AT_SHIELD       true
+  #define WiFiWebServer ESP8266_AT_WebServer
   
 #else
 
@@ -1069,9 +1190,16 @@ void loop()
 #define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    5
 
 // Config Timeout 120s (default 60s)
-#define CONFIG_TIMEOUT                      120000L
+#define CONFIG_TIMEOUT                            120000L
 
-#define USE_DYNAMIC_PARAMETERS              true
+#define USE_DYNAMIC_PARAMETERS                    true
+
+#if (USE_WIFI_CUSTOM && USE_ESP_AT_SHIELD)
+  // ESP-AT can use longer than 2K HTML and DYNAMIC_PARAMETERS
+  #undef USE_DYNAMIC_PARAMETERS
+  #define USE_DYNAMIC_PARAMETERS                   false
+  #warning Disable USE_DYNAMIC_PARAMETERS for ESP_AT_SHIELD
+#endif
 
 #include <WiFiManager_Generic_Lite_SAMD.h>
 
@@ -1248,7 +1376,7 @@ This is the terminal output when running [**SAMD_WiFi**](examples/SAMD_WiFi) exa
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.0.1
+WiFiManager_Generic_Lite v1.1.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xffffffff
 No doubleResetDetected
@@ -1349,7 +1477,7 @@ FFFFFFFFF
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.0.1
+WiFiManager_Generic_Lite v1.1.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1413,7 +1541,7 @@ HHHHHHHHHH HHHHHHHHHH
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.0.1
+WiFiManager_Generic_Lite v1.1.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1477,7 +1605,7 @@ FF
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.0.1
+WiFiManager_Generic_Lite v1.1.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1533,7 +1661,7 @@ HHHHHHHHH HHHHHHHHHH
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.0.1
+WiFiManager_Generic_Lite v1.1.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d01234
 doubleResetDetected
@@ -1595,6 +1723,8 @@ Debug is enabled by default on Serial. To disable, add at the beginning of sketc
 #define DRD_GENERIC_DEBUG             true
 ```
 
+---
+
 ## Troubleshooting
 
 If you get compilation errors, more often than not, you may need to install a newer version of the board's core, `Generic WiFi (WiFiNINA, WINC1500/WiFi101, ESP8266/ESP32-AT, etc.) module/shield` libraries or this library version.
@@ -1605,6 +1735,15 @@ Sometimes, the library will only work if you update the `Generic WiFi module/shi
 ---
 
 ## Releases
+
+### Major Release v1.1.0
+
+1. Configurable **Customs HTML Headers**, including Customs Style, Customs Head Elements, CORS Header.
+2. Fix Config Portal Bug. 
+3. Add functions to control Config Portal from software or Virtual Switches. Check [How to trigger a Config Portal from code #25](https://github.com/khoih-prog/Blynk_WM/issues/25)
+4. Use more efficient [FlashStorage_SAMD v1.1.0](https://github.com/khoih-prog/FlashStorage_SAMD) and [FlashStorage_STM32 v1.0.0](https://github.com/khoih-prog/FlashStorage_STM32)
+5. Optimize code. 
+6. Update examples
 
 ### Release v1.0.2
 
@@ -1656,7 +1795,9 @@ Submit issues to: [WiFiManager_Generic_Lite issues](https://github.com/khoih-pro
 17. Re-structure all examples to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device.
 18. Add support to **Seeeduino SAMD21/SAMD51 boards (SEEED_WIO_TERMINAL, SEEED_FEMTO_M0, SEEED_XIAO_M0, Wio_Lite_MG126, WIO_GPS_BOARD, SEEEDUINO_ZERO, SEEEDUINO_LORAWAN, SEEED_GROVE_UI_WIRELESS, etc.)**
 19. Add Table of Contents and Version String
-20. Use more efficient [FlashStorage_STM32](https://github.com/khoih-prog/FlashStorage_STM32) and [FlashStorage_SAMD](https://github.com/khoih-prog/FlashStorage_SAMD) library versions.
+20. Use more efficient **FlashStorage_STM32**](https://github.com/khoih-prog/FlashStorage_STM32) and [**FlashStorage_SAMD**](https://github.com/khoih-prog/FlashStorage_SAMD) library versions.
+21. Configurable **Customs HTML Headers**, including Customs Style, Customs Gead Elements, CORS Header
+22. Add functions to control Config Portal from software or Virtual Switches.
 
 ---
 ---

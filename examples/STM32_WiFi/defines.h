@@ -51,11 +51,30 @@
     #warning STM32F4 board selected
     #define BOARD_TYPE  "STM32F4"
   #elif defined(STM32F7)
-    #warning STM32F7 board selected
-    #define BOARD_TYPE  "STM32F7"
+
+    #if defined(ARDUINO_NUCLEO_F767ZI)
+      #warning Nucleo-144 NUCLEO_F767ZI board selected, using HardwareSerial Serial1 @ pin D0/RX and D1/TX
+      // RX TX
+      HardwareSerial Serial1(D0, D1);
+    #else
+    
+      #warning STM32F7 board selected
+      #define BOARD_TYPE  "STM32F7"
+
+    #endif
+    
   #elif defined(STM32L0)
-    #warning STM32L0 board selected
-    #define BOARD_TYPE  "STM32L0"
+    #if defined(ARDUINO_NUCLEO_L053R8)
+      #warning Nucleo-64 NUCLEO_L053R8 board selected, using HardwareSerial Serial1 @ pin D0/RX and D1/TX
+      // RX TX
+      HardwareSerial Serial1(D0, D1);   // (PA3, PA2);
+    #else
+    
+      #warning STM32L0 board selected
+      #define BOARD_TYPE  "STM32L0"
+
+    #endif
+    
   #elif defined(STM32L1)
     #warning STM32L1 board selected
     #define BOARD_TYPE  "STM32L1"
@@ -96,9 +115,16 @@
 
 /////////////////////////////////////////////
 
+// Add customs headers from v1.1.0
+#define USING_CUSTOMS_STYLE           true
+#define USING_CUSTOMS_HEAD_ELEMENT    true
+#define USING_CORS_FEATURE            true
+
+/////////////////////////////////////////////
+
 #define USE_WIFI_NINA             false
-#define USE_WIFI101               true
-#define USE_WIFI_CUSTOM           false
+#define USE_WIFI101               false
+#define USE_WIFI_CUSTOM           true
 
 #if USE_WIFI_NINA
 
@@ -139,6 +165,15 @@
 
   #define SHIELD_TYPE     "Custom using Custom WiFi Library"
   #warning Using Custom WiFi Library. You must include here or compile error
+
+  // For STM32
+  #warning EspSerial using SERIAL_PORT_HARDWARE, can be Serial or Serial1. See your board variant.h
+  #define EspSerial     SERIAL_PORT_HARDWARE    //Serial1
+
+  #include "ESP8266_AT_WebServer.h"
+
+  #define USE_ESP_AT_SHIELD       true
+  #define WiFiWebServer ESP8266_AT_WebServer
   
 #else
 
@@ -157,7 +192,14 @@
 // Config Timeout 120s (default 60s)
 #define CONFIG_TIMEOUT                            120000L
 
-#define USE_DYNAMIC_PARAMETERS              true
+#define USE_DYNAMIC_PARAMETERS                    true
+
+#if (USE_WIFI_CUSTOM && USE_ESP_AT_SHIELD)
+  // ESP-AT can use longer than 2K HTML and DYNAMIC_PARAMETERS
+  #undef USE_DYNAMIC_PARAMETERS
+  #define USE_DYNAMIC_PARAMETERS                   false
+  #warning Disable USE_DYNAMIC_PARAMETERS for ESP_AT_SHIELD
+#endif
 
 #include <WiFiManager_Generic_Lite_STM32.h>
 

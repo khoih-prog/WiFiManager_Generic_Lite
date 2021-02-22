@@ -1,6 +1,6 @@
 /****************************************************************************************************************************
   dynamicParams.h
-  For SAMD 21 MKR1000 boards using WiFi101 Modules/Shields
+  For SAMD21 MKR1000 boards using WiFi101 Modules/Shields
   
   WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
   (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 

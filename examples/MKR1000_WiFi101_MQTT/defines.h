@@ -1,6 +1,6 @@
 /****************************************************************************************************************************
   defines.h for SAMD_WiFiNINA_MQTT.ino
-  For SAMD 21 MKR1000 boards using WiFi101 Modules/Shields
+  For SAMD21 MKR1000 boards using WiFi101 Modules/Shields
   
   WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
   (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 
@@ -48,6 +48,13 @@
 // Config data Size currently is 128 bytes)
 #define EEPROM_START              0
 #define EEPROM_SIZE               (2 * 1024)
+
+/////////////////////////////////////////////
+
+// Add customs headers from v1.1.0
+#define USING_CUSTOMS_STYLE           true
+#define USING_CUSTOMS_HEAD_ELEMENT    true
+#define USING_CORS_FEATURE            true
 
 /////////////////////////////////////////////
 

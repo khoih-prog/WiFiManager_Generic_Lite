@@ -279,6 +279,11 @@ void MQTT_connect()
 #endif
 }
 
+#if USING_CUSTOMS_STYLE
+const char NewCustomsStyle[] /*PROGMEM*/ = "<style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}\
+button{background-color:blue;color:white;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>";
+#endif
+
 void setup()
 {
   // Debug console
@@ -297,7 +302,19 @@ void setup()
 
   // Optional to change default AP IP(192.168.4.1) and channel(10)
   //WiFiManager_Generic->setConfigPortalIP(IPAddress(192, 168, 120, 1));
-  WiFiManager_Generic->setConfigPortalChannel(1);
+  WiFiManager_Generic->setConfigPortalChannel(0);
+
+#if USING_CUSTOMS_STYLE
+  WiFiManager_Generic->setCustomsStyle(NewCustomsStyle);
+#endif
+
+#if USING_CUSTOMS_HEAD_ELEMENT
+  WiFiManager_Generic->setCustomsHeadElement("<style>html{filter: invert(10%);}</style>");
+#endif
+
+#if USING_CORS_FEATURE  
+  WiFiManager_Generic->setCORSHeader("Your Access-Control-Allow-Origin");
+#endif
 
   // Set customized DHCP HostName
   WiFiManager_Generic->begin(HOST_NAME);
@@ -317,17 +334,14 @@ void displayCredentials()
     Serial.println(myMenuItems[i].pdata);
   }
 }
-#endif
 
-void loop()
+void displayCredentialsInLoop()
 {
-
-#if USE_DYNAMIC_PARAMETERS
   static bool displayedCredentials = false;
 
   if (!displayedCredentials)
   {
-    for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
+    for (int i = 0; i < NUM_MENU_ITEMS; i++)
     {
       if (!strlen(myMenuItems[i].pdata))
       {
@@ -341,8 +355,16 @@ void loop()
       }
     }
   }
+}
+
 #endif
 
+void loop()
+{
   WiFiManager_Generic->run();
   check_status();
+
+#if USE_DYNAMIC_PARAMETERS
+  displayCredentialsInLoop();
+#endif  
 }

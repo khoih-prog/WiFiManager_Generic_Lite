@@ -8,13 +8,15 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.0.2
-   
+  Version: 1.1.0
+
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
   1.0.0   K Hoang      04/02/2021  Initial coding for generic boards using generic WiFi.
   1.0.1   K Hoang      05/02/2021  Fix bug. Drop Mega support due to marginal memory. 
-  1.0.2   K Hoang      06/02/2021  Add support to STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101                       
+  1.0.2   K Hoang      06/02/2021  Add support to STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101
+  1.1.0   K Hoang      21/02/2021  Optimize code and use better FlashStorage_SAMD and FlashStorage_STM32. 
+                                   Add customs HTML header feature. Fix bug. 
   *****************************************************************************************************************************/
   
 #include "defines.h"
@@ -57,6 +59,11 @@ void check_status()
 
 WiFiManager_Generic_Lite* WiFiManager_Generic;
 
+#if USING_CUSTOMS_STYLE
+const char NewCustomsStyle[] /*PROGMEM*/ = "<style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}\
+button{background-color:blue;color:white;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>";
+#endif
+
 void setup()
 {
   // Debug console
@@ -69,12 +76,40 @@ void setup()
   Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
   Serial.println(WIFI_MANAGER_GENERIC_LITE_VERSION);
 
+#if ( USE_WIFI_CUSTOM && USE_ESP_AT_SHIELD )
+    // initialize serial for ESP module
+  EspSerial.begin(115200);
+  // initialize ESP module
+  WiFi.init(&EspSerial);
+
+  Serial.println(F("WiFi shield init done"));
+
+  // check for the presence of the shield
+  if (WiFi.status() == WL_NO_SHIELD)
+  {
+    Serial.println(F("WiFi shield not present"));
+    // don't continue
+    while (true);
+  }
+#endif
 
   WiFiManager_Generic = new WiFiManager_Generic_Lite();
 
   // Optional to change default AP IP(192.168.4.1) and channel(10)
   //WiFiManager_Generic->setConfigPortalIP(IPAddress(192, 168, 120, 1));
-  //WiFiManager_Generic->setConfigPortalChannel(1);
+  WiFiManager_Generic->setConfigPortalChannel(0);
+
+#if USING_CUSTOMS_STYLE
+  WiFiManager_Generic->setCustomsStyle(NewCustomsStyle);
+#endif
+
+#if USING_CUSTOMS_HEAD_ELEMENT
+  WiFiManager_Generic->setCustomsHeadElement("<style>html{filter: invert(10%);}</style>");
+#endif
+
+#if USING_CORS_FEATURE  
+  WiFiManager_Generic->setCORSHeader("Your Access-Control-Allow-Origin");
+#endif
 
   // Set customized DHCP HostName
   WiFiManager_Generic->begin(HOST_NAME);
@@ -84,28 +119,25 @@ void setup()
 }
 
 #if USE_DYNAMIC_PARAMETERS
-void displayCredentials(void)
+void displayCredentials()
 {
-  Serial.println("\nYour stored Credentials :");
+  Serial.println(F("\nYour stored Credentials :"));
 
   for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
   {
-    Serial.println(String(myMenuItems[i].displayName) + " = " + myMenuItems[i].pdata);
+    Serial.print(myMenuItems[i].displayName);
+    Serial.print(F(" = "));
+    Serial.println(myMenuItems[i].pdata);
   }
 }
-#endif
 
-void loop()
+void displayCredentialsInLoop()
 {
-  WiFiManager_Generic->run();
-  check_status();
-
-#if USE_DYNAMIC_PARAMETERS
   static bool displayedCredentials = false;
 
   if (!displayedCredentials)
   {
-    for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
+    for (int i = 0; i < NUM_MENU_ITEMS; i++)
     {
       if (!strlen(myMenuItems[i].pdata))
       {
@@ -119,5 +151,16 @@ void loop()
       }
     }
   }
+}
+
 #endif
+
+void loop()
+{
+  WiFiManager_Generic->run();
+  check_status();
+
+#if USE_DYNAMIC_PARAMETERS
+  displayCredentialsInLoop();
+#endif  
 }

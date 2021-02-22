@@ -145,6 +145,13 @@
 
 /////////////////////////////////////////////
 
+// Add customs headers from v1.1.0
+#define USING_CUSTOMS_STYLE           true
+#define USING_CUSTOMS_HEAD_ELEMENT    true
+#define USING_CORS_FEATURE            true
+
+/////////////////////////////////////////////
+
 #define USE_WIFI_NINA             true
 #define USE_WIFI101               false
 #define USE_WIFI_CUSTOM           false
@@ -183,6 +190,14 @@
 
   #define SHIELD_TYPE     "Custom using Custom WiFi Library"
   #warning Using Custom WiFi Library. You must include here or compile error
+
+  // For SAMD
+  #define EspSerial Serial1
+
+  #include "ESP8266_AT_WebServer.h"
+
+  #define USE_ESP_AT_SHIELD       true
+  #define WiFiWebServer ESP8266_AT_WebServer
   
 #else
 
@@ -199,9 +214,16 @@
 #define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    5
 
 // Config Timeout 120s (default 60s)
-#define CONFIG_TIMEOUT                      120000L
+#define CONFIG_TIMEOUT                            120000L
 
-#define USE_DYNAMIC_PARAMETERS              true
+#define USE_DYNAMIC_PARAMETERS                    true
+
+#if (USE_WIFI_CUSTOM && USE_ESP_AT_SHIELD)
+  // ESP-AT can use longer than 2K HTML and DYNAMIC_PARAMETERS
+  #undef USE_DYNAMIC_PARAMETERS
+  #define USE_DYNAMIC_PARAMETERS                   false
+  #warning Disable USE_DYNAMIC_PARAMETERS for ESP_AT_SHIELD
+#endif
 
 #include <WiFiManager_Generic_Lite_SAMD.h>
 

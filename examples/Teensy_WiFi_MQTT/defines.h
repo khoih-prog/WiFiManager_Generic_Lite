@@ -64,8 +64,15 @@
 
 /////////////////////////////////////////////
 
-#define USE_WIFI_NINA             false
-#define USE_WIFI101               true
+// Add customs headers from v1.1.0
+#define USING_CUSTOMS_STYLE           true
+#define USING_CUSTOMS_HEAD_ELEMENT    true
+#define USING_CORS_FEATURE            true
+
+/////////////////////////////////////////////
+
+#define USE_WIFI_NINA             true
+#define USE_WIFI101               false
 #define USE_WIFI_CUSTOM           false
 
 #if USE_WIFI_NINA
@@ -109,7 +116,17 @@
   #define SHIELD_TYPE     "Custom using Custom WiFi Library"
   #warning Using Custom WiFi Library. You must include here or compile error
 
-  #include "WiFiEspAT.h"
+  // For Teensy 4.1/4.0
+  //#define EspSerial Serial1   //Serial1, Pin RX1 :  0, TX1 :  1
+  #define EspSerial Serial2   //Serial2, Pin RX2 :  7, TX2 :  8
+  //#define EspSerial Serial3   //Serial3, Pin RX3 : 15, TX3 : 14
+  //#define EspSerial Serial4   //Serial4, Pin RX4 : 16, TX4 : 17
+
+  #include "ESP8266_AT_WebServer.h"
+
+  #define USE_ESP_AT_SHIELD       true
+  #define WiFiWebServer ESP8266_AT_WebServer
+  #define WiFiClient    ESP8266_AT_Client
   
 #else
 
@@ -128,7 +145,14 @@
 // Config Timeout 120s (default 60s)
 #define CONFIG_TIMEOUT                            120000L
 
-#define USE_DYNAMIC_PARAMETERS              true
+#define USE_DYNAMIC_PARAMETERS                    true
+
+#if (USE_WIFI_CUSTOM && USE_ESP_AT_SHIELD)
+  // ESP-AT can use longer than 2K HTML and DYNAMIC_PARAMETERS
+  #undef USE_DYNAMIC_PARAMETERS
+  #define USE_DYNAMIC_PARAMETERS                   false
+  #error Can't use with ESP_AT_SHIELD
+#endif
 
 #include <WiFiManager_Generic_Lite_Teensy.h>
 

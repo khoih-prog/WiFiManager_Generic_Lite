@@ -8,13 +8,15 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.0.2
+  Version: 1.1.0
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
   1.0.0   K Hoang      04/02/2021  Initial coding for generic boards using generic WiFi.
   1.0.1   K Hoang      05/02/2021  Fix bug. Drop Mega support due to marginal memory. 
   1.0.2   K Hoang      06/02/2021  Add support to STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101
+  1.1.0   K Hoang      21/02/2021  Optimize code and use better FlashStorage_SAMD and FlashStorage_STM32. 
+                                   Add customs HTML header feature. Fix bug.
   *****************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_SAMD_h
@@ -33,7 +35,7 @@
   #error This code is intended to run on the SAMD platform! Please check your Tools->Board setting.  
 #endif
 
-#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.0.2"
+#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.1.0"
 
 #if (USE_WIFI_NINA || USE_WIFI101)
   #include <WiFiWebServer.h>
@@ -45,6 +47,18 @@
 //#include <FlashAsEEPROM.h>                //https://github.com/cmaglie/FlashStorage
 #include <FlashAsEEPROM_SAMD.h>                //https://github.com/khoih-prog/FlashStorage_SAMD
 #include <WiFiManager_Generic_Lite_Debug.h>
+
+#ifndef USING_CUSTOMS_STYLE
+  #define USING_CUSTOMS_STYLE     false
+#endif
+
+#ifndef USING_CUSTOMS_HEAD_ELEMENT
+  #define USING_CUSTOMS_HEAD_ELEMENT     false
+#endif
+
+#ifndef USING_CORS_FEATURE
+  #define USING_CORS_FEATURE     false
+#endif
 
 ///////// NEW for DRD /////////////
 // These defines must be put before #include <DoubleResetDetector_Generic.h>
@@ -125,13 +139,29 @@ uint16_t CONFIG_DATA_SIZE = sizeof(WIFI_GENERIC_Configuration);
 extern bool LOAD_DEFAULT_CONFIG_DATA;
 extern WIFI_GENERIC_Configuration defaultConfig;
 
+#if 1
 // -- HTML page fragments
-const char WIFI_GENERIC_HTML_HEAD[]     /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>SAMD_WM_NINA_Lite</title><style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style></head><div style=\"text-align:left;display:inline-block;min-width:260px;\">\
+
+const char WIFI_GENERIC_HTML_HEAD_START[] /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>SAMD_WM_Lite</title>";
+
+const char WIFI_GENERIC_HTML_HEAD_STYLE[] /*PROGMEM*/ = "<style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>";
+
+const char WIFI_GENERIC_HTML_HEAD_END[]   /*PROGMEM*/ = "</head><div style=\"text-align:left;display:inline-block;min-width:260px;\">\
 <fieldset><div><label>WiFi SSID</label><input value=\"[[id]]\"id=\"id\"><div></div></div>\
 <div><label>PWD</label><input value=\"[[pw]]\"id=\"pw\"><div></div></div>\
 <div><label>WiFi SSID1</label><input value=\"[[id1]]\"id=\"id1\"><div></div></div>\
 <div><label>PWD1</label><input value=\"[[pw1]]\"id=\"pw1\"><div></div></div></fieldset>\
 <fieldset><div><label>Board Name</label><input value=\"[[nm]]\"id=\"nm\"><div></div></div></fieldset>";
+
+#else
+// -- HTML page fragments
+const char WIFI_GENERIC_HTML_HEAD[]     /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>SAMD_WM_Lite</title><style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style></head><div style=\"text-align:left;display:inline-block;min-width:260px;\">\
+<fieldset><div><label>WiFi SSID</label><input value=\"[[id]]\"id=\"id\"><div></div></div>\
+<div><label>PWD</label><input value=\"[[pw]]\"id=\"pw\"><div></div></div>\
+<div><label>WiFi SSID1</label><input value=\"[[id1]]\"id=\"id1\"><div></div></div>\
+<div><label>PWD1</label><input value=\"[[pw1]]\"id=\"pw1\"><div></div></div></fieldset>\
+<fieldset><div><label>Board Name</label><input value=\"[[nm]]\"id=\"nm\"><div></div></div></fieldset>";
+#endif
 
 const char WIFI_GENERIC_FLDSET_START[]  /*PROGMEM*/ = "<fieldset>";
 const char WIFI_GENERIC_FLDSET_END[]    /*PROGMEM*/ = "</fieldset>";
@@ -147,8 +177,25 @@ udVal('nm',document.getElementById('nm').value);";
 const char WIFI_GENERIC_HTML_SCRIPT_ITEM[]  /*PROGMEM*/ = "udVal('{d}',document.getElementById('{d}').value);";
 const char WIFI_GENERIC_HTML_SCRIPT_END[]   /*PROGMEM*/ = "alert('Updated');}</script>";
 const char WIFI_GENERIC_HTML_END[]          /*PROGMEM*/ = "</html>";
-///
 
+//////////////////////////////////////////
+
+//KH Add repeatedly used const
+//KH, from v1.1.0
+const char WM_HTTP_HEAD_CL[]         PROGMEM = "Content-Length";
+const char WM_HTTP_HEAD_TEXT_HTML[]  PROGMEM = "text/html";
+const char WM_HTTP_HEAD_TEXT_PLAIN[] PROGMEM = "text/plain";
+
+const char WM_HTTP_CACHE_CONTROL[]   PROGMEM = "Cache-Control";
+const char WM_HTTP_NO_STORE[]        PROGMEM = "no-cache, no-store, must-revalidate";
+const char WM_HTTP_PRAGMA[]          PROGMEM = "Pragma";
+const char WM_HTTP_NO_CACHE[]        PROGMEM = "no-cache";
+const char WM_HTTP_EXPIRES[]         PROGMEM = "Expires";
+
+const char WM_HTTP_CORS[]            PROGMEM = "Access-Control-Allow-Origin";
+const char WM_HTTP_CORS_ALLOW_ALL[]  PROGMEM = "*";
+
+//////////////////////////////////////////
 
 String IPAddressToString(IPAddress _address)
 {
@@ -169,7 +216,7 @@ class WiFiManager_Generic_Lite
     WiFiManager_Generic_Lite()
     {     
       // check for the presence of the shield
-#if USE_WIFI101
+#if ( USE_WIFI101 || USE_ESP_AT_SHIELD )
       if (WiFi.status() == WL_NO_SHIELD)
 #else
       if (WiFi.status() == WL_NO_MODULE)
@@ -635,6 +682,64 @@ class WiFiManager_Generic_Lite
 #endif      
     }
 
+    //////////////////////////////////////
+    
+    // Add customs headers from v1.1.0
+    
+    // New from v1.1.0, for configure CORS Header, default to WM_HTTP_CORS_ALLOW_ALL = "*"
+
+#if USING_CUSTOMS_STYLE
+    //sets a custom style, such as color
+    // "<style>div,input{padding:5px;font-size:1em;}
+    // input{width:95%;}body{text-align: center;}
+    // button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}
+    // fieldset{border-radius:0.3rem;margin:0px;}</style>";
+    void setCustomsStyle(const char* CustomsStyle = WIFI_GENERIC_HTML_HEAD_STYLE) 
+    {
+      WIFI_GENERIC_HTML_HEAD_CUSTOMS_STYLE = CustomsStyle;
+      WG_LOGDEBUG1(F("Set CustomsStyle to : "), WIFI_GENERIC_HTML_HEAD_CUSTOMS_STYLE);
+    }
+    
+    const char* getCustomsStyle()
+    {
+      WG_LOGDEBUG1(F("Get CustomsStyle = "), WIFI_GENERIC_HTML_HEAD_CUSTOMS_STYLE);
+      return WIFI_GENERIC_HTML_HEAD_CUSTOMS_STYLE;
+    }
+#endif
+
+#if USING_CUSTOMS_HEAD_ELEMENT    
+    //sets a custom element to add to head, like a new style tag
+    void setCustomsHeadElement(const char* CustomsHeadElement = NULL) 
+    {
+      _CustomsHeadElement = CustomsHeadElement;
+      WG_LOGDEBUG1(F("Set CustomsHeadElement to : "), _CustomsHeadElement);
+    }
+    
+    const char* getCustomsHeadElement()
+    {
+      WG_LOGDEBUG1(F("Get CustomsHeadElement = "), _CustomsHeadElement);
+      return _CustomsHeadElement;
+    }
+#endif
+    
+#if USING_CORS_FEATURE   
+    void setCORSHeader(const char* CORSHeaders = NULL)
+    {     
+      _CORS_Header = CORSHeaders;
+
+      WG_LOGDEBUG1(F("Set CORS Header to : "), _CORS_Header);
+    }
+    
+    const char* getCORSHeader()
+    {      
+      WG_LOGDEBUG1(F("Get CORS Header = "), _CORS_Header);
+      return _CORS_Header;
+    }
+#endif
+          
+    //////////////////////////////////////
+
+
   private:
     String ipAddress = "0.0.0.0";
 
@@ -663,7 +768,26 @@ class WiFiManager_Generic_Lite
 
     IPAddress static_IP   = IPAddress(0, 0, 0, 0);
 
+    /////////////////////////////////////
+    
+    // Add customs headers from v1.1.0
+    
+#if USING_CUSTOMS_STYLE
+    const char* WIFI_GENERIC_HTML_HEAD_CUSTOMS_STYLE = NULL;
+#endif
+    
+#if USING_CUSTOMS_HEAD_ELEMENT
+    const char* _CustomsHeadElement = NULL;
+#endif
+    
+#if USING_CORS_FEATURE    
+    const char* _CORS_Header        = WM_HTTP_CORS_ALLOW_ALL;   //"*";
+#endif
+       
+    //////////////////////////////////////
+    
 #define RFC952_HOSTNAME_MAXLEN      24
+
     char RFC952_hostname[RFC952_HOSTNAME_MAXLEN + 1];
 
     char* getRFC952_hostname(const char* iHostname)
@@ -749,48 +873,27 @@ class WiFiManager_Generic_Lite
     
       WG_LOGERROR(isPersistent ? F("setForcedCP Persistent") : F("setForcedCP non-Persistent"));
 
-      uint16_t offset = CONFIG_EEPROM_START + CONFIG_DATA_SIZE;
-           
-      uint8_t* _pointer = (uint8_t *) &readForcedConfigPortalFlag;
-      
-      for (uint16_t i = 0; i < sizeof(readForcedConfigPortalFlag); i++, _pointer++, offset++)
-      {              
-        EEPROM.write(offset, *_pointer);
-      }
-      
+      EEPROM.put(CONFIG_EEPROM_START + CONFIG_DATA_SIZE, readForcedConfigPortalFlag);      
       EEPROM.commit();
     }
     
+    //////////////////////////////////////////////
+    
     void clearForcedCP()
     {
-      uint32_t readForcedConfigPortalFlag = 0;
-      
-      uint16_t offset = CONFIG_EEPROM_START + CONFIG_DATA_SIZE;
-           
-      uint8_t* _pointer = (uint8_t *) &readForcedConfigPortalFlag;
-      
-      for (uint16_t i = 0; i < sizeof(readForcedConfigPortalFlag); i++, _pointer++, offset++)
-      {              
-        EEPROM.write(offset, *_pointer);
-      }
-      
+      EEPROM.put(CONFIG_EEPROM_START + CONFIG_DATA_SIZE, 0);     
       EEPROM.commit();
     }
+    
+    //////////////////////////////////////////////
 
     bool isForcedCP()
     {
       uint32_t readForcedConfigPortalFlag;
-      
+
       // Return true if forced CP (0xDEADBEEF read at offset EPROM_START + DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE)
       // => set flag noForcedConfigPortal = false
-      uint16_t offset = CONFIG_EEPROM_START + CONFIG_DATA_SIZE;
-                
-      uint8_t* _pointer = (uint8_t *) &readForcedConfigPortalFlag;
-      
-      for (uint16_t i = 0; i < sizeof(readForcedConfigPortalFlag); i++, _pointer++, offset++)
-      {              
-        *_pointer = EEPROM.read(offset);
-      }
+      EEPROM.get(CONFIG_EEPROM_START + CONFIG_DATA_SIZE, readForcedConfigPortalFlag);
      
       // Return true if forced CP (0xDEADBEEF read at offset EPROM_START + DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE)
       // => set flag noForcedConfigPortal = false     
@@ -823,25 +926,47 @@ class WiFiManager_Generic_Lite
       int readCheckSum;
       
       uint16_t offset = CONFIG_EEPROM_START + sizeof(WIFI_GENERIC_config) + FORCED_CONFIG_PORTAL_FLAG_DATA_SIZE;
-                
+           
+      #define BUFFER_LEN      128
+      char readBuffer[BUFFER_LEN + 1];
+                     
       // Find the longest pdata, then dynamically allocate buffer. Remember to free when done
       // This is used to store tempo data to calculate checksum to see of data is valid
       // We dont like to destroy myMenuItems[i].pdata with invalid data
-          
+      
       for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
-      {                             
-        for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++, offset++)
-        {       
-          checkSum += EEPROM.read(offset);    
-         }       
+      {       
+        if (myMenuItems[i].maxlen > BUFFER_LEN)
+        {
+          // Size too large, abort and flag false
+          WG_LOGERROR(F("ChkCrR: Error Small Buffer."));
+          return false;
+        }
       }
-      
-      uint8_t* _pointer = (uint8_t *) &readCheckSum;
-      
-      for (uint16_t i = 0; i < sizeof(readCheckSum); i++, _pointer++, offset++)
-      {                  
-        *_pointer = EEPROM.read(offset);
-      }  
+         
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
+      {       
+        char* _pointer = readBuffer;
+        
+        // Prepare buffer, more than enough
+        memset(readBuffer, 0, sizeof(readBuffer));
+        
+        // Read more than necessary, but OK and easier to code
+        EEPROM.get(offset, readBuffer);
+        // NULL terminated
+        readBuffer[myMenuItems[i].maxlen] = 0;
+   
+        WG_LOGDEBUG3(F("ChkCrR:pdata="), readBuffer, F(",len="), myMenuItems[i].maxlen);      
+               
+        for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++,_pointer++)
+        {         
+          checkSum += *_pointer;  
+        }   
+        
+        offset += myMenuItems[i].maxlen;    
+      }
+
+      EEPROM.get(offset, readCheckSum);
                   
       WG_LOGERROR3(F("ChkCrR:CrCCsum=0x"), String(checkSum, HEX), F(",CrRCsum=0x"), String(readCheckSum, HEX));
            
@@ -865,6 +990,7 @@ class WiFiManager_Generic_Lite
       // Using FORCED_CONFIG_PORTAL_FLAG_DATA
       //offset += FORCED_CONFIG_PORTAL_FLAG_DATA_SIZE;
       uint16_t offset = CONFIG_EEPROM_START + sizeof(WIFI_GENERIC_config) + FORCED_CONFIG_PORTAL_FLAG_DATA_SIZE;
+      
       uint8_t* _pointer;
    
       for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
@@ -879,15 +1005,10 @@ class WiFiManager_Generic_Lite
         {
           *_pointer = EEPROM.read(offset);          
           checkSum += *_pointer;  
-         }       
+        }       
       }
-      
-      _pointer = (uint8_t *) &readCheckSum;
-      
-      for (uint16_t i = 0; i < sizeof(readCheckSum); i++, _pointer++, offset++)
-      {                  
-        *_pointer = EEPROM.read(offset);
-      }
+
+      EEPROM.get(offset, readCheckSum);
          
       WG_LOGERROR3(F("CrCCSum="), String(checkSum, HEX), F(",CrRCSum="), String(readCheckSum, HEX));
       
@@ -923,16 +1044,11 @@ class WiFiManager_Generic_Lite
           EEPROM.write(offset, *_pointer);
           
           checkSum += *_pointer;     
-         }
+        }
       }
-      
-      _pointer = (uint8_t *) &checkSum;
-      
-      for (uint16_t i = 0; i < sizeof(checkSum); i++, _pointer++, offset++)
-      {              
-        EEPROM.write(offset, *_pointer);
-      }
-      
+
+      EEPROM.put(offset, checkSum);
+     
       WG_LOGERROR1(F("CrCCSum=0x"), String(checkSum, HEX));
       
       EEPROM.commit();
@@ -960,18 +1076,8 @@ class WiFiManager_Generic_Lite
     //////////////////////////////////////////////
     
     bool EEPROM_get()
-    {
-      // It's too bad that emulate EEPROM.read()/write() can only deal with bytes. 
-      // Have to read/write each byte. To rewrite the library
-      
-      uint16_t offset = CONFIG_EEPROM_START;
-                
-      uint8_t* _pointer = (uint8_t *) &WIFI_GENERIC_config;
-      
-      for (uint16_t i = 0; i < sizeof(WIFI_GENERIC_config); i++, _pointer++, offset++)
-      {              
-        *_pointer = EEPROM.read(offset);
-      }
+    {      
+      EEPROM.get(CONFIG_EEPROM_START, WIFI_GENERIC_config);
       
       NULLTerminateConfig();
       
@@ -982,18 +1088,7 @@ class WiFiManager_Generic_Lite
     
     void EEPROM_put()
     {
-      // It's too bad that emulate EEPROM.read()/writ() can only deal with bytes. 
-      // Have to read/write each byte. To rewrite the library
-      
-      uint16_t offset = CONFIG_EEPROM_START;
-           
-      uint8_t* _pointer = (uint8_t *) &WIFI_GENERIC_config;
-      
-      for (uint16_t i = 0; i < sizeof(WIFI_GENERIC_config); i++, _pointer++, offset++)
-      {              
-        EEPROM.write(offset, *_pointer);
-      }
-
+      EEPROM.put(CONFIG_EEPROM_START, WIFI_GENERIC_config);
       EEPROM.commit();      
     }
     
@@ -1239,59 +1334,87 @@ class WiFiManager_Generic_Lite
 
     //////////////////////////////////////////////
     
+    // NEW
     void createHTML(String& root_html_template)
     {
       String pitem;
       
-      root_html_template = String(WIFI_GENERIC_HTML_HEAD);
+      root_html_template  = WIFI_GENERIC_HTML_HEAD_START;
+      
+  #if USING_CUSTOMS_STYLE
+      // Using Customs style when not NULL
+      if (WIFI_GENERIC_HTML_HEAD_CUSTOMS_STYLE)
+        root_html_template  += WIFI_GENERIC_HTML_HEAD_CUSTOMS_STYLE;
+      else
+        root_html_template  += WIFI_GENERIC_HTML_HEAD_STYLE;
+  #else     
+      root_html_template  += WIFI_GENERIC_HTML_HEAD_STYLE;
+  #endif
+      
+  #if USING_CUSTOMS_HEAD_ELEMENT
+      if (_CustomsHeadElement)
+        root_html_template += _CustomsHeadElement;
+  #endif          
+      
+      root_html_template += String(WIFI_GENERIC_HTML_HEAD_END) + WIFI_GENERIC_FLDSET_START;
 
-#if USE_DYNAMIC_PARAMETERS     
-      if (NUM_MENU_ITEMS > 0)
+#if USE_DYNAMIC_PARAMETERS      
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {
-        root_html_template += String(WIFI_GENERIC_FLDSET_START);
-           
-        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
-        {
-          pitem = String(WIFI_GENERIC_HTML_PARAM);
+        pitem = String(WIFI_GENERIC_HTML_PARAM);
 
-          pitem.replace("{b}", myMenuItems[i].displayName);
-          pitem.replace("{v}", myMenuItems[i].id);
-          pitem.replace("{i}", myMenuItems[i].id);
-          
-          root_html_template += pitem;      
-        }
-            
-        root_html_template += String(WIFI_GENERIC_FLDSET_END);
+        pitem.replace("{b}", myMenuItems[i].displayName);
+        pitem.replace("{v}", myMenuItems[i].id);
+        pitem.replace("{i}", myMenuItems[i].id);
+        
+        root_html_template += pitem;
       }
 #endif
-        
-      root_html_template += String(WIFI_GENERIC_HTML_BUTTON) + WIFI_GENERIC_HTML_SCRIPT;     
+      
+      root_html_template += String(WIFI_GENERIC_FLDSET_END) + WIFI_GENERIC_HTML_BUTTON + WIFI_GENERIC_HTML_SCRIPT;     
 
-#if USE_DYNAMIC_PARAMETERS           
-      if (NUM_MENU_ITEMS > 0)
-      {        
-        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
-        {
-          pitem = String(WIFI_GENERIC_HTML_SCRIPT_ITEM);
-          
-          pitem.replace("{d}", myMenuItems[i].id);
-          
-          root_html_template += pitem;        
-        }
+#if USE_DYNAMIC_PARAMETERS      
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
+      {
+        pitem = String(WIFI_GENERIC_HTML_SCRIPT_ITEM);
+        
+        pitem.replace("{d}", myMenuItems[i].id);
+        
+        root_html_template += pitem;
       }
-#endif      
+#endif
       
       root_html_template += String(WIFI_GENERIC_HTML_SCRIPT_END) + WIFI_GENERIC_HTML_END;
       
       return;     
     }
-    
+       
+    //////////////////////////////////////////////
+
+    void serverSendHeaders()
+    {
+      WG_LOGDEBUG3(F("serverSendHeaders:WM_HTTP_CACHE_CONTROL:"), WM_HTTP_CACHE_CONTROL, "=", WM_HTTP_NO_STORE);
+      server->sendHeader(WM_HTTP_CACHE_CONTROL, WM_HTTP_NO_STORE);
+      
+#if USING_CORS_FEATURE
+      // New from v1.1.0, for configure CORS Header, default to WM_HTTP_CORS_ALLOW_ALL = "*"
+      WG_LOGDEBUG3(F("serverSendHeaders:WM_HTTP_CORS:"), WM_HTTP_CORS, " : ", _CORS_Header);
+      server->sendHeader(WM_HTTP_CORS, _CORS_Header);
+#endif
+     
+      WG_LOGDEBUG3(F("serverSendHeaders:WM_HTTP_PRAGMA:"), WM_HTTP_PRAGMA, " : ", WM_HTTP_NO_CACHE);
+      server->sendHeader(WM_HTTP_PRAGMA, WM_HTTP_NO_CACHE);
+      
+      WG_LOGDEBUG3(F("serverSendHeaders:WM_HTTP_EXPIRES:"), WM_HTTP_EXPIRES, " : ", "-1");
+      server->sendHeader(WM_HTTP_EXPIRES, "-1");
+    }
+       
     //////////////////////////////////////////////
 
     void handleRequest()
     {
       if (server)
-      {
+      {        
         String key    = server->arg("key");
         String value  = server->arg("value");
 
@@ -1299,6 +1422,10 @@ class WiFiManager_Generic_Lite
 
         if (key == "" && value == "")
         {
+          // New from v1.1.0         
+          serverSendHeaders();        
+          //////
+          
           String result;
           createHTML(result);
 
@@ -1330,11 +1457,11 @@ class WiFiManager_Generic_Lite
           }
 #endif
 
-          // Check if HTML size is larger than 2K, warn that WebServer won't work
-          // only with notorious ESP8266-AT 2K buffer limitation.          
+
           WG_LOGDEBUG1(F("h:HTML page size:"), result.length());
+          WG_LOGDEBUG1(F("h:HTML="), result);
           
-          server->send(200, "text/html", result);
+          server->send(200, WM_HTTP_HEAD_TEXT_HTML, result);
 
           return;
         }
@@ -1429,33 +1556,38 @@ class WiFiManager_Generic_Lite
           else
             strncpy(WIFI_GENERIC_config.board_name, value.c_str(), sizeof(WIFI_GENERIC_config.board_name) - 1);
         }
+        else
+        {
         
 #if USE_DYNAMIC_PARAMETERS        
-        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
-        {
-          if ( !menuItemUpdated[i] && (key == myMenuItems[i].id) )
-          {
-            WG_LOGDEBUG3(F("h:"), myMenuItems[i].id, F("="), value.c_str() );
-            
-            menuItemUpdated[i] = true;
-            
-            number_items_Updated++;
+          for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
+          {           
+            if ( !menuItemUpdated[i] && (key == myMenuItems[i].id) )
+            {
+              WG_LOGDEBUG3(F("h:"), myMenuItems[i].id, F("="), value.c_str() );
+              
+              menuItemUpdated[i] = true;
+              
+              number_items_Updated++;
 
-            // Actual size of pdata is [maxlen + 1]
-            memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
+              // Actual size of pdata is [maxlen + 1]
+              memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
 
-            if ((int) strlen(value.c_str()) < myMenuItems[i].maxlen)
-              strcpy(myMenuItems[i].pdata, value.c_str());
-            else
-              strncpy(myMenuItems[i].pdata, value.c_str(), myMenuItems[i].maxlen);
+              if ((int) strlen(value.c_str()) < myMenuItems[i].maxlen)
+                strcpy(myMenuItems[i].pdata, value.c_str());
+              else
+                strncpy(myMenuItems[i].pdata, value.c_str(), myMenuItems[i].maxlen);
+                
+              break;  
+            }
           }
-        }
 #endif
-
+        }
+        
         WG_LOGDEBUG1(F("h:items updated ="), number_items_Updated);
         WG_LOGDEBUG3(F("h:key ="), key, ", value =", value);
 
-        server->send(200, "text/html", "OK");
+        server->send(200, WM_HTTP_HEAD_TEXT_HTML, "OK");
 
 #if USE_DYNAMIC_PARAMETERS        
         if (number_items_Updated == NUM_CONFIGURABLE_ITEMS + NUM_MENU_ITEMS)
