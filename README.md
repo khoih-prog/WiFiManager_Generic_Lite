@@ -74,7 +74,7 @@
   * [2. File defines.h](#2-file-definesh)
   * [3. File Credentials.h](#3-file-credentialsh)
   * [4. File dynamicParams.h](#4-file-dynamicparamsh)
-* [Debug Termimal Output Samples](#debug-terminal-output-samples)
+* [Debug Terminal Output Samples](#debug-terminal-output-samples)
   * [1. Open Config Portal](#1-open-config-portal)
   * [2. Received data from Config Portal](#2-received-data-from-config-portal)
   * [3. Got valid Credential from Config Portal, then connected to WiFi](#3-got-valid-credential-from-config-portal-then-connected-to-wifi)
