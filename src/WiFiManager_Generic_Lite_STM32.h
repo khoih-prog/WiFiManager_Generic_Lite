@@ -8,7 +8,7 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.1.0
+  Version: 1.1.2
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -17,6 +17,7 @@
   1.0.2   K Hoang      06/02/2021  Add support to STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101
   1.1.0   K Hoang      21/02/2021  Optimize code and use better FlashStorage_SAMD and FlashStorage_STM32. 
                                    Add customs HTML header feature. Fix bug.
+  1.1.2   K Hoang      30/03/2021  Fix MultiWiFi connection bug.
  *****************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_STM32_h
@@ -35,7 +36,7 @@
   #error This code is intended to run on STM32 platform! Please check your Tools->Board setting.
 #endif
 
-#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.1.0"
+#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.1.2"
 
 #if (USE_WIFI_NINA || USE_WIFI101)
   #include <WiFiWebServer.h>
@@ -1280,35 +1281,50 @@ class WiFiManager_Generic_Lite
         WG_LOGDEBUG3(F("Using index="), index, F(", lastConnectedIndex="), lastConnectedIndex);
       }
       
-      WG_LOGDEBUG3(F("con2WF:SSID="), WIFI_GENERIC_config.WiFi_Creds[index].wifi_ssid,
+      WG_LOGERROR3(F("con2WF:SSID="), WIFI_GENERIC_config.WiFi_Creds[index].wifi_ssid,
                 F(",PW="), WIFI_GENERIC_config.WiFi_Creds[index].wifi_pw);
              
-      while ( !wifi_connected && ( 0 < retry_time ) )
-      {      
-        WG_LOGDEBUG1(F("Remaining retry_time="), retry_time);
-        
-        status = WiFi.begin(WIFI_GENERIC_config.WiFi_Creds[index].wifi_ssid, WIFI_GENERIC_config.WiFi_Creds[index].wifi_pw); 
-            
-        // Need restart WiFi at beginning of each cycle 
-        if (status == WL_CONNECTED)
-        {
-          wifi_connected = true;          
-          lastConnectedIndex = index;                                     
-          WG_LOGDEBUG1(F("WOK, lastConnectedIndex="), lastConnectedIndex);
+      uint8_t numIndexTried = 0;
+      
+      while ( !wifi_connected && (numIndexTried++ < NUM_WIFI_CREDENTIALS) )
+      {         
+        while ( 0 < retry_time )
+        {      
+          WG_LOGDEBUG1(F("Remaining retry_time="), retry_time);
           
+          status = WiFi.begin(WIFI_GENERIC_config.WiFi_Creds[index].wifi_ssid, WIFI_GENERIC_config.WiFi_Creds[index].wifi_pw); 
+              
+          // Need restart WiFi at beginning of each cycle 
+          if (status == WL_CONNECTED)
+          {
+            wifi_connected = true;          
+            lastConnectedIndex = index;                                     
+            WG_LOGDEBUG1(F("WOK, lastConnectedIndex="), lastConnectedIndex);
+            
+            break;
+          }
+          else
+          {
+            delay(sleep_time);
+            retry_time--;
+          }         
+        }
+        
+        if (status == WL_CONNECTED)
+        {         
           break;
         }
         else
         {
-          delay(sleep_time);
-          retry_time--;
-        }         
+          index = (index + 1) % NUM_WIFI_CREDENTIALS;
+              
+          if (retry_time <= 0)
+          {      
+            WG_LOGERROR3(F("Failed using index="), index, F(", retry_time="), retry_time);
+            retry_time = RETRY_TIMES_CONNECT_WIFI;  
+          }
+        }
       }
-          
-      if (retry_time <= 0)
-      {      
-        WG_LOGERROR3(F("Failed using index="), index, F(", retry_time="), retry_time);             
-      }  
 
       if (wifi_connected)
       {

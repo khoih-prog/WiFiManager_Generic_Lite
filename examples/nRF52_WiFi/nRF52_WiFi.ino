@@ -8,7 +8,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.1.0
+  Version: 1.1.2
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -17,6 +17,7 @@
   1.0.2   K Hoang      06/02/2021  Add support to STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101
   1.1.0   K Hoang      21/02/2021  Optimize code and use better FlashStorage_SAMD and FlashStorage_STM32. 
                                    Add customs HTML header feature. Fix bug.
+  1.1.2   K Hoang      30/03/2021  Fix MultiWiFi connection bug.
   *****************************************************************************************************************************/
 #include "defines.h"
 #include "Credentials.h"
