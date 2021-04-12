@@ -8,7 +8,7 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.1.2
+  Version: 1.1.3
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -18,6 +18,7 @@
   1.1.0   K Hoang      21/02/2021  Optimize code and use better FlashStorage_SAMD and FlashStorage_STM32. 
                                    Add customs HTML header feature. Fix bug.
   1.1.2   K Hoang      30/03/2021  Fix MultiWiFi connection bug.
+  1.1.3   K Hoang      12/04/2021  Fix invalid "blank" Config Data treated as Valid.
  *****************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_DUE_h
@@ -33,7 +34,7 @@
   #error This code is intended to run on the SAM DUE platform! Please check your Tools->Board setting.  
 #endif
 
-#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.1.2"
+#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.1.3"
 
 #if (USE_WIFI_NINA || USE_WIFI101)
   #include <WiFiWebServer.h>
@@ -1093,6 +1094,31 @@ class WiFiManager_Generic_Lite
     
     //////////////////////////////////////////////
     
+    // If SSID, PW ="blank" or NULL, return false
+    bool isWiFiConfigValid()
+    {
+      if ( !strncmp(WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid,       WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
+           !strncmp(WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw,         WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
+           !strncmp(WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid,       WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
+           !strncmp(WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw,         WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
+           !strlen(WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid) || 
+           !strlen(WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid) ||
+           !strlen(WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw)   ||
+           !strlen(WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw)  )
+      {
+        // If SSID, PW ="blank" or NULL, set the flag
+        WG_LOGERROR(F("Invalid Stored WiFi Config Data"));
+        
+        hadConfigData = false;
+        
+        return false;
+      }
+      
+      return true;
+    }
+    
+    //////////////////////////////////////////////
+    
     bool dueFlashStorage_get()
     {
       uint16_t offset = CONFIG_EEPROM_START;
@@ -1103,7 +1129,7 @@ class WiFiManager_Generic_Lite
       
       NULLTerminateConfig();
       
-      return true;
+      return isWiFiConfigValid();
     }
     
     //////////////////////////////////////////////
@@ -1169,10 +1195,11 @@ class WiFiManager_Generic_Lite
       }
       else
       {   
-        // Load stored config / dynamic data from dueFlashStorage
-        // Verify ChkSum
-        dueFlashStorage_get();
-        
+        // Get config data. If "blank" or NULL, set false flag and exit
+        if (!dueFlashStorage_get())
+        {
+          return false;
+        }       
             
         calChecksum = calcChecksum();
 
@@ -1269,16 +1296,9 @@ class WiFiManager_Generic_Lite
 
         return false;
       }
-      else if ( !strncmp(WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid,       WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
-                !strncmp(WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw,         WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
-                !strncmp(WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid,       WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
-                !strncmp(WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw,         WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
-                !strlen(WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid) || 
-                !strlen(WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid) ||
-                !strlen(WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw)   ||
-                !strlen(WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw)  )
+      else if ( !isWiFiConfigValid() )
       {
-        // If SSID, PW ="nothing", stay in config mode forever until having config Data.
+        // If SSID, PW ="blank" or NULL, stay in config mode forever until having config Data.
         return false;
       }
       else
@@ -1295,7 +1315,7 @@ class WiFiManager_Generic_Lite
     {
       int sleep_time  = 250;
       int index       = 0;
-      uint8_t status;
+      uint8_t status  = WL_IDLE_STATUS;
                        
       static int lastConnectedIndex = 255;
 
