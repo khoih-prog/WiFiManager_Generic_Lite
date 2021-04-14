@@ -8,7 +8,7 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.1.3
+  Version: 1.2.0
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -19,6 +19,7 @@
                                    Add customs HTML header feature. Fix bug.
   1.1.2   K Hoang      30/03/2021  Fix MultiWiFi connection bug.
   1.1.3   K Hoang      12/04/2021  Fix invalid "blank" Config Data treated as Valid.
+  1.2.0   K Hoang      14/04/2021  Optional one set of WiFi Credentials. Enforce WiFi PWD minimum 8 chars
  *****************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_STM32_h
@@ -37,7 +38,7 @@
   #error This code is intended to run on STM32 platform! Please check your Tools->Board setting.
 #endif
 
-#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.1.3"
+#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.2.0"
 
 #if (USE_WIFI_NINA || USE_WIFI101)
   #include <WiFiWebServer.h>
@@ -142,7 +143,6 @@ uint16_t CONFIG_DATA_SIZE = sizeof(WIFI_GENERIC_Configuration);
 extern bool LOAD_DEFAULT_CONFIG_DATA;
 extern WIFI_GENERIC_Configuration defaultConfig;
 
-#if 1
 // -- HTML page fragments
 
 const char WIFI_GENERIC_HTML_HEAD_START[] /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>STM32_WM_Lite</title>";
@@ -150,21 +150,11 @@ const char WIFI_GENERIC_HTML_HEAD_START[] /*PROGMEM*/ = "<!DOCTYPE html><html><h
 const char WIFI_GENERIC_HTML_HEAD_STYLE[] /*PROGMEM*/ = "<style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>";
 
 const char WIFI_GENERIC_HTML_HEAD_END[]   /*PROGMEM*/ = "</head><div style=\"text-align:left;display:inline-block;min-width:260px;\">\
-<fieldset><div><label>WiFi SSID</label><input value=\"[[id]]\"id=\"id\"><div></div></div>\
-<div><label>PWD</label><input value=\"[[pw]]\"id=\"pw\"><div></div></div>\
-<div><label>WiFi SSID1</label><input value=\"[[id1]]\"id=\"id1\"><div></div></div>\
-<div><label>PWD1</label><input value=\"[[pw1]]\"id=\"pw1\"><div></div></div></fieldset>\
+<fieldset><div><label>*WiFi SSID</label><input value=\"[[id]]\"id=\"id\"><div></div></div>\
+<div><label>*PWD (8+ chars)</label><input value=\"[[pw]]\"id=\"pw\"><div></div></div>\
+<div><label>*WiFi SSID1</label><input value=\"[[id1]]\"id=\"id1\"><div></div></div>\
+<div><label>*PWD1 (8+ chars)</label><input value=\"[[pw1]]\"id=\"pw1\"><div></div></div></fieldset>\
 <fieldset><div><label>Board Name</label><input value=\"[[nm]]\"id=\"nm\"><div></div></div></fieldset>";
-
-#else
-// -- HTML page fragments
-const char WIFI_GENERIC_HTML_HEAD[]     /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>STM32_WM_Lite</title><style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style></head><div style=\"text-align:left;display:inline-block;min-width:260px;\">\
-<fieldset><div><label>WiFi SSID</label><input value=\"[[id]]\"id=\"id\"><div></div></div>\
-<div><label>PWD</label><input value=\"[[pw]]\"id=\"pw\"><div></div></div>\
-<div><label>WiFi SSID1</label><input value=\"[[id1]]\"id=\"id1\"><div></div></div>\
-<div><label>PWD1</label><input value=\"[[pw1]]\"id=\"pw1\"><div></div></div></fieldset>\
-<fieldset><div><label>Board Name</label><input value=\"[[nm]]\"id=\"nm\"><div></div></div></fieldset>";
-#endif
 
 const char WIFI_GENERIC_FLDSET_START[]  /*PROGMEM*/ = "<fieldset>";
 const char WIFI_GENERIC_FLDSET_END[]    /*PROGMEM*/ = "</fieldset>";
@@ -198,7 +188,16 @@ const char WM_HTTP_EXPIRES[]         PROGMEM = "Expires";
 const char WM_HTTP_CORS[]            PROGMEM = "Access-Control-Allow-Origin";
 const char WM_HTTP_CORS_ALLOW_ALL[]  PROGMEM = "*";
 
-//////////////////////////////////////////
+//////////////////////////////////////////////
+
+// New from v1.2.0
+#if !defined(REQUIRE_ONE_SET_SSID_PW)
+  #define REQUIRE_ONE_SET_SSID_PW     false
+#endif
+
+#define PASSWORD_MIN_LEN        8
+
+//////////////////////////////////////////////
 
 String IPAddressToString(IPAddress _address)
 {
@@ -1064,17 +1063,29 @@ class WiFiManager_Generic_Lite
        
     //////////////////////////////////////////////
     
-    // If SSID, PW ="blank" or NULL, return false
     bool isWiFiConfigValid()
     {
-      if ( !strncmp(WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid,       WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
-           !strncmp(WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw,         WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
-           !strncmp(WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid,       WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
-           !strncmp(WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw,         WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
-           !strlen(WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid) || 
-           !strlen(WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid) ||
-           !strlen(WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw)   ||
-           !strlen(WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw)  )
+      #if REQUIRE_ONE_SET_SSID_PW
+      // If SSID ="blank" or NULL, or PWD length < 8 (as required by standard) => return false
+      // Only need 1 set of valid SSID/PWD
+      if (!( ( ( strncmp(WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid, WM_NO_CONFIG, strlen(WM_NO_CONFIG)) && 
+                 strlen(WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid) >  0 )  &&
+             (   strlen(WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw) >= PASSWORD_MIN_LEN ) ) ||
+             ( ( strncmp(WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid, WM_NO_CONFIG, strlen(WM_NO_CONFIG)) && 
+                 strlen(WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid) >  0 )  &&
+               ( strlen(WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw) >= PASSWORD_MIN_LEN ) ) ))
+      #else
+      // If SSID ="blank" or NULL, or PWD length < 8 (as required by standard) => invalid set
+      // Need both sets of valid SSID/PWD
+      if ( !strncmp(WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid,   WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
+           !strncmp(WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw,     WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
+           !strncmp(WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid,   WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
+           !strncmp(WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw,     WM_NO_CONFIG, strlen(WM_NO_CONFIG) )  ||
+           ( strlen(WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid) == 0 ) || 
+           ( strlen(WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid) == 0 ) ||
+           ( strlen(WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw)   < PASSWORD_MIN_LEN ) ||
+           ( strlen(WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw)   < PASSWORD_MIN_LEN ) )
+      #endif     
       {
         // If SSID, PW ="blank" or NULL, set the flag
         WG_LOGERROR(F("Invalid Stored WiFi Config Data"));
@@ -1281,32 +1292,64 @@ class WiFiManager_Generic_Lite
     }
     
     //////////////////////////////////////////////
-
+    
+    // New connection logic from v1.2.0
     bool connectMultiWiFi(int retry_time)
     {
       int sleep_time  = 250;
       int index       = 0;
+      int new_index   = 0;
       uint8_t status  = WL_IDLE_STATUS;
                        
       static int lastConnectedIndex = 255;
 
       WG_LOGDEBUG(F("ConMultiWifi"));
-
+      
       if (static_IP != IPAddress(0, 0, 0, 0))
       {
         WG_LOGDEBUG(F("UseStatIP"));
         WiFi.config(static_IP);
       }
-    
+      
       if (lastConnectedIndex != 255)
       {
-        index = (lastConnectedIndex + 1) % NUM_WIFI_CREDENTIALS;                       
-        WG_LOGDEBUG3(F("Using index="), index, F(", lastConnectedIndex="), lastConnectedIndex);
+        //  Successive connection, index = ??
+        // Checking if new_index is OK
+        new_index = (lastConnectedIndex + 1) % NUM_WIFI_CREDENTIALS;
+        
+        if ( strlen(WIFI_GENERIC_config.WiFi_Creds[new_index].wifi_pw) >= PASSWORD_MIN_LEN )
+        {    
+          index = new_index;
+          WG_LOGDEBUG3(F("Using index="), index, F(", lastConnectedIndex="), lastConnectedIndex);
+        }
+        else
+        {
+          WG_LOGERROR3(F("Ignore invalid WiFi PW : index="), new_index, F(", PW="), WIFI_GENERIC_config.WiFi_Creds[new_index].wifi_pw);
+          
+          // Using the previous valid index
+          index = lastConnectedIndex;
+        }
       }
-      
+      else
+      {
+        //  First connection ever, index = 0
+        if ( strlen(WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw) >= PASSWORD_MIN_LEN )
+        {    
+          WG_LOGDEBUG(F("First connection, Using index=0"));
+        }
+        else
+        {
+          WG_LOGERROR3(F("Ignore invalid WiFi PW : index=0, SSID="), WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid,
+                       F(", PWD="), WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw);
+          
+          // Using the next valid index
+          index = 1;
+        }
+      } 
+         
       WG_LOGERROR3(F("con2WF:SSID="), WIFI_GENERIC_config.WiFi_Creds[index].wifi_ssid,
-                F(",PW="), WIFI_GENERIC_config.WiFi_Creds[index].wifi_pw);
-             
+                   F(",PW="), WIFI_GENERIC_config.WiFi_Creds[index].wifi_pw);
+      
       uint8_t numIndexTried = 0;
       
       while ( !wifi_connected && (numIndexTried++ < NUM_WIFI_CREDENTIALS) )
@@ -1338,20 +1381,31 @@ class WiFiManager_Generic_Lite
           break;
         }
         else
-        {
-          index = (index + 1) % NUM_WIFI_CREDENTIALS;
-              
+        {        
           if (retry_time <= 0)
           {      
             WG_LOGERROR3(F("Failed using index="), index, F(", retry_time="), retry_time);
             retry_time = RETRY_TIMES_CONNECT_WIFI;  
           }
+          
+          new_index = (index + 1) % NUM_WIFI_CREDENTIALS;
+          
+          // only use new index if valid (len >= PASSWORD_MIN_LEN = 8)
+          if ( strlen(WIFI_GENERIC_config.WiFi_Creds[new_index].wifi_pw) >= PASSWORD_MIN_LEN )
+          {
+            index = new_index;
+          }
+          
+          //WiFi.end();
         }
       }
 
       if (wifi_connected)
       {
         WG_LOGERROR(F("con2WF:OK"));
+        
+        WG_LOGERROR1(F("IP="), WiFi.localIP() );
+        
         displayWiFiData();
       }
       else
@@ -1363,7 +1417,7 @@ class WiFiManager_Generic_Lite
 
       return wifi_connected;  
     }
-
+    
     //////////////////////////////////////////////
     
     // NEW

@@ -8,7 +8,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.1.3
+  Version: 1.2.0
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -19,6 +19,7 @@
                                    Add customs HTML header feature. Fix bug.
   1.1.2   K Hoang      30/03/2021  Fix MultiWiFi connection bug.
   1.1.3   K Hoang      12/04/2021  Fix invalid "blank" Config Data treated as Valid.
+  1.2.0   K Hoang      14/04/2021  Optional one set of WiFi Credentials. Enforce WiFi PWD minimum 8 chars
  *****************************************************************************************************************************/
  
 #include "defines.h"

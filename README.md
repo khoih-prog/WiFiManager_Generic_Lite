@@ -16,6 +16,7 @@
   * [Currently supported Boards](#currently-supported-boards)
   * [Currently supported WiFi shields/modules](#currently-supported-wifi-shieldsmodules)
 * [Changelog](#changelog)
+  * [Release v1.2.0](#release-v120)
   * [Release v1.1.3](#release-v113)
   * [Release v1.1.2](#release-v112)
   * [Major Release v1.1.0](#major-release-v110)
@@ -39,16 +40,17 @@
   * [7. For STM32 boards](#7-for-stm32-boards) 
 * [How It Works](#how-it-works)
 * [How to use](#how-to-use)
-  * [1. Basic usage](#1-basic-usage)
-  * [2. Add custom parameters](#2-add-custom-parameters)
-  * [3. Not using custom parameters](#3-not-using-custom-parameters)
-  * [4. To open Config Portal](#4-to-open-config-portal)
-  * [5. To use different AP WiFi Channel](#5-to-use-different-ap-wifi-channel)
-  * [6. To use different static AP IP from default](#6-to-use-different-static-ap-ip-from-default)
-  * [7. To use custom DHCP HostName](#7-to-use-custom-dhcp-hostname)
-  * [8. To use custom HTML Style](#8-to-use-custom-html-style)
-  * [9. To use custom Head Elements](#9-to-use-custom-head-elements)
+  * [ 1. Basic usage](#1-basic-usage)
+  * [ 2. Add custom parameters](#2-add-custom-parameters)
+  * [ 3. Not using custom parameters](#3-not-using-custom-parameters)
+  * [ 4. To open Config Portal](#4-to-open-config-portal)
+  * [ 5. To use different AP WiFi Channel](#5-to-use-different-ap-wifi-channel)
+  * [ 6. To use different static AP IP from default](#6-to-use-different-static-ap-ip-from-default)
+  * [ 7. To use custom DHCP HostName](#7-to-use-custom-dhcp-hostname)
+  * [ 8. To use custom HTML Style](#8-to-use-custom-html-style)
+  * [ 9. To use custom Head Elements](#9-to-use-custom-head-elements)
   * [10. To use CORS Header](#10-to-use-cors-header)
+  * [11. To use and input only one set of WiFi SSID and PWD](#11-to-use-and-input-only-one-set-of-wifi-ssid-and-pwd)
 * [Examples](#examples)
   * [ 1. MKR1000_WiFi101](examples/MKR1000_WiFi101)
   * [ 2. MKR1000_WiFi101_MQTT](examples/MKR1000_WiFi101_MQTT)
@@ -178,6 +180,12 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
 ---
 
 ## Changelog
+
+### Release v1.2.0
+
+1. Permit optionally inputting one set of WiFi SSID/PWD by using `REQUIRE_ONE_SET_SSID_PW == true`
+2. Enforce WiFi Password minimum length of 8 chars
+3. Enhance MultiWiFi connection logic
 
 ### Release v1.1.3
 
@@ -587,6 +595,26 @@ While in AP mode, connect to it using its `SSID` (WIFI_GENERIC_XXXXXX) / `Passwo
 
 
 Once Credentials / WiFi network information is saved in the host non-volatile memory, it will try to autoconnect to WiFi every time it is started, without requiring any function calls in the sketch.
+
+
+#### 11. To use and input only one set of WiFi SSID and PWD
+
+#### 11.1 If you need to use and input only one set of WiFi SSID/PWD.
+
+```
+// Permit input only one set of WiFi SSID/PWD. The other can be "NULL or "blank"
+// Default is false (if not defined) => must input 2 sets of SSID/PWD
+#define REQUIRE_ONE_SET_SSID_PW       true
+```
+But it's always advisable to use and input both sets for reliability.
+ 
+#### 11.2 If you need to use both sets of WiFi SSID/PWD
+
+```
+// Permit input only one set of WiFi SSID/PWD. The other can be "NULL or "blank"
+// Default is false (if not defined) => must input 2 sets of SSID/PWD
+#define REQUIRE_ONE_SET_SSID_PW       false
+```
 
 ---
 ---
@@ -1211,7 +1239,13 @@ void loop()
 // Config Timeout 120s (default 60s). Applicable only if Config Data is Valid
 #define CONFIG_TIMEOUT                      120000L
 
-#define USE_DYNAMIC_PARAMETERS              true
+/////////////////////////////////////////////
+
+// Permit input only one set of WiFi SSID/PWD. The other can be "NULL or "blank"
+// Default is false (if not defined) => must input 2 sets of SSID/PWD
+#define REQUIRE_ONE_SET_SSID_PW       false
+
+#define USE_DYNAMIC_PARAMETERS        true
 
 /////////////////////////////////////////////
 
@@ -1397,7 +1431,7 @@ This is the terminal output when running [**SAMD_WiFi**](examples/SAMD_WiFi) exa
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.1.3
+WiFiManager_Generic_Lite v1.2.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xffffffff
 No doubleResetDetected
@@ -1498,7 +1532,7 @@ FFFFFFFFF
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.1.3
+WiFiManager_Generic_Lite v1.2.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1562,7 +1596,7 @@ HHHHHHHHHH HHHHHHHHHH
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.1.3
+WiFiManager_Generic_Lite v1.2.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1626,7 +1660,7 @@ FF
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.1.3
+WiFiManager_Generic_Lite v1.2.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1682,7 +1716,7 @@ HHHHHHHHH HHHHHHHHHH
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.1.3
+WiFiManager_Generic_Lite v1.2.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d01234
 doubleResetDetected
@@ -1757,6 +1791,12 @@ Sometimes, the library will only work if you update the `Generic WiFi module/shi
 
 ## Releases
 
+### Release v1.2.0
+
+1. Permit optionally inputting one set of WiFi SSID/PWD by using `REQUIRE_ONE_SET_SSID_PW == true`
+2. Enforce WiFi Password minimum length of 8 chars
+3. Enhance MultiWiFi connection logic
+
 ### Release v1.1.3
 
 1. Fix invalid "blank" or NULL Config Data treated as Valid. Check [WiFiManager connection attempt to unconfigured ("blank") SSID after restart on SAMD #8](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/8)
@@ -1829,6 +1869,8 @@ Submit issues to: [WiFiManager_Generic_Lite issues](https://github.com/khoih-pro
 20. Use more efficient **FlashStorage_STM32**](https://github.com/khoih-prog/FlashStorage_STM32) and [**FlashStorage_SAMD**](https://github.com/khoih-prog/FlashStorage_SAMD) library versions.
 21. Configurable **Customs HTML Headers**, including Customs Style, Customs Gead Elements, CORS Header
 22. Add functions to control Config Portal from software or Virtual Switches.
+23. Permit optionally inputting one set of WiFi SSID/PWD by using `REQUIRE_ONE_SET_SSID_PW == true`
+24. Enforce WiFi Password minimum length of 8 chars
 
 ---
 ---
@@ -1840,7 +1882,7 @@ Please help contribute to this project and add your name here.
 1. Thanks to [Max Gerhardt in GitHub](https://github.com/maxgerhardt) and [in PIO](https://community.platformio.org/u/maxgerhardt) for the useful fix [**attachInterrupt() on wifi101 unidentified**](https://community.platformio.org/t/attachinterrupt-on-wifi101-unidentified/17543) to enable STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101, leading to new v1.0.2
 2. Thanks to [Michael "bizprof"](https://github.com/bizprof) to report bugs in 
   - [SAMD MultiWiFi issues when first WiFi SSID configured in CP is invalid or not available #6](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/6) leading to v1.1.2.
-  - [WiFiManager connection attempt to unconfigured ("blank") SSID after restart on SAMD #8](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/8) leading to v1.1.3.
+  - [WiFiManager connection attempt to unconfigured ("blank") SSID after restart on SAMD #8](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/8) leading to v1.1.3 and v1.2.0
 
 
 <table>
