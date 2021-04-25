@@ -54,6 +54,10 @@
   * [ 9. To use custom Head Elements](#9-to-use-custom-head-elements)
   * [10. To use CORS Header](#10-to-use-cors-header)
   * [11. To use and input only one set of WiFi SSID and PWD](#11-to-use-and-input-only-one-set-of-wifi-ssid-and-pwd)
+  * [12. To enable auto-scan of WiFi networks for selection in Configuration Portal](#12-to-enable-auto-scan-of-wifi-networks-for-selection-in-configuration-portal)
+    * [12.1 Enable auto-scan of WiFi networks for selection in Configuration Portal](#121-enable-auto-scan-of-wifi-networks-for-selection-in-configuration-portal)
+    * [12.2 Disable manually input SSIDs](#122-disable-manually-input-ssids)
+    * [12.3 Select maximum number of SSIDs in the list](#123-select-maximum-number-of-ssids-in-the-list)  
 * [Examples](#examples)
   * [ 1. MKR1000_WiFi101](examples/MKR1000_WiFi101)
   * [ 2. MKR1000_WiFi101_MQTT](examples/MKR1000_WiFi101_MQTT)
@@ -92,7 +96,7 @@
     * [1.5 Reopen Config Portal if can't connect to any of the 2 WiFi APs](#15-reopen-config-portal-if-cant-connect-to-any-of-the-2-wifi-aps)
     * [1.6 DRD Not Detected](#16-drd-not-detected) 
     * [1.7 DRD detected and Config Portal is forcefully opened](#17-drd-detected-and-config-portal-is-forcefully-opened)
-  * [2. SAMD_WiFi on ITSYBITSY_M4 using Custom WiFi Library](#2-samd_wifi-example-on-itsybitsy_m4-using-custom-wifi-library) 
+  * [2. SAMD_WiFi on ITSYBITSY_M4 using Custom WiFi Library](#2-#2-samd_wifi-on-itsybitsy_m4-using-custom-wifi-library) 
     * [2.1 Open Config Portal](#21-open-config-portal)
     * [2.2 Got valid Credential from Config Portal, then connected to WiFi](#22-got-valid-credential-from-config-portal-then-connected-to-wifi)
 * [Debug](#debug)
@@ -724,14 +728,14 @@ Enter your credentials,
 ### 1. Without SCAN_WIFI_NETWORKS
 
 <p align="center">
-    <img src="https://github.com/khoih-prog/WiFiManager_NINA_Lite/blob/master/pics/Input.png">
+    <img src="https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/master/pics/Input.png">
 </p>
 
 ### 2. With SCAN_WIFI_NETWORKS
 
 
 <p align="center">
-    <img src="https://github.com/khoih-prog/WiFiManager_NINA_Lite/blob/master/pics/Input_With_Scan.png">
+    <img src="https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/master/pics/Input_With_Scan.png">
 </p>
 
 
@@ -740,7 +744,7 @@ Enter your credentials,
 The number of SSIDs in scanned list is limited at max 6.
 
 <p align="center">
-    <img src="https://github.com/khoih-prog/WiFiManager_NINA_Lite/blob/master/pics/ESP_AT_Input_With_Scan.png">
+    <img src="https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/master/pics/ESP_AT_Input_With_Scan.png">
 </p>
 
 
@@ -1864,7 +1868,7 @@ This is the terminal output when running [**SAMD_WiFi**](examples/SAMD_WiFi) exa
 #### 2.1 Open Config Portal
 
 <p align="center">
-    <img src="https://github.com/khoih-prog/WiFiManager_NINA_Lite/blob/master/pics/ESP_AT_Input_With_Scan.png">
+    <img src="https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/master/pics/ESP_AT_Input_With_Scan.png">
 </p>
 
 
@@ -2052,7 +2056,7 @@ Submit issues to: [WiFiManager_Generic_Lite issues](https://github.com/khoih-pro
 22. Add functions to control Config Portal from software or Virtual Switches.
 23. Permit optionally inputting one set of WiFi SSID/PWD by using `REQUIRE_ONE_SET_SSID_PW == true`
 24. Enforce WiFi Password minimum length of 8 chars
-25. Enable scan of WiFi networks for selection in Configuration Portal
+25. Enable **scan of WiFi networks** for selection in Configuration Portal
 
 ---
 ---
