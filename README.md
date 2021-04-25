@@ -96,7 +96,7 @@
     * [1.5 Reopen Config Portal if can't connect to any of the 2 WiFi APs](#15-reopen-config-portal-if-cant-connect-to-any-of-the-2-wifi-aps)
     * [1.6 DRD Not Detected](#16-drd-not-detected) 
     * [1.7 DRD detected and Config Portal is forcefully opened](#17-drd-detected-and-config-portal-is-forcefully-opened)
-  * [2. SAMD_WiFi on ITSYBITSY_M4 using Custom WiFi Library](#2-#2-samd_wifi-on-itsybitsy_m4-using-custom-wifi-library) 
+  * [2. SAMD_WiFi on ITSYBITSY_M4 using Custom WiFi Library](#2-samd_wifi-on-itsybitsy_m4-using-custom-wifi-library) 
     * [2.1 Open Config Portal](#21-open-config-portal)
     * [2.2 Got valid Credential from Config Portal, then connected to WiFi](#22-got-valid-credential-from-config-portal-then-connected-to-wifi)
 * [Debug](#debug)
