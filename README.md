@@ -728,14 +728,14 @@ Enter your credentials,
 ### 1. Without SCAN_WIFI_NETWORKS
 
 <p align="center">
-    <img src="https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/master/pics/Input.png">
+    <img src="https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/main/pics/Input.png">
 </p>
 
 ### 2. With SCAN_WIFI_NETWORKS
 
 
 <p align="center">
-    <img src="https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/master/pics/Input_With_Scan.png">
+    <img src="https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/main/pics/Input_With_Scan.png">
 </p>
 
 
@@ -744,7 +744,7 @@ Enter your credentials,
 The number of SSIDs in scanned list is limited at max 6.
 
 <p align="center">
-    <img src="https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/master/pics/ESP_AT_Input_With_Scan.png">
+    <img src="https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/main/pics/ESP_AT_Input_With_Scan.png">
 </p>
 
 
@@ -1868,7 +1868,7 @@ This is the terminal output when running [**SAMD_WiFi**](examples/SAMD_WiFi) exa
 #### 2.1 Open Config Portal
 
 <p align="center">
-    <img src="https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/master/pics/ESP_AT_Input_With_Scan.png">
+    <img src="https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/main/pics/ESP_AT_Input_With_Scan.png">
 </p>
 
 
