@@ -8,7 +8,7 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.2.0
+  Version: 1.3.0
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -19,7 +19,8 @@
                                    Add customs HTML header feature. Fix bug.
   1.1.2   K Hoang      30/03/2021  Fix MultiWiFi connection bug.
   1.1.3   K Hoang      12/04/2021  Fix invalid "blank" Config Data treated as Valid.
-  1.2.0   K Hoang      14/04/2021  Optional one set of WiFi Credentials. Enforce WiFi PWD minimum 8 chars
+  1.2.0   K Hoang      14/04/2021  Optional one set of WiFi Credentials. Enforce WiFi PWD minimum 8 chars  
+  1.3.0   Michael H    24/04/2021  Enable scan of WiFi networks for selection in Configuration Portal
  *****************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_DUE_h
@@ -35,7 +36,7 @@
   #error This code is intended to run on the SAM DUE platform! Please check your Tools->Board setting.  
 #endif
 
-#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.2.0"
+#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.3.0"
 
 #if (USE_WIFI_NINA || USE_WIFI101)
   #include <WiFiWebServer.h>
@@ -60,6 +61,34 @@ DueFlashStorage dueFlashStorageData;
 
 #ifndef USING_CORS_FEATURE
   #define USING_CORS_FEATURE     false
+#endif
+
+//////////////////////////////////////////////
+
+// New from v1.3.0
+// KH, Some minor simplification
+#if !defined(SCAN_WIFI_NETWORKS)
+  #define SCAN_WIFI_NETWORKS     true     //false
+#endif
+	
+#if SCAN_WIFI_NETWORKS
+  #if !defined(MANUAL_SSID_INPUT_ALLOWED)
+    #define MANUAL_SSID_INPUT_ALLOWED     true
+  #endif
+
+  #if !defined(MAX_SSID_IN_LIST)
+    #define MAX_SSID_IN_LIST     10
+  #elif (MAX_SSID_IN_LIST < 2)
+    #warning Parameter MAX_SSID_IN_LIST defined must be >= 2 - Reset to 10
+    #undef MAX_SSID_IN_LIST
+    #define MAX_SSID_IN_LIST      10
+  #elif (MAX_SSID_IN_LIST > 15)
+    #warning Parameter MAX_SSID_IN_LIST defined must be <= 15 - Reset to 10
+    #undef MAX_SSID_IN_LIST
+    #define MAX_SSID_IN_LIST      10
+  #endif
+#else
+  #warning SCAN_WIFI_NETWORKS disabled	
 #endif
 
 ///////// NEW for DRD /////////////
@@ -149,12 +178,15 @@ const char WIFI_GENERIC_HTML_HEAD_START[] /*PROGMEM*/ = "<!DOCTYPE html><html><h
 
 const char WIFI_GENERIC_HTML_HEAD_STYLE[] /*PROGMEM*/ = "<style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>";
 
-const char WIFI_GENERIC_HTML_HEAD_END[]   /*PROGMEM*/ = "</head><div style=\"text-align:left;display:inline-block;min-width:260px;\">\
-<fieldset><div><label>*WiFi SSID</label><input value=\"[[id]]\"id=\"id\"><div></div></div>\
-<div><label>*PWD (8+ chars)</label><input value=\"[[pw]]\"id=\"pw\"><div></div></div>\
-<div><label>*WiFi SSID1</label><input value=\"[[id1]]\"id=\"id1\"><div></div></div>\
-<div><label>*PWD1 (8+ chars)</label><input value=\"[[pw1]]\"id=\"pw1\"><div></div></div></fieldset>\
-<fieldset><div><label>Board Name</label><input value=\"[[nm]]\"id=\"nm\"><div></div></div></fieldset>";
+const char WIFI_GENERIC_HTML_HEAD_END[]   /*PROGMEM*/ = "</head><div style='text-align:left;display:inline-block;min-width:260px;'>\
+<fieldset><div><label>*WiFi SSID</label><div>[[input_id]]</div></div>\
+<div><label>*PWD (8+ chars)</label><input value='[[pw]]' id='pw'><div></div></div>\
+<div><label>*WiFi SSID1</label><div>[[input_id1]]</div></div>\
+<div><label>*PWD1 (8+ chars)</label><input value='[[pw1]]' id='pw1'><div></div></div></fieldset>\
+<fieldset><div><label>Board Name</label><input value='[[nm]]' id='nm'><div></div></div></fieldset>";	// DO NOT CHANGE THIS STRING EVER!!!!
+
+const char WIFI_GENERIC_HTML_INPUT_ID[]   /*PROGMEM*/ = "<input value='[[id]]' id='id'>";
+const char WIFI_GENERIC_HTML_INPUT_ID1[]  /*PROGMEM*/ = "<input value='[[id1]]' id='id1'>";
 
 const char WIFI_GENERIC_FLDSET_START[]  /*PROGMEM*/ = "<fieldset>";
 const char WIFI_GENERIC_FLDSET_END[]    /*PROGMEM*/ = "</fieldset>";
@@ -170,6 +202,16 @@ udVal('nm',document.getElementById('nm').value);";
 const char WIFI_GENERIC_HTML_SCRIPT_ITEM[]  /*PROGMEM*/ = "udVal('{d}',document.getElementById('{d}').value);";
 const char WIFI_GENERIC_HTML_SCRIPT_END[]   /*PROGMEM*/ = "alert('Updated');}</script>";
 const char WIFI_GENERIC_HTML_END[]          /*PROGMEM*/ = "</html>";
+
+#if SCAN_WIFI_NETWORKS
+const char WIFI_GENERIC_SELECT_START[]      /*PROGMEM*/ = "<select id=";
+const char WIFI_GENERIC_SELECT_END[]        /*PROGMEM*/ = "</select>";
+const char WIFI_GENERIC_DATALIST_START[]    /*PROGMEM*/ = "<datalist id=";
+const char WIFI_GENERIC_DATALIST_END[]      /*PROGMEM*/ = "</datalist>";
+const char WIFI_GENERIC_OPTION_START[]      /*PROGMEM*/ = "<option>";
+const char WIFI_GENERIC_OPTION_END[]        /*PROGMEM*/ = "";			// "</option>"; is not required
+const char WIFI_GENERIC_NO_NETWORKS_FOUND[] /*PROGMEM*/ = "No suitable WiFi networks available!";
+#endif
 
 //////////////////////////////////////////
 
@@ -231,7 +273,16 @@ class WiFiManager_Generic_Lite
     ~WiFiManager_Generic_Lite()
     {
       if (server)
+      {
         delete server;
+
+#if SCAN_WIFI_NETWORKS
+        if (indices)
+        {
+          free(indices); //indices array no longer required so free memory
+        }
+#endif
+      }
     }
         
     bool connectWiFi(const char* ssid, const char* pass)
@@ -759,6 +810,15 @@ class WiFiManager_Generic_Lite
     const char* _CORS_Header        = WM_HTTP_CORS_ALLOW_ALL;   //"*";
 #endif
        
+    /////////////////////////////////////
+    // Add WiFi Scan from v1.3.0
+    
+#if SCAN_WIFI_NETWORKS
+  int WiFiNetworksFound = 0;		// Number of SSIDs found by WiFi scan, including low quality and duplicates
+  int *indices;					        // WiFi network data, filled by scan (SSID, BSSID)
+  String ListOfSSIDs = "";		  // List of SSIDs found by scan, in HTML <option> format
+#endif
+
     //////////////////////////////////////
     
 #define RFC952_HOSTNAME_MAXLEN      24
@@ -1120,6 +1180,9 @@ class WiFiManager_Generic_Lite
         // If SSID, PW ="blank" or NULL, set the flag
         WG_LOGERROR(F("Invalid Stored WiFi Config Data"));
         
+        // Nullify the invalid data to avoid displaying garbage
+        memset(&WIFI_GENERIC_config, 0, sizeof(WIFI_GENERIC_config));
+        
         hadConfigData = false;
         
         return false;
@@ -1471,7 +1534,50 @@ class WiFiManager_Generic_Lite
         root_html_template += _CustomsHeadElement;
   #endif          
       
-      root_html_template += String(WIFI_GENERIC_HTML_HEAD_END) + WIFI_GENERIC_FLDSET_START;
+#if SCAN_WIFI_NETWORKS
+      WG_LOGDEBUG1(WiFiNetworksFound, F(" SSIDs found, generating HTML now"));
+      // Replace HTML <input...> with <select...>, based on WiFi network scan in startConfigurationMode()
+
+      ListOfSSIDs = "";
+
+      for (int i = 0, list_items = 0; (i < WiFiNetworksFound) && (list_items < MAX_SSID_IN_LIST); i++)
+      {
+        if (indices[i] == -1) 
+          continue; 		// skip duplicates and those that are below the required quality
+          
+        ListOfSSIDs += WIFI_GENERIC_OPTION_START + String(WiFi.SSID(indices[i])) + WIFI_GENERIC_OPTION_END;	
+        list_items++;		// Count number of suitable, distinct SSIDs to be included in list
+      }
+
+      WG_LOGDEBUG(ListOfSSIDs);
+
+      if (ListOfSSIDs == "")		// No SSID found or none was good enough
+        ListOfSSIDs = WIFI_GENERIC_OPTION_START + String(WIFI_GENERIC_NO_NETWORKS_FOUND) + WIFI_GENERIC_OPTION_END;
+
+      pitem = String(WIFI_GENERIC_HTML_HEAD_END);
+
+#if MANUAL_SSID_INPUT_ALLOWED
+      pitem.replace("[[input_id]]",  "<input id='id' list='SSIDs'>"  + String(WIFI_GENERIC_DATALIST_START) + "'SSIDs'>" + ListOfSSIDs + WIFI_GENERIC_DATALIST_END);
+      WG_LOGDEBUG1(F("pitem:"), pitem);
+      pitem.replace("[[input_id1]]", "<input id='id1' list='SSIDs'>" + String(WIFI_GENERIC_DATALIST_START) + "'SSIDs'>" + ListOfSSIDs + WIFI_GENERIC_DATALIST_END);
+      
+      WG_LOGDEBUG1(F("pitem:"), pitem);
+
+#else
+      pitem.replace("[[input_id]]",  "<select id='id'>"  + ListOfSSIDs + WIFI_GENERIC_SELECT_END);
+      pitem.replace("[[input_id1]]", "<select id='id1'>" + ListOfSSIDs + WIFI_GENERIC_SELECT_END);
+#endif
+
+      root_html_template += pitem + WIFI_GENERIC_FLDSET_START;
+
+#else
+
+      pitem = String(WIFI_GENERIC_HTML_HEAD_END);
+      pitem.replace("[[input_id]]",  WIFI_GENERIC_HTML_INPUT_ID);
+      pitem.replace("[[input_id1]]", WIFI_GENERIC_HTML_INPUT_ID1);
+      root_html_template += pitem + WIFI_GENERIC_FLDSET_START;
+
+#endif    // SCAN_WIFI_NETWORKS
 
 #if USE_DYNAMIC_PARAMETERS      
       for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
@@ -1558,11 +1664,22 @@ class WiFiManager_Generic_Lite
             result.replace("DUE_WM_Lite", WIFI_GENERIC_config.board_name);
           }
 
-          result.replace("[[id]]",     WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid);
-          result.replace("[[pw]]",     WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw);
-          result.replace("[[id1]]",    WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid);
-          result.replace("[[pw1]]",    WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw);
-          result.replace("[[nm]]",     WIFI_GENERIC_config.board_name);
+          if (hadConfigData)
+          {
+            result.replace("[[id]]",     WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid);
+            result.replace("[[pw]]",     WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw);
+            result.replace("[[id1]]",    WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid);
+            result.replace("[[pw1]]",    WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw);
+            result.replace("[[nm]]",     WIFI_GENERIC_config.board_name);
+          }
+          else
+          {
+            result.replace("[[id]]",  "");
+            result.replace("[[pw]]",  "");
+            result.replace("[[id1]]", "");
+            result.replace("[[pw1]]", "");
+            result.replace("[[nm]]",  "");
+          }
           
 #if USE_DYNAMIC_PARAMETERS          
           for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
@@ -1737,6 +1854,12 @@ class WiFiManager_Generic_Lite
 
     void startConfigurationMode()
     {
+#if SCAN_WIFI_NETWORKS
+	    configTimeout = 0;  // To allow user input in CP
+	    
+	    WiFiNetworksFound = scanWifiNetworks(&indices);	
+#endif
+    
       WiFi.config(portal_apIP);
 
       if ( (portal_ssid == "") || portal_pass == "" )
@@ -1800,6 +1923,179 @@ class WiFiManager_Generic_Lite
 
       configuration_mode = true;
     }
+    
+#if SCAN_WIFI_NETWORKS
+
+	  // Source code adapted from https://github.com/khoih-prog/ESP_WiFiManager/blob/master/src/ESP_WiFiManager-Impl.h
+
+    int           _paramsCount            = 0;
+    int           _minimumQuality         = -1;
+    bool          _removeDuplicateAPs     = true;
+	
+	  //////////////////////////////////////////
+    
+    void swap(int *thisOne, int *thatOne)
+    {
+       int tempo;
+
+       tempo    = *thatOne;
+       *thatOne = *thisOne;
+       *thisOne = tempo;
+    }
+
+    //////////////////////////////////////////
+	
+	  void setMinimumSignalQuality(int quality)
+	  {
+	    _minimumQuality = quality;
+	  }
+
+	  //////////////////////////////////////////
+
+	  //if this is true, remove duplicate Access Points - default true
+	  void setRemoveDuplicateAPs(bool removeDuplicates)
+	  {
+	    _removeDuplicateAPs = removeDuplicates;
+	  }
+
+	  //////////////////////////////////////////
+
+	  //Scan for WiFiNetworks in range and sort by signal strength
+	  //space for indices array allocated on the heap and should be freed when no longer required  
+	  int scanWifiNetworks(int **indicesptr)
+	  {
+	    WG_LOGDEBUG(F("Scanning Network"));
+
+	    int n = WiFi.scanNetworks();
+
+	    WG_LOGDEBUG1(F("scanWifiNetworks: Done, Scanned Networks n = "), n); 
+
+	    //KH, Terrible bug here. WiFi.scanNetworks() returns n < 0 => malloc( negative == very big ) => crash!!!
+	    //In .../esp32/libraries/WiFi/src/WiFiType.h
+	    //#define WIFI_SCAN_RUNNING   (-1)
+	    //#define WIFI_SCAN_FAILED    (-2)
+	    //if (n == 0)
+	    if (n <= 0)
+	    {
+		    WG_LOGDEBUG(F("No network found"));
+		    return (0);
+	    }
+	    else
+	    {
+		    // Allocate space off the heap for indices array.
+		    // This space should be freed when no longer required.
+		    int* indices = (int *)malloc(n * sizeof(int));
+
+		    if (indices == NULL)
+		    {
+		      WG_LOGDEBUG(F("ERROR: Out of memory"));
+		      *indicesptr = NULL;
+		      return (0);
+		    }
+
+		    *indicesptr = indices;
+	       
+		    //sort networks
+		    for (int i = 0; i < n; i++)
+		    {
+		      indices[i] = i;
+		    }
+
+		    WG_LOGDEBUG(F("Sorting"));
+
+		    // RSSI SORT
+		    // old sort
+		    for (int i = 0; i < n; i++)
+		    {
+		      for (int j = i + 1; j < n; j++)
+		      {
+			      if (WiFi.RSSI(indices[j]) > WiFi.RSSI(indices[i]))
+			      {
+                    //std::swap(indices[i], indices[j]);
+                    // Using locally defined swap()
+                    swap(&indices[i], &indices[j]);
+       			}
+		      }
+		    }
+
+		    WG_LOGDEBUG(F("Removing Dup"));
+
+		    // remove duplicates ( must be RSSI sorted )
+		    if (_removeDuplicateAPs)
+		    {
+		      String cssid;
+		      
+		      for (int i = 0; i < n; i++)
+		      {
+			      if (indices[i] == -1)
+			        continue;
+
+			      cssid = WiFi.SSID(indices[i]);
+			      
+			      for (int j = i + 1; j < n; j++)
+			      {
+			        if (cssid == WiFi.SSID(indices[j]))
+			        {
+				        WG_LOGDEBUG1("DUP AP:", WiFi.SSID(indices[j]));
+				        indices[j] = -1; // set dup aps to index -1
+			        }
+			      }
+		      }
+		    }
+
+		    for (int i = 0; i < n; i++)
+		    {
+		      if (indices[i] == -1)
+			      continue; // skip dups
+
+		      int quality = getRSSIasQuality(WiFi.RSSI(indices[i]));
+
+		      if (!(_minimumQuality == -1 || _minimumQuality < quality))
+		      {
+			      indices[i] = -1;
+			      WG_LOGDEBUG(F("Skipping low quality"));
+		      }
+		    }
+
+		    WG_LOGDEBUG(F("WiFi networks found:"));
+		    
+		    for (int i = 0; i < n; i++)
+		    {
+		      if (indices[i] == -1)
+			      continue; // skip dups
+		      else
+			      WG_LOGDEBUG5(i+1,": ",WiFi.SSID(indices[i]), ", ", WiFi.RSSI(i), "dB");
+		    }
+
+		    return (n);
+	    }
+	  }
+
+	  //////////////////////////////////////////
+
+	  int getRSSIasQuality(int RSSI)
+	  {
+	    int quality = 0;
+
+	    if (RSSI <= -100)
+	    {
+		    quality = 0;
+	    }
+	    else if (RSSI >= -50)
+	    {
+		    quality = 100;
+	    }
+	    else
+	    {
+		    quality = 2 * (RSSI + 100);
+	    }
+
+	    return quality;
+	  }
+
+  //////////////////////////////////////////
+
+#endif	       
 };
 
 

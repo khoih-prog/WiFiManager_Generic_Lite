@@ -21,9 +21,9 @@
 
 #define DRD_GENERIC_DEBUG             true
 
-#if ( defined(STM32F0) || defined(STM32F1) || defined(STM32F2) || defined(STM32F3)  ||defined(STM32F4) || defined(STM32F7) || \
-      defined(STM32L0) || defined(STM32L1) || defined(STM32L4) || defined(STM32H7)  ||defined(STM32G0) || defined(STM32G4) || \
-      defined(STM32WB) || defined(STM32MP1) )
+#if ( defined(STM32F0) || defined(STM32F1)  || defined(STM32F2) || defined(STM32F3)  ||defined(STM32F4) || defined(STM32F7) || \
+      defined(STM32L0) || defined(STM32L1)  || defined(STM32L4) || defined(STM32H7)  ||defined(STM32G0) || defined(STM32G4) || \
+      defined(STM32WB) || defined(STM32MP1) || defined(STM32L5) )
   #if defined(WIFI_GENERIC_USE_STM32)
     #undef WIFI_GENERIC_USE_STM32
     #undef WIFI_USE_STM32
@@ -81,6 +81,9 @@
   #elif defined(STM32L4)
     #warning STM32L4 board selected
     #define BOARD_TYPE  "STM32L4"
+  #elif defined(STM32L5)
+    #warning STM32L5 board selected
+    #define BOARD_TYPE  "STM32L5"  
   #elif defined(STM32H7)
     #warning STM32H7 board selected
     #define BOARD_TYPE  "STM32H7"
@@ -209,12 +212,29 @@
 
 /////////////////////////////////////////////
 
+#define SCAN_WIFI_NETWORKS                  true
+
+// To be able to manually input SSID, not from a scanned SSID lists
+#define MANUAL_SSID_INPUT_ALLOWED           true
+
+/////////////////////////////////////////////
+
 #if (USE_WIFI_CUSTOM && USE_ESP_AT_SHIELD)
-  // ESP-AT can use longer than 2K HTML and DYNAMIC_PARAMETERS
+  // ESP-AT can't use longer than 2K HTML and DYNAMIC_PARAMETERS
   #undef USE_DYNAMIC_PARAMETERS
   #define USE_DYNAMIC_PARAMETERS                   false
-  #error Can't use with ESP_AT_SHIELD
+  #warning Disable USE_DYNAMIC_PARAMETERS for ESP_AT_SHIELD
+
+  // From 2-6 to keep HTML short for ESP8266-AT. Limited 6 in WiFiEspAT library anyway
+  #define MAX_SSID_IN_LIST                  6
+
+#else
+
+  // From 2-15
+  #define MAX_SSID_IN_LIST                  8
 #endif
+
+/////////////////////////////////////////////
 
 #include <WiFiManager_Generic_Lite_STM32.h>
 

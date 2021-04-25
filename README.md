@@ -16,6 +16,7 @@
   * [Currently supported Boards](#currently-supported-boards)
   * [Currently supported WiFi shields/modules](#currently-supported-wifi-shieldsmodules)
 * [Changelog](#changelog)
+  * [Major Release v1.3.0](#major-release-v130)
   * [Release v1.2.0](#release-v120)
   * [Release v1.1.3](#release-v113)
   * [Release v1.1.2](#release-v112)
@@ -38,6 +39,8 @@
   * [5. For Adafruit SAMD boards](#5-for-adafruit-samd-boards)
   * [6. For Seeeduino SAMD boards](#6-for-seeeduino-samd-boards)
   * [7. For STM32 boards](#7-for-stm32-boards) 
+    * [7.1. For STM32 boards to use LAN8720](#71-for-stm32-boards-to-use-lan8720)
+    * [7.2. For STM32 boards to use Serial1](#72-for-stm32-boards-to-use-serial1)
 * [How It Works](#how-it-works)
 * [How to use](#how-to-use)
   * [ 1. Basic usage](#1-basic-usage)
@@ -65,6 +68,9 @@
   * [11. Teensy_WiFi](examples/Teensy_WiFi)
   * [12. Teensy_WiFi_MQTT](examples/Teensy_WiFi_MQTT)
 * [So, how it works?](#so-how-it-works)
+  * [1. Without SCAN_WIFI_NETWORKS](#1-without-scan_wifi_networks)
+  * [2. With SCAN_WIFI_NETWORKS](#2-with-scan_wifi_networks)
+  * [3. With SCAN_WIFI_NETWORKS for ESP8266-AT and ESP32-AT shield](#3-with-scan_wifi_networks-for-esp8266-at-and-esp32-at-shield)
 * [Important Notes](#important-notes)
 * [How to use default Credentials and have them pre-loaded onto Config Portal](#how-to-use-default-credentials-and-have-them-pre-loaded-onto-config-portal)
   * [1. To always load Default Credentials and override Config Portal data](#1-to-always-load-default-credentials-and-override-config-portal-data)
@@ -78,13 +84,17 @@
   * [3. File Credentials.h](#3-file-credentialsh)
   * [4. File dynamicParams.h](#4-file-dynamicparamsh)
 * [Debug Terminal Output Samples](#debug-terminal-output-samples)
-  * [1. Open Config Portal](#1-open-config-portal)
-  * [2. Received data from Config Portal](#2-received-data-from-config-portal)
-  * [3. Got valid Credential from Config Portal, then connected to WiFi](#3-got-valid-credential-from-config-portal-then-connected-to-wifi)
-  * [4. Lost a WiFi and autoconnect to another WiFi AP](#4-lost-a-wifi-and-autoconnect-to-another-wifi-ap)
-  * [5. Reopen Config Portal if can't connect to any of the 2 WiFi APs](#5-reopen-config-portal-if-cant-connect-to-any-of-the-2-wifi-aps)
-  * [6. DRD Not Detected](#6-drd-not-detected) 
-  * [7. DRD detected and Config Portal is forcefully opened](#7drd-detected-and-config-portal-is-forcefully-opened)
+  * [1. SAMD_WiFi example on Nano-33 IoT](#1-samd_wifi-example-on-nano-33-iot) 
+    * [1.1 Open Config Portal](#11-open-config-portal)
+    * [1.2 Received data from Config Portal](#12-received-data-from-config-portal)
+    * [1.3 Got valid Credential from Config Portal, then connected to WiFi](#13-got-valid-credential-from-config-portal-then-connected-to-wifi)
+    * [1.4 Lost a WiFi and autoconnect to another WiFi AP](#14-lost-a-wifi-and-autoconnect-to-another-wifi-ap)
+    * [1.5 Reopen Config Portal if can't connect to any of the 2 WiFi APs](#15-reopen-config-portal-if-cant-connect-to-any-of-the-2-wifi-aps)
+    * [1.6 DRD Not Detected](#16-drd-not-detected) 
+    * [1.7 DRD detected and Config Portal is forcefully opened](#17-drd-detected-and-config-portal-is-forcefully-opened)
+  * [2. SAMD_WiFi on ITSYBITSY_M4 using Custom WiFi Library](#2-samd_wifi-example-on-itsybitsy_m4-using-custom-wifi-library) 
+    * [2.1 Open Config Portal](#21-open-config-portal)
+    * [2.2 Got valid Credential from Config Portal, then connected to WiFi](#22-got-valid-credential-from-config-portal-then-connected-to-wifi)
 * [Debug](#debug)
 * [Troubleshooting](#troubleshooting)
 * [Releases](#releases)
@@ -133,6 +143,7 @@ New recent features:
 - Control Config Portal from software or Virtual Switches
 - To permit autoreset after configurable timeout if DRD/MRD or non-persistent forced-CP
 - Use new nRF52 LittleFS, SAMD FlashStorage_SAMD and STM32F/L/H/G/WB/MP1 FlashStorage_STM32 features
+- **Scan WiFi networks** for selection in Configuration Portal
 
 
 #### Currently supported Boards
@@ -157,7 +168,7 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
   - Nucleo-64
   - Discovery
   - Generic STM32F0, STM32F1, STM32F2, STM32F3, STM32F4, STM32F7 (with 64+K Flash): x8 and up
-  - STM32L0, STM32L1, STM32L4
+  - STM32L0, STM32L1, STM32L4, STM32L5
   - STM32G0, STM32G4
   - STM32H7
   - STM32WB
@@ -180,6 +191,13 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
 ---
 
 ## Changelog
+
+### Major Release v1.3.0
+
+1. Enable scan of WiFi networks for selection in Configuration Portal. Check [PR for v1.3.0 - Enable scan of WiFi networks #10](https://github.com/khoih-prog/WiFiManager_NINA_Lite/pull/10). Now you can select optional **SCAN_WIFI_NETWORKS**, **MANUAL_SSID_INPUT_ALLOWED** to be able to manually input SSID, not only from a scanned SSID lists and **MAX_SSID_IN_LIST** (from 2-6 for ESP8266-AT or 2-15 for other)
+2. Minor enhancement to not display garbage when data is invalid
+3. Tested with new [Arduino Core for STM32 v2.0.0](https://github.com/stm32duino/Arduino_Core_STM32) and add support to new STM32L5 boards.
+
 
 ### Release v1.2.0
 
@@ -226,7 +244,7 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
 ## Prerequisites
 
  1. [`Arduino IDE 1.8.13+` for Arduino](https://www.arduino.cc/en/Main/Software)
- 2. [`Arduino Core for STM32 v1.9.0+`](https://github.com/stm32duino/Arduino_Core_STM32) for STM32 boards. [![GitHub release](https://img.shields.io/github/release/stm32duino/Arduino_Core_STM32.svg)](https://github.com/stm32duino/Arduino_Core_STM32/releases/latest)
+ 2. [`Arduino Core for STM32 v2.0.0+`](https://github.com/stm32duino/Arduino_Core_STM32) for STM32 boards. [![GitHub release](https://img.shields.io/github/release/stm32duino/Arduino_Core_STM32.svg)](https://github.com/stm32duino/Arduino_Core_STM32/releases/latest)
  3. [`Teensy core 1.51`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0, LC) boards
  4. [`Arduino SAM DUE core 1.6.12+`](https://github.com/arduino/ArduinoCore-sam) for SAM DUE ARM Cortex-M3 boards
  5. [`Arduino SAMD core 1.8.11+`](https://www.arduino.cc/en/Guide/ArduinoM0) for SAMD ARM Cortex-M0+ boards. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-samd.svg)](https://github.com/arduino/ArduinoCore-samd/releases/latest)
@@ -397,6 +415,30 @@ This file must be copied into the directory:
 - `~/.arduino15/packages/Seeeduino/hardware/samd/x.yy.zz/platform.txt`
 
 #### 7. For STM32 boards
+
+#### 7.1. For STM32 boards to use LAN8720
+
+To use LAN8720 on some STM32 boards 
+
+- **Nucleo-144 (F429ZI, NUCLEO_F746NG, NUCLEO_F746ZG, NUCLEO_F756ZG)**
+- **Discovery (DISCO_F746NG)**
+- **STM32F4 boards (BLACK_F407VE, BLACK_F407VG, BLACK_F407ZE, BLACK_F407ZG, BLACK_F407VE_Mini, DIYMORE_F407VGT, FK407M1)**
+
+you have to copy the files [stm32f4xx_hal_conf_default.h](Packages_Patches/STM32/hardware/stm32/1.9.0/system/STM32F4xx) and [stm32f7xx_hal_conf_default.h](Packages_Patches/STM32/hardware/stm32/1.9.0/system/STM32F7xx) into STM32 stm32 directory (~/.arduino15/packages/STM32/hardware/stm32/1.9.0/system) to overwrite the old files.
+
+Supposing the STM32 stm32 core version is 1.9.0. These files must be copied into the directory:
+
+- `~/.arduino15/packages/STM32/hardware/stm32/1.9.0/system/STM32F4xx/stm32f4xx_hal_conf_default.h` for STM32F4.
+- `~/.arduino15/packages/STM32/hardware/stm32/1.9.0/system/STM32F7xx/stm32f7xx_hal_conf_default.h` for Nucleo-144 STM32F7.
+
+Whenever a new version is installed, remember to copy this file into the new version directory. For example, new version is x.yy.zz,
+theses files must be copied into the corresponding directory:
+
+- `~/.arduino15/packages/STM32/hardware/stm32/x.yy.zz/system/STM32F4xx/stm32f4xx_hal_conf_default.h`
+- `~/.arduino15/packages/STM32/hardware/stm32/x.yy.zz/system/STM32F7xx/stm32f7xx_hal_conf_default.h
+
+
+#### 7.2. For STM32 boards to use Serial1
 
 **To use Serial1 on some STM32 boards without Serial1 definition (Nucleo-144 NUCLEO_F767ZI, Nucleo-64 NUCLEO_L053R8, etc.) boards**, you have to copy the files [STM32 variant.h](Packages_Patches/STM32/hardware/stm32/1.9.0) into STM32 stm32 directory (~/.arduino15/packages/STM32/hardware/stm32/1.9.0). You have to modify the files corresponding to your boards, this is just an illustration how to do.
 
@@ -599,7 +641,7 @@ Once Credentials / WiFi network information is saved in the host non-volatile me
 
 #### 11. To use and input only one set of WiFi SSID and PWD
 
-#### 11.1 If you need to use and input only one set of WiFi SSID/PWD.
+#### 11.1 If you need to use and input only one set of WiFi SSID/PWD
 
 ```
 // Permit input only one set of WiFi SSID/PWD. The other can be "NULL or "blank"
@@ -614,6 +656,36 @@ But it's always advisable to use and input both sets for reliability.
 // Permit input only one set of WiFi SSID/PWD. The other can be "NULL or "blank"
 // Default is false (if not defined) => must input 2 sets of SSID/PWD
 #define REQUIRE_ONE_SET_SSID_PW       false
+```
+
+#### 12. To enable auto-scan of WiFi networks for selection in Configuration Portal
+
+#### 12.1 Enable auto-scan of WiFi networks for selection in Configuration Portal
+
+
+```
+#define SCAN_WIFI_NETWORKS                  true
+```
+
+The manual input of SSIDs is default enabled, so that users can input arbitrary SSID, not only from the scanned list. This is for the sample use-cases in which users can input the known SSIDs of another place, then send the boards to that place. The boards can connect to WiFi without users entering Config Portal to re-configure.
+
+#### 12.2 Disable manually input SSIDs
+
+```
+// To disable manually input SSID, only from a scanned SSID lists
+#define MANUAL_SSID_INPUT_ALLOWED           false
+```
+
+This is for normal use-cases in which users can only select an SSID from a scanned list of SSIDs to avoid typo mistakes and/or security.
+
+#### 12.3 Select maximum number of SSIDs in the list
+
+The maximum number of SSIDs in the list is seletable from 2 to 15 (for ESP8266/ESP32-AT shields, from 2-6). If invalid number of SSIDs is selected, the default number of 10 will be used.
+
+
+```
+// From 2-15
+#define MAX_SSID_IN_LIST                    8
 ```
 
 ---
@@ -649,9 +721,28 @@ After you connected, please, go to http://192.168.4.1 or newly configured AP IP,
 
 Enter your credentials, 
 
+### 1. Without SCAN_WIFI_NETWORKS
+
 <p align="center">
-    <img src="https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/main/pics/Input.png">
+    <img src="https://github.com/khoih-prog/WiFiManager_NINA_Lite/blob/master/pics/Input.png">
 </p>
+
+### 2. With SCAN_WIFI_NETWORKS
+
+
+<p align="center">
+    <img src="https://github.com/khoih-prog/WiFiManager_NINA_Lite/blob/master/pics/Input_With_Scan.png">
+</p>
+
+
+### 3. With SCAN_WIFI_NETWORKS for ESP8266-AT and ESP32-AT shield
+
+The number of SSIDs in scanned list is limited at max 6.
+
+<p align="center">
+    <img src="https://github.com/khoih-prog/WiFiManager_NINA_Lite/blob/master/pics/ESP_AT_Input_With_Scan.png">
+</p>
+
 
 then click `Save`. 
 
@@ -1425,13 +1516,15 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 ### Debug Terminal output Samples
 
+#### 1. SAMD_WiFi example on Nano-33 IoT
+
 This is the terminal output when running [**SAMD_WiFi**](examples/SAMD_WiFi) example on **Nano-33 IoT**:
 
-#### 1. Open Config Portal
+#### 1.1 Open Config Portal
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.2.0
+WiFiManager_Generic_Lite v1.3.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xffffffff
 No doubleResetDetected
@@ -1479,7 +1572,7 @@ ClearFlag write = 0xd0d04321
 FFFFFFFFF
 ```
 
-#### 2. Received data from Config Portal
+#### 1.2 Received data from Config Portal
 
 ```
 [WG] h: Init menuItemUpdated :6
@@ -1528,11 +1621,11 @@ FFFFFFFFF
 [WG] h:Rst
 ```
 
-#### 3. Got valid Credential from Config Portal, then connected to WiFi
+#### 1.3 Got valid Credential from Config Portal, then connected to WiFi
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.2.0
+WiFiManager_Generic_Lite v1.3.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1573,7 +1666,7 @@ HHHHHHHHHH HHHHHHHHHH HHHHHHHHHH HHHHHHHHHH HHHHHHHHHH HHHHHHHHHH HHHHHHHHHH HHH
 HHHHHHHHHH HHHHHHHHHH HHHHHHHHHH HHHHHHHHHH HHHHHHHHHH HHHHHHHHHH HHHHHHHHHH HHHHHHHHHH
 ```
 
-#### 4. Lost a WiFi and autoconnect to another WiFi AP
+#### 1.4 Lost a WiFi and autoconnect to another WiFi AP
 
 ```
 [WG] r:Check&WLost                      <=== Lost primary WiFi
@@ -1592,11 +1685,11 @@ WiFi-begin: return2 = 3
 HHHHHHHHHH HHHHHHHHHH
 ```
 
-#### 5. Reopen Config Portal if can't connect to any of the 2 WiFi APs
+#### 1.5 Reopen Config Portal if can't connect to any of the 2 WiFi APs
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.2.0
+WiFiManager_Generic_Lite v1.3.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1656,11 +1749,11 @@ MQTT Server = new_mqtt.duckdns.org
 FF
 ```
 
-#### 6. DRD Not Detected:
+#### 1.6 DRD Not Detected:
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.2.0
+WiFiManager_Generic_Lite v1.3.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1712,11 +1805,11 @@ MQTT Server = new_mqtt.duckdns.org
 HHHHHHHHH HHHHHHHHHH
 ```
 
-#### 7.DRD detected and Config Portal is forcefully opened
+#### 1.7 DRD detected and Config Portal is forcefully opened
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.2.0
+WiFiManager_Generic_Lite v1.3.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d01234
 doubleResetDetected
@@ -1761,6 +1854,88 @@ Port = 8080
 MQTT Server = new_mqtt.duckdns.org
 
 ```
+
+---
+
+#### 2. SAMD_WiFi on ITSYBITSY_M4 using Custom WiFi Library
+
+This is the terminal output when running [**SAMD_WiFi**](examples/SAMD_WiFi) example on **Adafruit SAMD51 ITSYBITSY_M4**:
+
+#### 2.1 Open Config Portal
+
+<p align="center">
+    <img src="https://github.com/khoih-prog/WiFiManager_NINA_Lite/blob/master/pics/ESP_AT_Input_With_Scan.png">
+</p>
+
+
+```
+Start SAMD_WiFi on ITSYBITSY_M4 with Custom using Custom WiFi Library
+WiFiManager_Generic_Lite v1.3.0
+[ESP_AT] Use ES8266-AT Command
+WiFi shield init done
+[WG] Hostname=SAMD-Master-Controller
+Flag read = 0xffffffff
+No doubleResetDetected
+SetFlag write = 0xd0d01234
+[WG] CCSum=0xe11e,RCSum=0xffffffff
+[WG] InitCfgFile,sz=236
+[WG] SaveEEPROM,Sz=1024,DataSz=0,WCSum=0xdb3
+[WG] bg: isForcedConfigPortal = false
+[WG] bg:Stay forever in CP:No ConfigDat
+[WG] Scanning Network
+[WG] scanWifiNetworks: Done, Scanned Networks n = 9
+[WG] Sorting
+[WG] Removing Dup
+[WG] DUP AP:Waterhome
+[WG] DUP AP:
+[WG] WiFi networks found:
+[WG] 1: HueNet1, -44dB
+[WG] 2: HueNetTek, -32dB
+[WG] 3: HueNet2, -58dB
+[WG] 4: bacau, -82dB
+[WG] 5: dlink-4F96, -86dB
+[WG] 6: Waterhome, -88dB
+[WG] 7: , -84dB
+[WG] 9: BELL627, -63dB
+[WG] SSID=WIFI_GENERIC_51F485,PW=MyWIFI_GENERIC_51F485
+[WG] IP=192.168.4.1,CH=1
+[WG] s:configTimeout = 0
+Stop doubleResetDetecting
+ClearFlag write = 0xd0d04321
+F
+```
+
+#### 2.2 Got valid Credential from Config Portal, then connected to WiFi
+
+```
+Start SAMD_WiFi on ITSYBITSY_M4 with Custom using Custom WiFi Library
+WiFiManager_Generic_Lite v1.3.0
+[ESP_AT] Use ES8266-AT Command
+WiFi shield init done
+[WG] Hostname=SAMD-Master-Controller
+Flag read = 0xd0d04321
+No doubleResetDetected
+SetFlag write = 0xd0d01234
+[WG] CCSum=0x14eb,RCSum=0x14eb
+[WG] ======= Start Stored Config Data =======
+[WG] Hdr=WIFI_GENERIC,SSID=HueNet1,PW=12345678
+[WG] SSID1=HueNet2,PW1=12345678
+[WG] BName=Itsy-Bitsy-SAMD51
+[WG] ConMultiWifi
+[WG] First connection, Using index=0
+[WG] con2WF:SSID=HueNet1,PW=12345678
+[WG] Remaining retry_time=3
+[WG] WOK, lastConnectedIndex=0
+[WG] con2WF:OK
+[WG] IP=192.168.2.154
+[WG] SSID=HueNet1,RSSI=-40
+[WG] IP=192.168.2.154
+[WG] b:WOK
+Stop doubleResetDetecting
+ClearFlag write = 0xd0d04321
+HHH
+```
+  
 ---
 ---
 
@@ -1790,6 +1965,12 @@ Sometimes, the library will only work if you update the `Generic WiFi module/shi
 ---
 
 ## Releases
+
+### Major Release v1.3.0
+
+1. Enable scan of WiFi networks for selection in Configuration Portal. Check [PR for v1.3.0 - Enable scan of WiFi networks #10](https://github.com/khoih-prog/WiFiManager_NINA_Lite/pull/10). Now you can select optional **SCAN_WIFI_NETWORKS**, **MANUAL_SSID_INPUT_ALLOWED** to be able to manually input SSID, not only from a scanned SSID lists and **MAX_SSID_IN_LIST** (from 2-6 for ESP8266-AT or 2-15 for other)
+2. Minor enhancement to not display garbage when data is invalid
+3. Tested with new [Arduino Core for STM32 v2.0.0](https://github.com/stm32duino/Arduino_Core_STM32) and add support to new STM32L5 boards.
 
 ### Release v1.2.0
 
@@ -1871,6 +2052,7 @@ Submit issues to: [WiFiManager_Generic_Lite issues](https://github.com/khoih-pro
 22. Add functions to control Config Portal from software or Virtual Switches.
 23. Permit optionally inputting one set of WiFi SSID/PWD by using `REQUIRE_ONE_SET_SSID_PW == true`
 24. Enforce WiFi Password minimum length of 8 chars
+25. Enable scan of WiFi networks for selection in Configuration Portal
 
 ---
 ---
@@ -1880,15 +2062,17 @@ Submit issues to: [WiFiManager_Generic_Lite issues](https://github.com/khoih-pro
 Please help contribute to this project and add your name here.
 
 1. Thanks to [Max Gerhardt in GitHub](https://github.com/maxgerhardt) and [in PIO](https://community.platformio.org/u/maxgerhardt) for the useful fix [**attachInterrupt() on wifi101 unidentified**](https://community.platformio.org/t/attachinterrupt-on-wifi101-unidentified/17543) to enable STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101, leading to new v1.0.2
-2. Thanks to [Michael "bizprof"](https://github.com/bizprof) to report bugs in 
+2. Thanks to [Michael H. "bizprof"](https://github.com/bizprof) to report bugs in 
   - [SAMD MultiWiFi issues when first WiFi SSID configured in CP is invalid or not available #6](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/6) leading to v1.1.2.
   - [WiFiManager connection attempt to unconfigured ("blank") SSID after restart on SAMD #8](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/8) leading to v1.1.3 and v1.2.0
+3. Again thanks to [Michael H. "bizprof"](https://github.com/bizprof) to be `collaborator, co-author/maintainer` of this library. With the impressive new feature : 
+  - `Enable scan of WiFi networks for selection in Configuration Portal`. Check [PR for v1.3.0 - Enable scan of WiFi networks #10](https://github.com/khoih-prog/WiFiManager_NINA_Lite/pull/10) leading to v1.3.0
 
 
 <table>
   <tr>
     <td align="center"><a href="https://github.com/maxgerhardt"><img src="https://github.com/maxgerhardt.png" width="100px;" alt="maxgerhardt"/><br /><sub><b>Maximilian Gerhardt</b></sub></a><br /></td>
-    <td align="center"><a href="https://github.com/bizprof"><img src="https://github.com/bizprof.png" width="100px;" alt="bizprof"/><br /><sub><b>Michael "bizprof"</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/bizprof"><img src="https://github.com/bizprof.png" width="100px;" alt="bizprof"/><br /><sub><b>⭐️⭐️ Michael H. "bizprof"</b></sub></a><br /></td>
   </tr> 
 </table>
 
@@ -1913,6 +2097,6 @@ If you want to contribute to this project:
 
 ### Copyright
 
-Copyright 2021- Khoi Hoang
+Copyright 2021- Khoi Hoang - Michale H.
 
 
