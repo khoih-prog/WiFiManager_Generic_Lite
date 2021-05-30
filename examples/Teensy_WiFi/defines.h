@@ -174,7 +174,7 @@
   #warning Disable USE_DYNAMIC_PARAMETERS for ESP_AT_SHIELD
 
   // From 2-6 to keep HTML short for ESP8266-AT. Limited 6 in WiFiEspAT library anyway
-  #define MAX_SSID_IN_LIST                  6
+  #define MAX_SSID_IN_LIST                  4
 
 #else
 

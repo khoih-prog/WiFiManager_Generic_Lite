@@ -1,13 +1,13 @@
 /****************************************************************************************************************************
   defines.h
-  For Teensy boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
+  For RP2040 boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
   
   WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
   (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 
   configuration/reconfiguration and autoconnect/autoreconnect of WiFi and other services without Hardcoding.
   
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
-  Licensed under MIT license
+  Licensed under MIT license        
  *****************************************************************************************************************************/
 
 #ifndef defines_h
@@ -21,46 +21,45 @@
 
 #define DRD_GENERIC_DEBUG             true
 
-#ifdef CORE_TEENSY
-
-  #if defined(__IMXRT1062__)
-    // For Teensy 4.1/4.0
-    #if defined(ARDUINO_TEENSY41)
-      #define BOARD_TYPE      "TEENSY 4.1"
-    #elif defined(ARDUINO_TEENSY40)
-      #define BOARD_TYPE      "TEENSY 4.0"
-    #else
-      #define BOARD_TYPE      "TEENSY 4.x"
-    #endif  
-  #elif defined(__MK66FX1M0__)
-    #define BOARD_TYPE "Teensy 3.6"
-  #elif defined(__MK64FX512__)
-    #define BOARD_TYPE "Teensy 3.5"
-  #elif defined(__MKL26Z64__)
-    #define BOARD_TYPE "Teensy LC"
-  #elif defined(__MK20DX256__)
-    #define BOARD_TYPE "Teensy 3.2" // and Teensy 3.1 (obsolete)
-  #elif defined(__MK20DX128__)
-    #define BOARD_TYPE "Teensy 3.0"
-  #elif defined(__AVR_AT90USB1286__)
-    #error Teensy 2.0++ not supported yet
-  #elif defined(__AVR_ATmega32U4__)
-    #error Teensy 2.0 not supported yet
-  #else
-    // For Other Boards
-    #define BOARD_TYPE      "Unknown Teensy Board"
+#if ( defined(ARDUINO_NANO_RP2040_CONNECT) || defined(ARDUINO_ARCH_RP2040) || defined(ARDUINO_RASPBERRY_PI_PICO) || \
+      defined(ARDUINO_GENERIC_RP2040) || defined(ARDUINO_ADAFRUIT_FEATHER_RP2040) )
+  #if defined(WIFI_GENERIC_USE_RP2040)
+    #undef WIFI_GENERIC_USE_RP2040
+    #undef WIFI_USE_RP2040
   #endif
+  #define WIFI_GENERIC_USE_RP2040     true
+  #define WIFI_USE_RP2040             true
 #else
-  #error This code is intended to run on Teensy platform! Please check your Tools->Board setting.  
+  #error This code is intended to run only on the RP2040 boards ! Please check your Tools->Board setting.
 #endif
 
-#ifndef BOARD_NAME
-  #define BOARD_NAME    BOARD_TYPE
-#endif
+  
+#if defined(WIFI_GENERIC_USE_RP2040) && defined(ARDUINO_ARCH_MBED)
 
-// Start location in EEPROM to store config data. Default 0
-// Config data Size currently is 128 bytes)
-#define EEPROM_START     0
+  #warning Using ARDUINO_ARCH_MBED
+  
+  #if ( defined(ARDUINO_NANO_RP2040_CONNECT)    || defined(ARDUINO_RASPBERRY_PI_PICO) || \
+        defined(ARDUINO_GENERIC_RP2040) || defined(ARDUINO_ADAFRUIT_FEATHER_RP2040) )
+    // Only undef known BOARD_NAME to use better one
+    #undef BOARD_NAME
+  #endif
+  
+  #if defined(ARDUINO_RASPBERRY_PI_PICO)
+    #define BOARD_NAME      "MBED RASPBERRY_PI_PICO"
+  #elif defined(ARDUINO_ADAFRUIT_FEATHER_RP2040)
+    #define BOARD_NAME      "MBED ADAFRUIT_FEATHER_RP2040"
+  #elif defined(ARDUINO_GENERIC_RP2040)
+    #define BOARD_NAME      "MBED GENERIC_RP2040"
+  #elif defined(ARDUINO_NANO_RP2040_CONNECT) 
+    #define BOARD_NAME      "MBED NANO_RP2040_CONNECT"
+  #else
+    // Use default BOARD_NAME if exists
+    #if !defined(BOARD_NAME)
+      #define BOARD_NAME      "MBED Unknown RP2040"
+    #endif
+  #endif
+
+#endif
 
 /////////////////////////////////////////////
 
@@ -71,17 +70,11 @@
 
 /////////////////////////////////////////////
 
-#define USE_WIFI_NINA             false
+#define USE_WIFI_NINA             true
 #define USE_WIFI101               false
-#define USE_WIFI_CUSTOM           true
+#define USE_WIFI_CUSTOM           false
 
 #if USE_WIFI_NINA
-
-  #if defined(USE_WIFI101)
-    #undef USE_WIFI101
-  #endif
-  
-  #define USE_WIFI101           false
 
   #warning Using WIFININA_Generic Library
   #define SHIELD_TYPE     "WiFiNINA using WiFiNINA_Generic Library"
@@ -116,17 +109,12 @@
   #define SHIELD_TYPE     "Custom using Custom WiFi Library"
   #warning Using Custom WiFi Library. You must include here or compile error
 
-  // For Teensy 4.1/4.0
-  //#define EspSerial Serial1   //Serial1, Pin RX1 :  0, TX1 :  1
-  #define EspSerial Serial2   //Serial2, Pin RX2 :  7, TX2 :  8
-  //#define EspSerial Serial3   //Serial3, Pin RX3 : 15, TX3 : 14
-  //#define EspSerial Serial4   //Serial4, Pin RX4 : 16, TX4 : 17
+  #define EspSerial Serial1
 
   #include "ESP8266_AT_WebServer.h"
 
   #define USE_ESP_AT_SHIELD       true
   #define WiFiWebServer ESP8266_AT_WebServer
-  #define WiFiClient    ESP8266_AT_Client
   
 #else
 
@@ -185,15 +173,14 @@
 
 /////////////////////////////////////////////
 
-#include <WiFiManager_Generic_Lite_Teensy.h>
+#include <WiFiManager_Generic_Lite_RP2040.h>
 
-#define HOST_NAME   "Teensy-MQTT-Controller"
+#define HOST_NAME   "RP2040-Master-Controller"
 
 #ifdef LED_BUILTIN
-# define LED_PIN     LED_BUILTIN
+  #define LED_PIN     LED_BUILTIN
 #else
   #define LED_PIN     13
 #endif
-
 
 #endif      //defines_h

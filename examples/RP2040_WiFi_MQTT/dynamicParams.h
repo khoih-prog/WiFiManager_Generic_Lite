@@ -1,13 +1,13 @@
 /****************************************************************************************************************************
-  dynamicParams.h for STM32_WiFiNINA_MQTT.ino
-  For STM32 boards using WIFI_GENERIC Modules/Shields, using much less code to support boards with smaller memory
+  dynamicParams.h
+  For RP2040 boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
 
   WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
   (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 
   configuration/reconfiguration and autoconnect/autoreconnect of WiFi and other services without Hardcoding.
   
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
-  Licensed under MIT license
+  Licensed under MIT license     
  *****************************************************************************************************************************/
 
 #ifndef dynamicParams_h
@@ -19,7 +19,7 @@
 
 /////////////// Start dynamic Credentials ///////////////
 
-//Defined in <WiFiManager_Generic_Lite_STM32.h>
+//Defined in <WiFiManager_Generic_Lite_RP2040.h>
 /**************************************
   #define MAX_ID_LEN                5
   #define MAX_DISPLAY_NAME_LEN      16

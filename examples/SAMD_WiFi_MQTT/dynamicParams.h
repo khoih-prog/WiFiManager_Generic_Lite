@@ -33,8 +33,6 @@
   } MenuItem;
 **************************************/
 
-#if USE_DYNAMIC_PARAMETERS
-
 #define AIO_SERVER_LEN       20
 #define AIO_SERVERPORT_LEN   6
 #define AIO_USERNAME_LEN     20
@@ -44,14 +42,21 @@
 #define AIO_PUB_TOPIC_LEN    40
 #define AIO_SUB_TOPIC_LEN    40
 
+// If you don't USE_DYNAMIC_PARAMETERS, you can hardcode thse info to use
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 char AIO_SERVER     [AIO_SERVER_LEN + 1]        = "io.adafruit.com";
 char AIO_SERVERPORT [AIO_SERVERPORT_LEN + 1]    = "1883";     //1883, or 8883 for SSL
-
 char AIO_USERNAME   [AIO_USERNAME_LEN + 1]      = "private";
 char AIO_KEY        [AIO_KEY_LEN + 1]           = "private";
 
 char AIO_PUB_TOPIC  [AIO_PUB_TOPIC_LEN + 1]     = "/feeds/Temperature";
 char AIO_SUB_TOPIC  [AIO_SUB_TOPIC_LEN + 1]     = "/feeds/LED_Control";
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+#if USE_DYNAMIC_PARAMETERS
 
 MenuItem myMenuItems [] =
 {

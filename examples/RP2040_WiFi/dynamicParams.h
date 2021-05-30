@@ -1,13 +1,13 @@
 /****************************************************************************************************************************
   dynamicParams.h
-  For SAMD21 MKR1000 boards using WiFi101 Modules/Shields
+  For RP2040 boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
   
   WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
   (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 
   configuration/reconfiguration and autoconnect/autoreconnect of WiFi and other services without Hardcoding.
   
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
-  Licensed under MIT license     
+  Licensed under MIT license  
  *****************************************************************************************************************************/
 
 #ifndef dynamicParams_h
@@ -33,39 +33,31 @@
   } MenuItem;
 **************************************/
 
-#define AIO_SERVER_LEN       20
-#define AIO_SERVERPORT_LEN   6
-#define AIO_USERNAME_LEN     20
-#define AIO_KEY_LEN          40
-
-// 
-#define AIO_PUB_TOPIC_LEN    40
-#define AIO_SUB_TOPIC_LEN    40
-
-// If you don't USE_DYNAMIC_PARAMETERS, you can hardcode thse info to use
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
-char AIO_SERVER     [AIO_SERVER_LEN + 1]        = "io.adafruit.com";
-char AIO_SERVERPORT [AIO_SERVERPORT_LEN + 1]    = "1883";     //1883, or 8883 for SSL
-char AIO_USERNAME   [AIO_USERNAME_LEN + 1]      = "private";
-char AIO_KEY        [AIO_KEY_LEN + 1]           = "private";
-
-char AIO_PUB_TOPIC  [AIO_PUB_TOPIC_LEN + 1]     = "/feeds/Temperature";
-char AIO_SUB_TOPIC  [AIO_SUB_TOPIC_LEN + 1]     = "/feeds/LED_Control";
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 #if USE_DYNAMIC_PARAMETERS
+
+#define MAX_BLYNK_SERVER_LEN      34
+#define MAX_BLYNK_TOKEN_LEN       34
+
+char Blynk_Server1 [MAX_BLYNK_SERVER_LEN + 1]  = "account.duckdns.org";
+char Blynk_Token1  [MAX_BLYNK_TOKEN_LEN + 1]   = "token1";
+
+char Blynk_Server2 [MAX_BLYNK_SERVER_LEN + 1]  = "account.ddns.net";
+char Blynk_Token2  [MAX_BLYNK_TOKEN_LEN + 1]   = "token2";
+
+#define MAX_BLYNK_PORT_LEN        6
+char Blynk_Port   [MAX_BLYNK_PORT_LEN + 1]  = "8080";
+
+#define MAX_MQTT_SERVER_LEN      34
+char MQTT_Server  [MAX_MQTT_SERVER_LEN + 1]   = "mqtt.duckdns.org";
 
 MenuItem myMenuItems [] =
 {
-  { "svr", "AIO_SERVER",      AIO_SERVER,     AIO_SERVER_LEN },
-  { "prt", "AIO_SERVERPORT",  AIO_SERVERPORT, AIO_SERVERPORT_LEN },
-  { "usr", "AIO_USERNAME",    AIO_USERNAME,   AIO_USERNAME_LEN },
-  { "key", "AIO_KEY",         AIO_KEY,        AIO_KEY_LEN },
-  { "pub", "AIO_PUB_TOPIC",   AIO_PUB_TOPIC,  AIO_PUB_TOPIC_LEN },
-  { "sub", "AIO_SUB_TOPIC",   AIO_SUB_TOPIC,  AIO_SUB_TOPIC_LEN },
+  { "sv1", "Blynk Server1", Blynk_Server1,  MAX_BLYNK_SERVER_LEN },
+  { "tk1", "Token1",        Blynk_Token1,   MAX_BLYNK_TOKEN_LEN },
+  { "sv2", "Blynk Server2", Blynk_Server2,  MAX_BLYNK_SERVER_LEN },
+  { "tk2", "Token2",        Blynk_Token2,   MAX_BLYNK_TOKEN_LEN },
+  { "prt", "Port",          Blynk_Port,     MAX_BLYNK_PORT_LEN },
+  { "mqt", "MQTT Server",   MQTT_Server,    MAX_MQTT_SERVER_LEN },
 };
 
 uint16_t NUM_MENU_ITEMS = sizeof(myMenuItems) / sizeof(MenuItem);  //MenuItemSize;

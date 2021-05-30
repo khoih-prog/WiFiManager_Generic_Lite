@@ -1,4 +1,4 @@
-/****************************************************************************************************************************
+/*******************************************************************************************************************************
   WiFiManager_Generic_Lite_nRF52.h
   For nRF52 boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
 
@@ -8,7 +8,7 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.3.0
+  Version: 1.4.0
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -21,7 +21,8 @@
   1.1.3   K Hoang      12/04/2021  Fix invalid "blank" Config Data treated as Valid.
   1.2.0   K Hoang      14/04/2021  Optional one set of WiFi Credentials. Enforce WiFi PWD minimum 8 chars  
   1.3.0   Michael H    24/04/2021  Enable scan of WiFi networks for selection in Configuration Portal
- *****************************************************************************************************************************/
+  1.4.0   K Hoang      29/05/2021  Add support to Nano_RP2040_Connect, RASPBERRY_PI_PICO using Arduino mbed or Arduino-pico core
+ ********************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_nRF52_h
 #define WiFiManager_Generic_Lite_nRF52_h
@@ -37,7 +38,7 @@
   #error This code is intended to run on the nRF52 platform! Please check your Tools->Board setting.  
 #endif
 
-#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.3.0"
+#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.4.0"
 
 #if (USE_WIFI_NINA || USE_WIFI101)
   #include <WiFiWebServer.h>
@@ -80,15 +81,15 @@ File file(InternalFS);
   #endif
 
   #if !defined(MAX_SSID_IN_LIST)
-    #define MAX_SSID_IN_LIST     10
+    #define MAX_SSID_IN_LIST     6
   #elif (MAX_SSID_IN_LIST < 2)
-    #warning Parameter MAX_SSID_IN_LIST defined must be >= 2 - Reset to 10
+    #warning Parameter MAX_SSID_IN_LIST defined must be >= 2 - Reset to 6
     #undef MAX_SSID_IN_LIST
-    #define MAX_SSID_IN_LIST      10
+    #define MAX_SSID_IN_LIST      6
   #elif (MAX_SSID_IN_LIST > 15)
-    #warning Parameter MAX_SSID_IN_LIST defined must be <= 15 - Reset to 10
+    #warning Parameter MAX_SSID_IN_LIST defined must be <= 15 - Reset to 6
     #undef MAX_SSID_IN_LIST
-    #define MAX_SSID_IN_LIST      10
+    #define MAX_SSID_IN_LIST      6
   #endif
 #else
   #warning SCAN_WIFI_NETWORKS disabled	

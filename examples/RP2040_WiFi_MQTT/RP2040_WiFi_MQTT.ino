@@ -1,6 +1,6 @@
 /****************************************************************************************************************************
-  Teensy40_WiFiNINA_MQTT.ino
-  For Teensy boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
+  RP2040_WiFi_MQTT.ino
+  For RP2040 boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
   
   WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
   (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 
@@ -8,6 +8,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
+  
   Version: 1.4.0
 
   Version Modified By   Date        Comments
@@ -22,7 +23,8 @@
   1.2.0   K Hoang      14/04/2021  Optional one set of WiFi Credentials. Enforce WiFi PWD minimum 8 chars  
   1.3.0   Michael H    24/04/2021  Enable scan of WiFi networks for selection in Configuration Portal
   1.4.0   K Hoang      29/05/2021  Add support to Nano_RP2040_Connect, RASPBERRY_PI_PICO using Arduino mbed or Arduino-pico core
- *****************************************************************************************************************************/
+  *****************************************************************************************************************************/
+
 /****************************************************************************************************************************
   You have to modify file ./libraries/Adafruit_MQTT_Library/Adafruit_MQTT.cpp  as follows to avoid ltoa, ultoa and dtostrf error
 
@@ -313,7 +315,7 @@ void setup()
 
   delay(200);
 
-  Serial.print(F("\nStart Teensy_WiFi_MQTT on ")); Serial.print(BOARD_NAME);
+  Serial.print(F("\nStart RP2040_WiFi_MQTT on ")); Serial.print(BOARD_NAME);
   Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
   Serial.println(WIFI_MANAGER_GENERIC_LITE_VERSION);
 
@@ -354,7 +356,7 @@ void setup()
 
   // Set customized DHCP HostName
   WiFiManager_Generic->begin(HOST_NAME);
-  //Or use default Hostname "Teensy-WIFI-XXXXXX"
+  //Or use default Hostname "RP2040-WiFiNINA-XXXXXX"
   //WiFiManager_Generic->begin();
 }
 

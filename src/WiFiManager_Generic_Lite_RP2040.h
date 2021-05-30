@@ -1,6 +1,6 @@
 /*******************************************************************************************************************************
-  WiFiManager_Generic_Lite_STM32.h
-  For STM32 boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
+  WiFiManager_Generic_Lite_RP2040.h
+  For RP2040 boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
 
   WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
   (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 
@@ -24,20 +24,17 @@
   1.4.0   K Hoang      29/05/2021  Add support to Nano_RP2040_Connect, RASPBERRY_PI_PICO using Arduino mbed or Arduino-pico core
  ********************************************************************************************************************************/
 
-#ifndef WiFiManager_Generic_Lite_STM32_h
-#define WiFiManager_Generic_Lite_STM32_h
+#ifndef WiFiManager_Generic_Lite_RP2040_h
+#define WiFiManager_Generic_Lite_RP2040_h
 
-#if ( defined(STM32F0) || defined(STM32F1)   || defined(STM32F2) || defined(STM32F3)  ||defined(STM32F4) || defined(STM32F7) || \
-      defined(STM32L0) || defined(STM32L1)   || defined(STM32L4) || defined(STM32H7)  ||defined(STM32G0) || defined(STM32G4) || \
-      defined(STM32WB) || defined(STM32MP1)  || defined(STM32L5) )
-  #if defined(WIFI_GENERIC_USE_STM32)
-    #undef WIFI_GENERIC_USE_STM32
+#if ( defined(NANO_RP2040_CONNECT)    || defined(ARDUINO_ARCH_RP2040) || defined(ARDUINO_RASPBERRY_PI_PICO) || \
+      defined(ARDUINO_GENERIC_RP2040) || defined(ARDUINO_ADAFRUIT_FEATHER_RP2040) )
+  #if defined(WIFI_GENERIC_USE_RP2040)
+    #undef WIFI_GENERIC_USE_RP2040
   #endif
-  #define WIFI_GENERIC_USE_STM32      true
-#endif
-
-#if ( defined(ESP8266) || defined(ESP32) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) || defined(CORE_TEENSY) || !(WIFI_GENERIC_USE_STM32) )
-  #error This code is intended to run on STM32 platform! Please check your Tools->Board setting.
+  #define WIFI_GENERIC_USE_RP2040      true
+#else
+  #error This code is intended to run on the RP2040 platform! Please check your Tools->Board setting.  
 #endif
 
 #define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.4.0"
@@ -48,9 +45,13 @@
   #warning You have to include another WiFiWebServer, such as ESP8266_AT_WebServer.
 #endif
 
-#include <WiFiManager_Generic_Lite_Debug.h>
+//////////////////////////////////////////
 
-#include <IWatchdog.h>
+#warning Using LittleFS in WiFiManager_Generic_Lite_RP2040.h
+
+//////////////////////////////////////////
+
+#include <WiFiManager_Generic_Lite_Debug.h>
 
 #ifndef USING_CUSTOMS_STYLE
   #define USING_CUSTOMS_STYLE     false
@@ -98,8 +99,8 @@
 // Otherwise, library will use default EEPROM storage
 #define  DRD_FLAG_DATA_SIZE     4
 
-#ifndef DRD_GENERIC_DEBUG
-  #define DRD_GENERIC_DEBUG     false
+#ifndef DOUBLERESETDETECTOR_DEBUG
+#define DOUBLERESETDETECTOR_DEBUG     false
 #endif
 
 #include <DoubleResetDetector_Generic.h>      //https://github.com/khoih-prog/DoubleResetDetector_Generic
@@ -114,6 +115,7 @@
 DoubleResetDetector_Generic* drd;
 
 ///////// NEW for DRD /////////////
+
 
 //NEW
 #define MAX_ID_LEN                5
@@ -151,7 +153,7 @@ typedef struct
 
 #define NUM_WIFI_CREDENTIALS      2
 
-// Configurable items besides fixed Header
+// Configurable items besides fixed Header, just add board_name 
 #define NUM_CONFIGURABLE_ITEMS    ( ( 2 * NUM_WIFI_CREDENTIALS ) + 1 )
 ////////////////
 
@@ -175,7 +177,7 @@ extern WIFI_GENERIC_Configuration defaultConfig;
 
 // -- HTML page fragments
 
-const char WIFI_GENERIC_HTML_HEAD_START[] /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>STM32_WM_Lite</title>";
+const char WIFI_GENERIC_HTML_HEAD_START[] /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>RP2040_WM_Lite</title>";
 
 const char WIFI_GENERIC_HTML_HEAD_STYLE[] /*PROGMEM*/ = "<style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>";
 
@@ -325,7 +327,7 @@ class WiFiManager_Generic_Lite
         String randomNum = String(random(0xFFFFFF), HEX);
         randomNum.toUpperCase();
         
-        String _hostname = "STM32-WIFI-" + randomNum;
+        String _hostname = "RP2040-WIFI-" + randomNum;
         _hostname.toUpperCase();
 
         getRFC952_hostname(_hostname.c_str());
@@ -704,13 +706,53 @@ class WiFiManager_Generic_Lite
     }
     
     //////////////////////////////////////////////
+        
+    typedef struct
+    {
+      uint32_t CPUID;                  /*!< Offset: 0x000 (R/ )  CPUID Base Register */
+      uint32_t ICSR;                   /*!< Offset: 0x004 (R/W)  Interrupt Control and State Register */
+      uint32_t RESERVED0;
+      uint32_t AIRCR;                  /*!< Offset: 0x00C (R/W)  Application Interrupt and Reset Control Register */
+      uint32_t SCR;                    /*!< Offset: 0x010 (R/W)  System Control Register */
+      uint32_t CCR;                    /*!< Offset: 0x014 (R/W)  Configuration Control Register */
+      uint32_t RESERVED1;
+      uint32_t SHP[2U];                /*!< Offset: 0x01C (R/W)  System Handlers Priority Registers. [0] is RESERVED */
+      uint32_t SHCSR;                  /*!< Offset: 0x024 (R/W)  System Handler Control and State Register */
+    } SCB_Type;
+    
+    //////////////////////////////////////////////
 
+    void NVIC_SystemReset()
+    {                  
+    /* SCB Application Interrupt and Reset Control Register Definitions */
+    #define SCB_AIRCR_VECTKEY_Pos              16U                                      /*!< SCB AIRCR: VECTKEY Position */
+    #define SCB_AIRCR_VECTKEY_Msk              (0xFFFFUL << SCB_AIRCR_VECTKEY_Pos)      /*!< SCB AIRCR: VECTKEY Mask */
+        
+    #define SCB_AIRCR_SYSRESETREQ_Pos           2U                                      /*!< SCB AIRCR: SYSRESETREQ Position */
+    #define SCB_AIRCR_SYSRESETREQ_Msk          (1UL << SCB_AIRCR_SYSRESETREQ_Pos)       /*!< SCB AIRCR: SYSRESETREQ Mask */    
+
+    #define SCS_BASE            (0xE000E000UL)                            /*!< System Control Space Base Address */
+    #define SysTick_BASE        (SCS_BASE +  0x0010UL)                    /*!< SysTick Base Address */
+    #define NVIC_BASE           (SCS_BASE +  0x0100UL)                    /*!< NVIC Base Address */
+    #define SCB_BASE            (SCS_BASE +  0x0D00UL)                    /*!< System Control Block Base Address */
+
+    #define SCB                 ((SCB_Type       *)     SCB_BASE      )   /*!< SCB configuration struct */
+    #define SysTick             ((SysTick_Type   *)     SysTick_BASE  )   /*!< SysTick configuration struct */
+    #define NVIC                ((NVIC_Type      *)     NVIC_BASE     )   /*!< NVIC configuration struct */
+
+                                  
+      SCB->AIRCR  = ((0x5FAUL << SCB_AIRCR_VECTKEY_Pos) | SCB_AIRCR_SYSRESETREQ_Msk);
+
+      while(true);
+    }
+
+    //////////////////////////////////////////////
+    
     void resetFunc()
-    {    
-      // Initialize the IWDG with 2 seconds timeout.
-      // This would cause a CPU reset if the IWDG timer
-      // is not reloaded in approximately 2 seconds.
-      IWatchdog.begin(2000000);
+    {
+      delay(1000);
+      // Restart for RPi_Pico
+      NVIC_SystemReset();
     }
 
     //////////////////////////////////////
@@ -775,6 +817,7 @@ class WiFiManager_Generic_Lite
     String ipAddress = "0.0.0.0";
 
     WiFiWebServer* server = NULL;
+    
     bool configuration_mode = false;
 
     unsigned long configTimeout;
@@ -874,34 +917,7 @@ class WiFiManager_Generic_Lite
     }
 
 #define WIFI_GENERIC_BOARD_TYPE   "WIFI_GENERIC"
-#define WM_NO_CONFIG             "blank"
-
-#ifndef EEPROM_SIZE
-  #define EEPROM_SIZE       4096
-#else
-  #if (EEPROM_SIZE > 4096)
-    #warning EEPROM_SIZE must be <= 4096. Reset to 4096
-    #undef EEPROM_SIZE
-    #define EEPROM_SIZE     4096
-  #endif
-  #if (EEPROM_SIZE < CONFIG_DATA_SIZE)
-    #warning EEPROM_SIZE must be > CONFIG_DATA_SIZE. Reset to 512
-    #undef EEPROM_SIZE
-    #define EEPROM_SIZE     512
-  #endif
-#endif
-
-#ifndef EEPROM_START
-  #define EEPROM_START     0
-  #warning EEPROM_START not defined. Set to 0
-#else
-  #if (EEPROM_START + DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE + FORCED_CONFIG_PORTAL_FLAG_DATA_SIZE > EEPROM_SIZE)
-    #error EPROM_START + DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE + FORCED_CONFIG_PORTAL_FLAG_DATA_SIZE > EEPROM_SIZE. Please adjust.
-  #endif
-#endif
-
-// Stating positon to store Blynk8266_WM_config
-#define CONFIG_EEPROM_START    (EEPROM_START + DRD_FLAG_DATA_SIZE)
+#define WM_NO_CONFIG              "blank"
 
     int calcChecksum()
     {
@@ -914,40 +930,77 @@ class WiFiManager_Generic_Lite
       return checkSum;
     }
     
+// Use LittleFS/InternalFS for RP2040
+#define  CONFIG_FILENAME                  ("/fs/wm_config.dat")
+#define  CONFIG_FILENAME_BACKUP           ("/fs/wm_config.bak")
+
+#define  CREDENTIALS_FILENAME             ("/fs/wm_cred.dat")
+#define  CREDENTIALS_FILENAME_BACKUP      ("/fs/wm_cred.bak")
+
+#define  CONFIG_PORTAL_FILENAME           ("/fs/wm_cp.dat")
+#define  CONFIG_PORTAL_FILENAME_BACKUP    ("/fs/wm_cp.bak")
+
     //////////////////////////////////////////////
     
-#if defined(DATA_EEPROM_BASE)
-    // For STM32 devices having integrated EEPROM.
-    #include <EEPROM.h>
-    #warning STM32 devices have integrated EEPROM. Not using buffered API.   
-#else  
-    /**
-     Most STM32 devices don't have an integrated EEPROM. To emulate a EEPROM, the STM32 Arduino core emulated
-     the operation of an EEPROM with the help of the embedded flash.
-     Writing to a flash is very expensive operation, since a whole flash page needs to be written, even if you only
-     want to access the flash byte-wise.
-     The STM32 Arduino core provides a buffered access API to the emulated EEPROM. The library has allocated the
-     buffer even if you don't use the buffered API, so it's strongly suggested to use the buffered API anyhow.
-     */
-    #include <FlashStorage_STM32.h>       // https://github.com/khoih-prog/FlashStorage_STM32
-    #warning STM32 devices have no integrated EEPROM. Using buffered API with FlashStorage_STM32 library
-#endif    // #if defined(DATA_EEPROM_BASE)
-//////////////////////////////////////////////
-          
+    void saveForcedCP(uint32_t value)
+    {
+      // Mbed RP2040 code
+      FILE *file = fopen(CONFIG_PORTAL_FILENAME, "w");
+      
+      WG_LOGERROR(F("SaveCPFile "));
+
+      if (file)
+      {
+        fseek(file, 0, SEEK_SET);
+        fwrite((uint8_t *) &value, 1, sizeof(value), file);        
+        fclose(file);
+        
+        WG_LOGERROR(F("OK"));
+      }
+      else
+      {
+        WG_LOGERROR(F("failed"));
+      }
+
+      // Trying open redundant CP file
+      file = fopen(CONFIG_PORTAL_FILENAME_BACKUP, "w");
+      
+      WG_LOGERROR(F("SaveBkUpCPFile "));
+
+      if (file)
+      {
+        fseek(file, 0, SEEK_SET);
+        fwrite((uint8_t *) &value, 1, sizeof(value), file);        
+        fclose(file);
+        
+        WG_LOGERROR(F("OK"));
+      }
+      else
+      {
+        WG_LOGERROR(F("failed"));
+      }
+    }
+    
+    //////////////////////////////////////////////
+    
     void setForcedCP(bool isPersistent)
     {
       uint32_t readForcedConfigPortalFlag = isPersistent? FORCED_PERS_CONFIG_PORTAL_FLAG_DATA : FORCED_CONFIG_PORTAL_FLAG_DATA;
-   
+  
       WG_LOGERROR(isPersistent ? F("setForcedCP Persistent") : F("setForcedCP non-Persistent"));
-   
-      EEPROM.put(CONFIG_EEPROM_START + CONFIG_DATA_SIZE, readForcedConfigPortalFlag);
+      
+      saveForcedCP(readForcedConfigPortalFlag);
     }
     
     //////////////////////////////////////////////
     
     void clearForcedCP()
     {
-      EEPROM.put(CONFIG_EEPROM_START + CONFIG_DATA_SIZE, 0);
+      uint32_t readForcedConfigPortalFlag = 0;
+   
+      WG_LOGERROR(F("clearForcedCP"));
+      
+      saveForcedCP(readForcedConfigPortalFlag);
     }
     
     //////////////////////////////////////////////
@@ -955,10 +1008,34 @@ class WiFiManager_Generic_Lite
     bool isForcedCP()
     {
       uint32_t readForcedConfigPortalFlag;
+    
+      WG_LOGDEBUG(F("Check if isForcedCP"));
       
-      // Return true if forced CP (0xDEADBEEF read at offset EPROM_START + DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE)
-      // => set flag noForcedConfigPortal = false
-      EEPROM.get(CONFIG_EEPROM_START + CONFIG_DATA_SIZE, readForcedConfigPortalFlag);
+      FILE *file = fopen(CONFIG_PORTAL_FILENAME, "r");
+      
+      WG_LOGDEBUG(F("LoadCPFile "));
+
+      if (!file)
+      {
+        WG_LOGDEBUG(F("failed"));
+
+        // Trying open redundant config file
+        file = fopen(CONFIG_PORTAL_FILENAME_BACKUP, "r");
+        
+        WG_LOGDEBUG(F("LoadBkUpCPFile "));
+
+        if (!file)
+        {
+          WG_LOGDEBUG(F("failed"));
+          return false;
+        }
+      }
+           
+      fseek(file, 0, SEEK_SET);
+      fread((uint8_t *) &readForcedConfigPortalFlag, 1, sizeof(readForcedConfigPortalFlag), file);        
+      fclose(file);
+      WG_LOGDEBUG(F("OK"));
+      
       
       // Return true if forced CP (0xDEADBEEF read at offset EPROM_START + DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE)
       // => set flag noForcedConfigPortal = false     
@@ -979,59 +1056,169 @@ class WiFiManager_Generic_Lite
     }
     
     //////////////////////////////////////////////
-   
+
 #if USE_DYNAMIC_PARAMETERS
-   
+    
     bool checkDynamicData()
     {
       int checkSum = 0;
       int readCheckSum;
+      char* readBuffer = nullptr;
+           
+      FILE *file = fopen(CREDENTIALS_FILENAME, "r");
       
-      #define BUFFER_LEN      128
-      char readBuffer[BUFFER_LEN + 1];
+      WG_LOGDEBUG(F("LoadCredFile "));
+
+      if (!file)
+      {
+        WG_LOGDEBUG(F("failed"));
+
+        // Trying open redundant config file
+        file = fopen(CREDENTIALS_FILENAME_BACKUP, "r");
+        
+        WG_LOGDEBUG(F("LoadBkUpCredFile "));
+
+        if (!file)
+        {
+          WG_LOGDEBUG(F("failed"));
+          return false;
+        }
+      }
       
-      uint16_t offset = CONFIG_EEPROM_START + sizeof(WIFI_GENERIC_config) + FORCED_CONFIG_PORTAL_FLAG_DATA_SIZE;
-                  
       // Find the longest pdata, then dynamically allocate buffer. Remember to free when done
       // This is used to store tempo data to calculate checksum to see of data is valid
       // We dont like to destroy myMenuItems[i].pdata with invalid data
       
+      uint16_t maxBufferLength = 0;
+      
       for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
-        if (myMenuItems[i].maxlen > BUFFER_LEN)
+        if (myMenuItems[i].maxlen > maxBufferLength)
+          maxBufferLength = myMenuItems[i].maxlen;
+      }
+      
+      if (maxBufferLength > 0)
+      {
+        readBuffer = new char[ maxBufferLength + 1 ];
+        
+        // check to see NULL => stop and return false
+        if (readBuffer == NULL)
         {
-          // Size too large, abort and flag false
-          WG_LOGERROR(F("ChkCrR: Error Small Buffer."));
+          WG_LOGERROR(F("ChkCrR: Error can't allocate buffer."));
+          return false;
+        }     
+        else
+        {
+          WG_LOGDEBUG1(F("ChkCrR: Buffer allocated, Sz="), maxBufferLength + 1);
+        }  
+          
+        uint16_t offset = 0;
+        
+        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
+        {       
+          uint8_t * _pointer = (uint8_t *) readBuffer;
+
+          // Actual size of pdata is [maxlen + 1]
+          memset(readBuffer, 0, myMenuItems[i].maxlen + 1);
+          
+          // Redundant, but to be sure correct position         
+          fseek(file, offset, SEEK_SET);
+          fread(_pointer, 1, myMenuItems[i].maxlen, file);  
+           
+          offset += myMenuItems[i].maxlen;
+       
+          WG_LOGDEBUG3(F("ChkCrR:pdata="), readBuffer, F(",len="), myMenuItems[i].maxlen);         
+                 
+          for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++,_pointer++)
+          {         
+            checkSum += *_pointer;  
+          }       
+        }
+
+        fread((uint8_t *) &readCheckSum, 1, sizeof(readCheckSum), file);
+        
+        WG_LOGDEBUG(F("OK"));
+        
+        fclose(file);
+        
+        WG_LOGERROR3(F("CrCCsum=0x"), String(checkSum, HEX), F(",CrRCsum=0x"), String(readCheckSum, HEX));
+        
+        if (readBuffer != nullptr)
+        {
+          // Free buffer
+          delete [] readBuffer;
+          WG_LOGDEBUG(F("Buffer freed"));
+        }
+        
+        if ( checkSum == readCheckSum)
+        {
+          return true;
+        }
+      }
+      
+      return false;
+    }
+    
+    //////////////////////////////////////////////
+
+    bool loadDynamicData()
+    {
+      int checkSum = 0;
+      int readCheckSum;
+      totalDataSize = sizeof(WIFI_GENERIC_config) + sizeof(readCheckSum);
+      
+      FILE *file = fopen(CREDENTIALS_FILENAME, "r");
+      
+      WG_LOGDEBUG(F("LoadCredFile "));
+
+      if (!file)
+      {
+        WG_LOGDEBUG(F("failed"));
+
+        // Trying open redundant config file
+        file = fopen(CREDENTIALS_FILENAME_BACKUP, "r");
+        
+        WG_LOGDEBUG(F("LoadBkUpCredFile "));
+
+        if (!file)
+        {
+          WG_LOGDEBUG(F("failed"));
           return false;
         }
       }
-         
+     
+      uint16_t offset = 0;
+      
       for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
-        char* _pointer = readBuffer;
-        
-        // Prepare buffer, more than enough
-        memset(readBuffer, 0, sizeof(readBuffer));
-        
-        // Read more than necessary, but OK and easier to code
-        EEPROM.get(offset, readBuffer);
-        // NULL terminated
-        readBuffer[myMenuItems[i].maxlen] = 0;
+        uint8_t * _pointer = (uint8_t *) myMenuItems[i].pdata;
+        totalDataSize += myMenuItems[i].maxlen;
 
-        WG_LOGDEBUG3(F("ChkCrR:pdata="), readBuffer, F(",len="), myMenuItems[i].maxlen);     
+        // Actual size of pdata is [maxlen + 1]
+        memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
+        
+        // Redundant, but to be sure correct position
+        fseek(file, offset, SEEK_SET);
+        fread(_pointer, 1, myMenuItems[i].maxlen, file);
+        
+        offset += myMenuItems[i].maxlen;        
+    
+        WG_LOGDEBUG3(F("CrR:pdata="), myMenuItems[i].pdata, F(",len="), myMenuItems[i].maxlen);         
                
         for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++,_pointer++)
         {         
           checkSum += *_pointer;  
-        }   
-        
-        offset += myMenuItems[i].maxlen;    
+        }       
       }
 
-      EEPROM.get(offset, readCheckSum);
-           
-      WG_LOGERROR3(F("ChkCrR:CrCCsum=0x"), String(checkSum, HEX), F(",CrRCsum=0x"), String(readCheckSum, HEX));
-           
+      fread((uint8_t *) &readCheckSum, 1, sizeof(readCheckSum), file);
+      
+      WG_LOGDEBUG(F("OK"));
+      
+      fclose(file);
+      
+      WG_LOGDEBUG3(F("CrCCsum=0x"), String(checkSum, HEX), F(",CrRCsum=0x"), String(readCheckSum, HEX));
+      
       if ( checkSum != readCheckSum)
       {
         return false;
@@ -1041,70 +1228,102 @@ class WiFiManager_Generic_Lite
     }
     
     //////////////////////////////////////////////
-    
-    bool EEPROM_getDynamicData()
-    {
-      int readCheckSum;
-      int checkSum = 0;
-      uint16_t offset = CONFIG_EEPROM_START + sizeof(WIFI_GENERIC_config) + FORCED_CONFIG_PORTAL_FLAG_DATA_SIZE;
-           
-      totalDataSize = sizeof(WIFI_GENERIC_config) + sizeof(readCheckSum);
-      
-      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
-      {       
-        char* _pointer = myMenuItems[i].pdata;
-        totalDataSize += myMenuItems[i].maxlen;
-        
-        // Actual size of pdata is [maxlen + 1]
-        memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
-               
-        for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++,_pointer++,offset++)
-        {
-          *_pointer = EEPROM.read(offset);
-          
-          checkSum += *_pointer;  
-         }       
-      }
-      
-      EEPROM.get(offset, readCheckSum);
-      
-      WG_LOGERROR3(F("CrCCsum=0x"), String(checkSum, HEX), F(",CrRCsum=0x"), String(readCheckSum, HEX));
-      
-      if ( checkSum != readCheckSum)
-      {
-        return false;
-      }
-      
-      return true;
-    }
-    
-    //////////////////////////////////////////////
 
-    void EEPROM_putDynamicData()
+    void saveDynamicData()
     {
       int checkSum = 0;
-      uint16_t offset = CONFIG_EEPROM_START + sizeof(WIFI_GENERIC_config) + FORCED_CONFIG_PORTAL_FLAG_DATA_SIZE;
-                
+    
+      FILE *file = fopen(CREDENTIALS_FILENAME, "w");
+      
+      WG_LOGDEBUG(F("SaveCredFile "));
+
+      uint16_t offset = 0;
+      
       for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
-        char* _pointer = myMenuItems[i].pdata;
+        uint8_t* _pointer = (uint8_t *) myMenuItems[i].pdata;
+       
+        WG_LOGDEBUG3(F("CW1:pdata="), myMenuItems[i].pdata, F(",len="), myMenuItems[i].maxlen);
         
-        //WG_LOGDEBUG3(F("pdata="), myMenuItems[i].pdata, F(",len="), myMenuItems[i].maxlen);
-                            
-        for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++,_pointer++,offset++)
+        if (file)
         {
-          EEPROM.write(offset, *_pointer);
+          // Redundant, but to be sure correct position
+          fseek(file, offset, SEEK_SET);
+          fwrite(_pointer, 1, myMenuItems[i].maxlen, file); 
           
+          offset += myMenuItems[i].maxlen;      
+        }
+        else
+        {
+          WG_LOGDEBUG(F("failed"));
+        }        
+                     
+        for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++,_pointer++)
+        {         
           checkSum += *_pointer;     
          }
       }
       
-      EEPROM.put(offset, checkSum);
+      if (file)
+      {
+        fwrite((uint8_t *) &checkSum, 1, sizeof(checkSum), file);        
+        fclose(file);
+        
+        WG_LOGDEBUG(F("OK"));    
+      }
+      else
+      {
+        WG_LOGDEBUG(F("failed"));
+      }   
+           
+      WG_LOGDEBUG1(F("CrWCSum=0x"), String(checkSum, HEX));
       
-      WG_LOGERROR1(F("CrCCSum=0x"), String(checkSum, HEX));
+      // Trying open redundant Auth file
+      file = fopen(CREDENTIALS_FILENAME_BACKUP, "w");
+      
+      WG_LOGDEBUG(F("SaveBkUpCredFile "));
+
+      offset = 0;
+      
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
+      {       
+        uint8_t* _pointer = (uint8_t *) myMenuItems[i].pdata;
+     
+        WG_LOGDEBUG3(F("CW2:pdata="), myMenuItems[i].pdata, F(",len="), myMenuItems[i].maxlen);
+        
+        if (file)
+        {
+          fseek(file, offset, SEEK_SET);
+          fwrite(_pointer, 1, myMenuItems[i].maxlen, file); 
+          
+          // Redundant, but to be sure correct position
+          offset += myMenuItems[i].maxlen; 
+        }
+        else
+        {
+          WG_LOGDEBUG(F("failed"));
+        }        
+                     
+        for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++,_pointer++)
+        {         
+          checkSum += *_pointer;     
+         }
+      }
+      
+      if (file)
+      {
+        fwrite((uint8_t *) &checkSum, 1, sizeof(checkSum), file);        
+        fclose(file);
+        
+        WG_LOGDEBUG(F("OK"));    
+      }
+      else
+      {
+        WG_LOGDEBUG(F("failed"));
+      }   
     }
-#endif    // #if USE_DYNAMIC_PARAMETERS    
-    
+#endif
+
     //////////////////////////////////////////////
     
     void NULLTerminateConfig()
@@ -1121,7 +1340,7 @@ class WiFiManager_Generic_Lite
       WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw  [PASS_MAX_LEN - 1] = 0;
       WIFI_GENERIC_config.board_name[BOARD_NAME_MAX_LEN - 1]  = 0;
     }
-       
+
     //////////////////////////////////////////////
     
     bool isWiFiConfigValid()
@@ -1162,38 +1381,87 @@ class WiFiManager_Generic_Lite
       return true;
     }
     
-    //////////////////////////////////////////////
-    
-    bool EEPROM_get()
+    //////////////////////////////////////////////  
+
+    bool loadConfigData()
     {
-      EEPROM.get(CONFIG_EEPROM_START, WIFI_GENERIC_config);
-      NULLTerminateConfig();
+      WG_LOGDEBUG(F("LoadCfgFile "));
+      
+      // file existed
+      FILE *file = fopen(CONFIG_FILENAME, "r");
+      
+      if (!file)
+      {
+        WG_LOGDEBUG(F("failed"));
+
+        // Trying open redundant config file
+        file = fopen(CONFIG_FILENAME_BACKUP, "r");
+        
+        WG_LOGDEBUG(F("LoadBkUpCfgFile "));
+
+        if (!file)
+        {
+          WG_LOGDEBUG(F("failed"));
+          return false;
+        }
+      }
+     
+      fseek(file, 0, SEEK_SET);
+      fread((uint8_t *) &WIFI_GENERIC_config, 1, sizeof(WIFI_GENERIC_config), file);
+      fclose(file);
+
+      WG_LOGDEBUG(F("OK"));
       
       return isWiFiConfigValid();
-    }
-    
-    //////////////////////////////////////////////
-    
-    void EEPROM_put()
-    {
-      EEPROM.put(CONFIG_EEPROM_START, WIFI_GENERIC_config);
     }
     
     //////////////////////////////////////////////
 
     void saveConfigData()
     {
+      WG_LOGDEBUG(F("SaveCfgFile "));
+
       int calChecksum = calcChecksum();
       WIFI_GENERIC_config.checkSum = calChecksum;
+      WG_LOGDEBUG1(F("WCSum=0x"), String(calChecksum, HEX));
       
-      WG_LOGERROR5(F("SaveEEPROM,Sz="), EEPROM.length(), F(",DataSz="), totalDataSize, F(",WCSum=0x"), String(calChecksum, HEX));
-      
-      EEPROM_put();
+      FILE *file = fopen(CONFIG_FILENAME, "w");
+
+      if (file)
+      {
+        fseek(file, 0, SEEK_SET);
+        fwrite((uint8_t *) &WIFI_GENERIC_config, 1, sizeof(WIFI_GENERIC_config), file);
+        fclose(file);
         
-#if USE_DYNAMIC_PARAMETERS        
-      EEPROM_putDynamicData();
-#endif        
-    }    
+        WG_LOGDEBUG(F("OK"));
+      }
+      else
+      {
+        WG_LOGDEBUG(F("failed"));
+      }
+      
+      WG_LOGDEBUG(F("SaveBkUpCfgFile "));
+      
+      // Trying open redundant Auth file
+      file = fopen(CONFIG_FILENAME_BACKUP, "w");
+
+      if (file)
+      {
+        fseek(file, 0, SEEK_SET);
+        fwrite((uint8_t *) &WIFI_GENERIC_config, 1, sizeof(WIFI_GENERIC_config), file);
+        fclose(file);
+        
+        WG_LOGDEBUG(F("OK"));
+      }
+      else
+      {
+        WG_LOGDEBUG(F("failed"));
+      }
+      
+#if USE_DYNAMIC_PARAMETERS      
+      saveDynamicData();
+#endif
+    }
     
     //////////////////////////////////////////////
     
@@ -1206,22 +1474,19 @@ class WiFiManager_Generic_Lite
       // Including config and dynamic data, and assume valid
       saveConfigData();
           
-      WG_LOGERROR(F("======= Start Loaded Config Data ======="));
+      WG_LOGDEBUG(F("======= Start Loaded Config Data ======="));
       displayConfigData(WIFI_GENERIC_config);    
     }
     
     //////////////////////////////////////////////
     
+    // Return false if init new EEPROM or SPIFFS. No more need trying to connect. Go directly to config mode
     bool getConfigData()
     {
-      bool dynamicDataValid = true;
-      int calChecksum;   
+      bool dynamicDataValid = true; 
+      int calChecksum; 
       
-      hadConfigData = false; 
-      
-#if defined(DATA_EEPROM_BASE)      
-      EEPROM.begin();
-#endif
+      hadConfigData = false;
       
       // Use new LOAD_DEFAULT_CONFIG_DATA logic
       if (LOAD_DEFAULT_CONFIG_DATA)
@@ -1234,17 +1499,14 @@ class WiFiManager_Generic_Lite
       }
       else
       {   
-        // Load stored config data from EEPROM
-        WG_LOGERROR1(F("EEPROMsz:"), EEPROM_SIZE);
-        WG_LOGERROR1(F("EEPROM Length():"), EEPROM.length());
-        
+        // Load stored config data from LittleFS
         // Get config data. If "blank" or NULL, set false flag and exit
-        if (!EEPROM_get())
+        if (!loadConfigData())
         {
           return false;
         }
         
-        // Verify ChkSum
+        // Verify ChkSum        
         calChecksum = calcChecksum();
 
         WG_LOGERROR3(F("CCSum=0x"), String(calChecksum, HEX),
@@ -1253,20 +1515,20 @@ class WiFiManager_Generic_Lite
 #if USE_DYNAMIC_PARAMETERS        
         // Load stored dynamic data from LittleFS
         dynamicDataValid = checkDynamicData();
-#endif           
-                      
-        // If checksum = 0 => simulated EEPROM has been cleared (by uploading new FW, etc) => force to CP
+#endif
+        
+        // If checksum = 0 => LittleFS has been cleared (by uploading new FW, etc) => force to CP
         // If bad checksum = 0 => force to CP
         if ( (calChecksum != 0) && (calChecksum == WIFI_GENERIC_config.checkSum) )
-        {
+        {       
           if (dynamicDataValid)
           {
   #if USE_DYNAMIC_PARAMETERS        
-            EEPROM_getDynamicData();
-            
+            loadDynamicData();
+             
             WG_LOGERROR(F("Valid Stored Dynamic Data"));
-  #endif
-           
+  #endif 
+         
             WG_LOGERROR(F("======= Start Stored Config Data ======="));
             displayConfigData(WIFI_GENERIC_config);
             
@@ -1285,9 +1547,9 @@ class WiFiManager_Generic_Lite
             // Even if you don't open CP, you're OK on next boot if your default config data is valid 
             return false;
           }
-        } 
-      }
-      
+        }   
+      }   
+
       if ( (strncmp(WIFI_GENERIC_config.header, WIFI_GENERIC_BOARD_TYPE, strlen(WIFI_GENERIC_BOARD_TYPE)) != 0) ||
            (calChecksum != WIFI_GENERIC_config.checkSum) || !dynamicDataValid || 
            ( (calChecksum == 0) && (WIFI_GENERIC_config.checkSum == 0) ) )   
@@ -1340,7 +1602,7 @@ class WiFiManager_Generic_Lite
 
         saveConfigData();
         
-        return false;  
+        return false;        
       }
       else if ( !isWiFiConfigValid() )
       {
@@ -1628,12 +1890,12 @@ class WiFiManager_Generic_Lite
           if ( RFC952_hostname[0] != 0 )
           {
             // Replace only if Hostname is valid
-            result.replace("STM32_WM_Lite", RFC952_hostname);
+            result.replace("RP2040_WM_Lite", RFC952_hostname);
           }
           else if ( WIFI_GENERIC_config.board_name[0] != 0 )
           {
             // Or replace only if board_name is valid.  Otherwise, keep intact
-            result.replace("STM32_WM_Lite", WIFI_GENERIC_config.board_name);
+            result.replace("RP2040_WM_Lite", WIFI_GENERIC_config.board_name);
           }
 
           if (hadConfigData)
@@ -1760,10 +2022,11 @@ class WiFiManager_Generic_Lite
           else
             strncpy(WIFI_GENERIC_config.board_name, value.c_str(), sizeof(WIFI_GENERIC_config.board_name) - 1);
         }
-        else
-        {
+
         
-#if USE_DYNAMIC_PARAMETERS        
+#if USE_DYNAMIC_PARAMETERS 
+        else
+        {       
           for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
           {           
             if ( !menuItemUpdated[i] && (key == myMenuItems[i].id) )
@@ -1785,8 +2048,8 @@ class WiFiManager_Generic_Lite
               break;  
             }
           }
-#endif
         }
+#endif
         
         WG_LOGDEBUG1(F("h:items updated ="), number_items_Updated);
         WG_LOGDEBUG3(F("h:key ="), key, ", value =", value);
@@ -1799,7 +2062,7 @@ class WiFiManager_Generic_Lite
         if (number_items_Updated == NUM_CONFIGURABLE_ITEMS)
 #endif 
         {
-          WG_LOGERROR(F("h:UpdEEPROM"));
+          WG_LOGERROR(F("h:UpdLittleFS"));
 
           saveConfigData();
           
@@ -1830,7 +2093,7 @@ class WiFiManager_Generic_Lite
 	    configTimeout = 0;  // To allow user input in CP
 	    
 	    WiFiNetworksFound = scanWifiNetworks(&indices);	
-#endif
+#endif    
     
       WiFi.config(portal_apIP);
 
@@ -2070,4 +2333,5 @@ class WiFiManager_Generic_Lite
 #endif	       
 };
 
-#endif    //WiFiManager_Generic_Lite_STM32_h
+
+#endif    //WiFiManager_Generic_Lite_RP2040_h

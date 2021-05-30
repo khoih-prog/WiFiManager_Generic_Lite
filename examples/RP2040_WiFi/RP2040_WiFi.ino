@@ -1,7 +1,7 @@
 /****************************************************************************************************************************
-  STM32_WiFi.ino
-  For STM32 boards using WIFI_GENERIC Modules/Shields, using much less code to support boards with smaller memory
-
+  RP2040_WiFi.ino
+  For RP2040 boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
+  
   WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
   (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 
   configuration/reconfiguration and autoconnect/autoreconnect of WiFi and other services without Hardcoding.
@@ -22,25 +22,10 @@
   1.2.0   K Hoang      14/04/2021  Optional one set of WiFi Credentials. Enforce WiFi PWD minimum 8 chars  
   1.3.0   Michael H    24/04/2021  Enable scan of WiFi networks for selection in Configuration Portal
   1.4.0   K Hoang      29/05/2021  Add support to Nano_RP2040_Connect, RASPBERRY_PI_PICO using Arduino mbed or Arduino-pico core
- *****************************************************************************************************************************/
+  *****************************************************************************************************************************/
 #include "defines.h"
 #include "Credentials.h"
 #include "dynamicParams.h"
-
-#if USE_WIFI101
-  // Fix only for STM32 using WiFi101, thanks to Max Gerhardt in
-  // https://community.platformio.org/t/attachinterrupt-on-wifi101-unidentified/17543
-  extern "C" void attachInterruptMultiArch(uint32_t pin, void *chip_isr, uint32_t mode)
-  {
-    void (*_c)(void) = (void(*)(void))(chip_isr);
-    attachInterrupt(pin, _c, mode);
-  }
-  
-  extern "C" void detachInterruptMultiArch(uint32_t pin)
-  {
-    detachInterrupt(pin);
-  }
-#endif
 
 void heartBeatPrint()
 {
@@ -67,8 +52,8 @@ void check_status()
   static unsigned long checkstatus_timeout = 0;
 
   //KH
-#define HEARTBEAT_INTERVAL    600000L
-  // Print hearbeat every HEARTBEAT_INTERVAL (600) seconds.
+#define HEARTBEAT_INTERVAL    20000L
+  // Print hearbeat every HEARTBEAT_INTERVAL (20) seconds.
   if ((millis() > checkstatus_timeout) || (checkstatus_timeout == 0))
   {
     heartBeatPrint();
@@ -91,7 +76,7 @@ void setup()
 
   delay(200);
 
-  Serial.print(F("\nStart STM32_WiFi on ")); Serial.print(BOARD_NAME);
+  Serial.print(F("\nStart RP2040_WiFi on ")); Serial.print(BOARD_NAME);
   Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
   Serial.println(WIFI_MANAGER_GENERIC_LITE_VERSION);
 
@@ -132,7 +117,7 @@ void setup()
 
   // Set customized DHCP HostName
   WiFiManager_Generic->begin(HOST_NAME);
-  //Or use default Hostname "STM32-WiFi-XXXXXX"
+  //Or use default Hostname "-WIFI-XXXXXX"
   //WiFiManager_Generic->begin();
 }
 

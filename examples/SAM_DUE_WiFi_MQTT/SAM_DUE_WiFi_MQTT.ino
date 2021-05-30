@@ -8,7 +8,7 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.3.0
+  Version: 1.4.0
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -21,14 +21,27 @@
   1.1.3   K Hoang      12/04/2021  Fix invalid "blank" Config Data treated as Valid.
   1.2.0   K Hoang      14/04/2021  Optional one set of WiFi Credentials. Enforce WiFi PWD minimum 8 chars  
   1.3.0   Michael H    24/04/2021  Enable scan of WiFi networks for selection in Configuration Portal
+  1.4.0   K Hoang      29/05/2021  Add support to Nano_RP2040_Connect, RASPBERRY_PI_PICO using Arduino mbed or Arduino-pico core
   *****************************************************************************************************************************/
 /****************************************************************************************************************************
-  You have to modify file ./libraries/Adafruit_MQTT_Library/Adafruit_MQTT.cpp  as follows to avoid dtostrf error
-   
-  //#if defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) ||             \
-  //    defined(ARDUINO_ARCH_SAMD)
-  #if !( ESP32 || ESP8266 || defined(CORE_TEENSY) || defined(STM32F1) || defined(STM32F2) || defined(STM32F3) || defined(STM32F4) || defined(STM32F7) )
-  static char *dtostrf(double val, signed char width, unsigned char prec, char *sout) 
+  You have to modify file ./libraries/Adafruit_MQTT_Library/Adafruit_MQTT.cpp  as follows to avoid ltoa, ultoa and dtostrf error
+
+  #ifdef __cplusplus
+    extern "C" {
+  #endif
+
+  extern char* itoa(int value, char *string, int radix);
+  extern char* ltoa(long value, char *string, int radix);
+  extern char* utoa(unsigned value, char *string, int radix);
+  extern char* ultoa(unsigned long value, char *string, int radix);
+
+  #ifdef __cplusplus
+    } // extern "C"
+  #endif
+
+  #if !( ESP32 || ESP8266 || defined(CORE_TEENSY) || defined(STM32F1) || defined(STM32F2) || defined(STM32F3) || defined(STM32F4) || defined(STM32F7) || \
+       ( defined(ARDUINO_ARCH_RP2040) && !defined(ARDUINO_ARCH_MBED) ) ) 
+  static char *dtostrf(double val, signed char width, unsigned char prec, char *sout)
   {
     char fmt[20];
     sprintf(fmt, "%%%d.%df", width, prec);
@@ -189,8 +202,8 @@ void createNewInstances()
     if (mqtt)
     {
       Serial.println(F("Creating new MQTT object OK"));
-      Serial.print(F("AIO_SERVER = ")); Serial.print(AIO_SERVER); Serial.print(F(", AIO_SERVERPORT = ")); Serial.print(AIO_SERVERPORT);
-      Serial.print(F("AIO_USERNAME = ")); Serial.print(AIO_USERNAME); Serial.print(F(", AIO_KEY = ")); Serial.print(AIO_KEY);
+      Serial.print(F("AIO_SERVER = ")); Serial.print(AIO_SERVER); Serial.print(F(", AIO_SERVERPORT = ")); Serial.println(AIO_SERVERPORT);
+      Serial.print(F("AIO_USERNAME = ")); Serial.print(AIO_USERNAME); Serial.print(F(", AIO_KEY = ")); Serial.println(AIO_KEY);
     }
     else
       Serial.println(F("Creating new MQTT object failed"));
@@ -299,6 +312,25 @@ void setup()
   pinMode(LED_PIN, OUTPUT);
 
   Serial.println("\nStart DUE_WiFiNINA_MQTT on " + String(BOARD_TYPE));
+  Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
+  Serial.println(WIFI_MANAGER_GENERIC_LITE_VERSION);
+
+#if ( USE_WIFI_CUSTOM && USE_ESP_AT_SHIELD )
+    // initialize serial for ESP module
+  EspSerial.begin(115200);
+  // initialize ESP module
+  WiFi.init(&EspSerial);
+
+  Serial.println(F("WiFi shield init done"));
+
+  // check for the presence of the shield
+  if (WiFi.status() == WL_NO_SHIELD)
+  {
+    Serial.println(F("WiFi shield not present"));
+    // don't continue
+    while (true);
+  }
+#endif
 
   WiFiManager_Generic = new WiFiManager_Generic_Lite();
 

@@ -16,6 +16,7 @@
   * [Currently supported Boards](#currently-supported-boards)
   * [Currently supported WiFi shields/modules](#currently-supported-wifi-shieldsmodules)
 * [Changelog](#changelog)
+  * [Major Release v1.4.0](#major-release-v140)
   * [Major Release v1.3.0](#major-release-v130)
   * [Release v1.2.0](#release-v120)
   * [Release v1.1.3](#release-v113)
@@ -41,6 +42,9 @@
   * [7. For STM32 boards](#7-for-stm32-boards) 
     * [7.1. For STM32 boards to use LAN8720](#71-for-stm32-boards-to-use-lan8720)
     * [7.2. For STM32 boards to use Serial1](#72-for-stm32-boards-to-use-serial1)
+  * [8. For RP2040-based boards using Earle Philhower arduino-pico core](#8-for-rp2040-based-boards-using-earle-philhower-arduino-pico-core)
+    * [8.1. To use BOARD_NAME](#81-to-use-board_name)
+    * [8.2. To avoid compile error relating to microsecondsToClockCycles](#82-to-avoid-compile-error-relating-to-microsecondstoclockcycles)
 * [How It Works](#how-it-works)
 * [How to use](#how-to-use)
   * [ 1. Basic usage](#1-basic-usage)
@@ -54,10 +58,12 @@
   * [ 9. To use custom Head Elements](#9-to-use-custom-head-elements)
   * [10. To use CORS Header](#10-to-use-cors-header)
   * [11. To use and input only one set of WiFi SSID and PWD](#11-to-use-and-input-only-one-set-of-wifi-ssid-and-pwd)
+    * [11.1 If you need to use and input only one set of WiFi SSID/PWD](#111-if-you-need-to-use-and-input-only-one-set-of-wifi-ssidpwd)
+    * [11.2 If you need to use both sets of WiFi SSID/PWD](#112-if-you-need-to-use-both-sets-of-wifi-ssidpwd)
   * [12. To enable auto-scan of WiFi networks for selection in Configuration Portal](#12-to-enable-auto-scan-of-wifi-networks-for-selection-in-configuration-portal)
     * [12.1 Enable auto-scan of WiFi networks for selection in Configuration Portal](#121-enable-auto-scan-of-wifi-networks-for-selection-in-configuration-portal)
     * [12.2 Disable manually input SSIDs](#122-disable-manually-input-ssids)
-    * [12.3 Select maximum number of SSIDs in the list](#123-select-maximum-number-of-ssids-in-the-list)  
+    * [12.3 Select maximum number of SSIDs in the list](#123-select-maximum-number-of-ssids-in-the-list)
 * [Examples](#examples)
   * [ 1. MKR1000_WiFi101](examples/MKR1000_WiFi101)
   * [ 2. MKR1000_WiFi101_MQTT](examples/MKR1000_WiFi101_MQTT)
@@ -71,6 +77,8 @@
   * [10. STM32_WiFi_MQTT](examples/STM32_WiFi_MQTT)
   * [11. Teensy_WiFi](examples/Teensy_WiFi)
   * [12. Teensy_WiFi_MQTT](examples/Teensy_WiFi_MQTT)
+  * [13. RP2040_WiFi](examples/RP2040_WiFi) **New**
+  * [14. RP2040_WiFi_MQTT](examples/RP2040_WiFi_MQTT) **New**
 * [So, how it works?](#so-how-it-works)
   * [1. Without SCAN_WIFI_NETWORKS](#1-without-scan_wifi_networks)
   * [2. With SCAN_WIFI_NETWORKS](#2-with-scan_wifi_networks)
@@ -125,7 +133,7 @@ If you have used the full-fledge WiFiManager such as :
 
 and have to write **complicated callback functions** to save custom parameters in SPIFFS/LittleFS/EEPROM, you'd appreciate the simplicity of this Light-Weight Credentials / WiFiManager.
 
-This library is a Light Weight Credentials / WiFi Manager for Generic WiFi (WiFiNINA, WINC1500/WiFi101, WiFiEsp, etc.) modules/shields, specially designed to support **Teensy, SAM DUE, SAMD21 (Nano-33 IoT, Itsy-Bitsy M0, etc), SAMD51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.), STM32F/L/H/G/WB/MP1 (F1, F2, F3, F4, F7, Nucleo-144, etc.), nRF52 (Adafruit NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, NINA_B302_ublox, NINA_B112_ublox, etc.), etc. boards running Generic WiFi modules/shields.** with smaller memory (64+K bytes)
+This library is a Light Weight Credentials / WiFi Manager for Generic WiFi (WiFiNINA, WINC1500/WiFi101, WiFiEsp, etc.) modules/shields, specially designed to support **Teensy, SAM DUE, SAMD21 (Nano-33 IoT, Itsy-Bitsy M0, etc), SAMD51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.), STM32F (F1, F2, F3, F4, F7, Nucleo-144, etc.), nRF52 (Adafruit NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, NINA_B302_ublox, NINA_B112_ublox, etc.), RP2040-based (Nano RP2040 Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040), etc. boards running WiFiNINA modules/shields.** with smaller memory (64+K bytes)
 
 The AVR-family boards (UNO, Nano, Mega, etc.) are **not supported** as they don't have enough memory to run Config Portal WebServer.
 
@@ -146,9 +154,10 @@ New recent features:
 - Examples are designed to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device.
 - Control Config Portal from software or Virtual Switches
 - To permit autoreset after configurable timeout if DRD/MRD or non-persistent forced-CP
-- Use new nRF52 LittleFS, SAMD FlashStorage_SAMD and STM32F/L/H/G/WB/MP1 FlashStorage_STM32 features
+- Use new nRF52, RP2040 LittleFS, SAMD FlashStorage_SAMD and STM32F/L/H/G/WB/MP1 FlashStorage_STM32 features
 - **Scan WiFi networks** for selection in Configuration Portal
 
+---
 
 #### Currently supported Boards
 
@@ -182,6 +191,11 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
   - Generic Flight Controllers
   - Midatronics boards
 
+ 7. RP2040-based boards, such as **Nano RP2040 Connect**, using [**Arduino mbed OS for Nano boards**](https://github.com/arduino/ArduinoCore-mbed).
+
+ 8. RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed) or [**Earle Philhower's arduino-pico** core](https://github.com/earlephilhower/arduino-pico).
+
+---
 
 #### Currently supported WiFi shields/modules
 
@@ -195,6 +209,13 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
 ---
 
 ## Changelog
+
+### Major Release v1.4.0
+
+1. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Earle Philhower's arduino-pico** core](https://github.com/earlephilhower/arduino-pico).
+2. Add support to RP2040-based boards, such as **Nano_RP2040_Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed).
+3. Update `Packages' Patches`
+4. Add `LibraryPatches` for [**Adafruit_MQTT_Library**](https://github.com/adafruit/Adafruit_MQTT_Library) to fix compiler error for RP2040-based and many other boards.
 
 ### Major Release v1.3.0
 
@@ -252,21 +273,23 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
  3. [`Teensy core 1.51`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0, LC) boards
  4. [`Arduino SAM DUE core 1.6.12+`](https://github.com/arduino/ArduinoCore-sam) for SAM DUE ARM Cortex-M3 boards
  5. [`Arduino SAMD core 1.8.11+`](https://www.arduino.cc/en/Guide/ArduinoM0) for SAMD ARM Cortex-M0+ boards. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-samd.svg)](https://github.com/arduino/ArduinoCore-samd/releases/latest)
- 6. [`Adafruit SAMD core 1.6.7+`](https://www.adafruit.com/) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.). [![GitHub release](https://img.shields.io/github/release/adafruit/ArduinoCore-samd.svg)](https://github.com/adafruit/ArduinoCore-samd/releases/latest)
+ 6. [`Adafruit SAMD core 1.7.2+`](https://www.adafruit.com/) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.). [![GitHub release](https://img.shields.io/github/release/adafruit/ArduinoCore-samd.svg)](https://github.com/adafruit/ArduinoCore-samd/releases/latest)
  7. [`Seeeduino SAMD core 1.8.1+`](https://github.com/Seeed-Studio/ArduinoCore-samd) for SAMD21/SAMD51 boards (XIAO M0, Wio Terminal, etc.). [![Latest release](https://img.shields.io/github/release/Seeed-Studio/ArduinoCore-samd.svg)](https://github.com/Seeed-Studio/ArduinoCore-samd/releases/latest/)
- 8. [`Adafruit nRF52 v0.21.0+`](https://www.adafruit.com) for nRF52 boards such as Adafruit NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, **NINA_B302_ublox**, etc. [![GitHub release](https://img.shields.io/github/release/adafruit/Adafruit_nRF52_Arduino.svg)](https://github.com/adafruit/Adafruit_nRF52_Arduino/releases/latest)
- 9. [`Functional-VLPP library v1.0.2+`](https://github.com/khoih-prog/functional-vlpp) to use server's lambda function. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/Functional-Vlpp.svg?)](https://www.ardu-badge.com/Functional-Vlpp)
-10. [`WiFiNINA_Generic library v1.8.5+`](https://github.com/khoih-prog/WiFiNINA_Generic). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiNINA_Generic.svg?)](https://www.ardu-badge.com/WiFiNINA_Generic)
-11. [`WiFiWebServer library v1.1.1+`](https://github.com/khoih-prog/WiFiWebServer). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiWebServer.svg?)](https://www.ardu-badge.com/WiFiWebServer)
-12. [`ESP8266_AT_WebServer library v1.1.2+`](https://github.com/khoih-prog/ESP8266_AT_WebServer) to be able to support ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP8266_AT_WebServer.svg?)](https://www.ardu-badge.com/ESP8266_AT_WebServer)
-13. [`ESP_AT_Lib library v1.0.0+`](https://github.com/khoih-prog/ESP_AT_Lib) if using ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_AT_Lib.svg?)](https://www.ardu-badge.com/ESP_AT_Lib).
-14. [`WiFi101 library v0.16.1+`](https://github.com/arduino-libraries/WiFi101) if using WINC1500/WiFi101 shields (MKR1000, etc.). [![GitHub release](https://img.shields.io/github/release/arduino-libraries/WiFi101.svg)](https://github.com/arduino-libraries/WiFi101/releases/latest)
-15. [`WiFiEspAT library v1.3.1+`](https://github.com/jandrassy/WiFiEspAT) if using ESP8288/ESP32-AT shields. [![GitHub release](https://img.shields.io/github/release/jandrassy/WiFiEspAT.svg)](https://github.com/jandrassy/WiFiEspAT/releases/latest)
-16. [`FlashStorage_SAMD library v1.1.0+`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD21 and SAMD51 boards (ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit Itsy-Bitsy M4, etc.). [![GitHub release](https://img.shields.io/github/release/khoih-prog/FlashStorage_SAMD.svg)](https://github.com/khoih-prog/FlashStorage_SAMD/releases/latest)
-17. [`FlashStorage_STM32 library v1.0.1+`](https://github.com/khoih-prog/FlashStorage_STM32) for STM32F/L/H/G/WB/MP1 boards. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/FlashStorage_STM32.svg?)](https://www.ardu-badge.com/FlashStorage_STM32)
-18. [`DueFlashStorage library v1.0.0+`](https://github.com/sebnil/DueFlashStorage) for SAM DUE. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/DueFlashStorage.svg?)](https://www.ardu-badge.com/DueFlashStorage)
-19. [`Adafruit's LittleFS/InternalFS`](www.adafruit.com) for nRF52
-20. [`DoubleResetDetector_Generic v1.0.3+`](https://github.com/khoih-prog/DoubleResetDetector_Generic). To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/DoubleResetDetector_Generic.svg?)](https://www.ardu-badge.com/DoubleResetDetector_Generic)
+ 8. [`Adafruit nRF52 v0.21.0+`](https://www.adafruit.com) for nRF52 boards such as Adafruit NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, **NINA_B302_ublox**, etc. [![GitHub release](https://img.shields.io/github/release/adafruit/Adafruit_nRF52_Arduino.svg)](https://github.com/adafruit/Adafruit_nRF52_Arduino/releases/latest). **Don't use v0.22.0+ yet because of compiler error. To be fixed.**
+ 9. [`Arduino mbed_rp2040 core 2.1.0+`](https://github.com/arduino/ArduinoCore-mbed) for Arduino (Use Arduino Board Manager) RP2040-based boards, such as **Arduino Nano RP2040 Connect, RASPBERRY_PI_PICO, etc.**. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
+10. [`Earle Philhower's arduino-pico core v1.6.2+`](https://github.com/earlephilhower/arduino-pico) for RP2040-based boards such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
+11. [`Functional-VLPP library v1.0.2+`](https://github.com/khoih-prog/functional-vlpp) to use server's lambda function. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/Functional-Vlpp.svg?)](https://www.ardu-badge.com/Functional-Vlpp)
+12. [`WiFiNINA_Generic library v1.8.10-1+`](https://github.com/khoih-prog/WiFiNINA_Generic). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiNINA_Generic.svg?)](https://www.ardu-badge.com/WiFiNINA_Generic)
+13. [`WiFiWebServer library v1.2.0+`](https://github.com/khoih-prog/WiFiWebServer). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiWebServer.svg?)](https://www.ardu-badge.com/WiFiWebServer)
+14. [`ESP8266_AT_WebServer library v1.3.0+`](https://github.com/khoih-prog/ESP8266_AT_WebServer) to be able to support ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP8266_AT_WebServer.svg?)](https://www.ardu-badge.com/ESP8266_AT_WebServer)
+15. [`ESP_AT_Lib library v1.3.0+`](https://github.com/khoih-prog/ESP_AT_Lib) if using ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_AT_Lib.svg?)](https://www.ardu-badge.com/ESP_AT_Lib).
+16. [`WiFi101 library v0.16.1+`](https://github.com/arduino-libraries/WiFi101) if using WINC1500/WiFi101 shields (MKR1000, etc.). [![GitHub release](https://img.shields.io/github/release/arduino-libraries/WiFi101.svg)](https://github.com/arduino-libraries/WiFi101/releases/latest)
+17. [`WiFiEspAT library v1.3.1+`](https://github.com/jandrassy/WiFiEspAT) if using ESP8288/ESP32-AT shields. [![GitHub release](https://img.shields.io/github/release/jandrassy/WiFiEspAT.svg)](https://github.com/jandrassy/WiFiEspAT/releases/latest)
+18. [`FlashStorage_SAMD library v1.1.0+`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD21 and SAMD51 boards (ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit Itsy-Bitsy M4, etc.). [![GitHub release](https://img.shields.io/github/release/khoih-prog/FlashStorage_SAMD.svg)](https://github.com/khoih-prog/FlashStorage_SAMD/releases/latest)
+19. [`FlashStorage_STM32 library v1.1.0+`](https://github.com/khoih-prog/FlashStorage_STM32) for STM32F/L/H/G/WB/MP1 boards. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/FlashStorage_STM32.svg?)](https://www.ardu-badge.com/FlashStorage_STM32)
+20. [`DueFlashStorage library v1.0.0+`](https://github.com/sebnil/DueFlashStorage) for SAM DUE. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/DueFlashStorage.svg?)](https://www.ardu-badge.com/DueFlashStorage)
+21. [`Adafruit's LittleFS/InternalFS`](www.adafruit.com) for nRF52
+22. [`DoubleResetDetector_Generic v1.3.0+`](https://github.com/khoih-prog/DoubleResetDetector_Generic). To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/DoubleResetDetector_Generic.svg?)](https://www.ardu-badge.com/DoubleResetDetector_Generic)
 
 ---
 
@@ -298,6 +321,8 @@ You can also use this link [![arduino-library-badge](https://www.ardu-badge.com/
 ### Packages' Patches
 
 #### 1. For Adafruit nRF52840 and nRF52832 boards
+
+**Don't use v0.22.0+ yet because of compiler error. To be fixed.**
 
 **To be able to compile, run and automatically detect and display BOARD_NAME on nRF52840/nRF52832 boards**, you have to copy the whole [nRF52 0.21.0](Packages_Patches/adafruit/hardware/nrf52/0.21.0) directory into Adafruit nRF52 directory (~/.arduino15/packages/adafruit/hardware/nrf52/0.21.0). 
 
@@ -394,11 +419,11 @@ Whenever the above-mentioned compiler error issue is fixed with the new Arduino 
 
 #### 5. For Adafruit SAMD boards
  
- ***To be able to automatically detect and display BOARD_NAME on Adafruit SAMD (Itsy-Bitsy M4, etc) boards***, you have to copy the file [Adafruit SAMD platform.txt](Packages_Patches/adafruit/hardware/samd/1.6.6) into Adafruit samd directory (~/.arduino15/packages/adafruit/hardware/samd/1.6.6). 
+ ***To be able to automatically detect and display BOARD_NAME on Adafruit SAMD (Itsy-Bitsy M4, etc) boards***, you have to copy the file [Adafruit SAMD platform.txt](Packages_Patches/adafruit/hardware/samd/1.7.1) into Adafruit samd directory (~/.arduino15/packages/adafruit/hardware/samd/1.7.1). 
 
-Supposing the Adafruit SAMD core version is 1.6.6. This file must be copied into the directory:
+Supposing the Adafruit SAMD core version is 1.7.1. This file must be copied into the directory:
 
-- `~/.arduino15/packages/adafruit/hardware/samd/1.6.6/platform.txt`
+- `~/.arduino15/packages/adafruit/hardware/samd/1.7.1/platform.txt`
 
 Whenever a new version is installed, remember to copy this file into the new version directory. For example, new version is x.yy.zz
 This file must be copied into the directory:
@@ -420,7 +445,7 @@ This file must be copied into the directory:
 
 #### 7. For STM32 boards
 
-#### 7.1. For STM32 boards to use LAN8720
+#### 7.1 For STM32 boards to use LAN8720
 
 To use LAN8720 on some STM32 boards 
 
@@ -442,7 +467,7 @@ theses files must be copied into the corresponding directory:
 - `~/.arduino15/packages/STM32/hardware/stm32/x.yy.zz/system/STM32F7xx/stm32f7xx_hal_conf_default.h
 
 
-#### 7.2. For STM32 boards to use Serial1
+#### 7.2 For STM32 boards to use Serial1
 
 **To use Serial1 on some STM32 boards without Serial1 definition (Nucleo-144 NUCLEO_F767ZI, Nucleo-64 NUCLEO_L053R8, etc.) boards**, you have to copy the files [STM32 variant.h](Packages_Patches/STM32/hardware/stm32/1.9.0) into STM32 stm32 directory (~/.arduino15/packages/STM32/hardware/stm32/1.9.0). You have to modify the files corresponding to your boards, this is just an illustration how to do.
 
@@ -456,6 +481,38 @@ theses files must be copied into the corresponding directory:
 
 - `~/.arduino15/packages/STM32/hardware/stm32/x.yy.zz/variants/NUCLEO_F767ZI/variant.h`
 - `~/.arduino15/packages/STM32/hardware/stm32/x.yy.zz/variants/NUCLEO_L053R8/variant.h`
+
+#### 8. For RP2040-based boards using [Earle Philhower arduino-pico core](https://github.com/earlephilhower/arduino-pico)
+
+#### 8.1 To use BOARD_NAME
+
+ **To be able to automatically detect and display BOARD_NAME on RP2040-based boards (RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040, GENERIC_RP2040, etc) boards**, you have to copy the file [RP2040 platform.txt](Packages_Patches/rp2040/hardware/rp2040/1.4.0) into rp2040 directory (~/.arduino15/packages/rp2040/hardware/rp2040/1.4.0). 
+
+Supposing the rp2040 core version is 1.4.0. This file must be copied into the directory:
+
+- `~/.arduino15/packages/rp2040/hardware/rp2040/1.4.0/platform.txt`
+
+Whenever a new version is installed, remember to copy this file into the new version directory. For example, new version is x.yy.zz
+This file must be copied into the directory:
+
+- `~/.arduino15/packages/rp2040/hardware/rp2040/x.yy.zz/platform.txt`
+
+With core after v1.5.0, this step is not necessary anymore thanks to the PR [Add -DBOARD_NAME="{build.board}" #136](https://github.com/earlephilhower/arduino-pico/pull/136).
+
+#### 8.2 To avoid compile error relating to microsecondsToClockCycles
+
+Some libraries, such as [Adafruit DHT-sensor-library](https://github.com/adafruit/DHT-sensor-library), require the definition of microsecondsToClockCycles(). **To be able to compile and run on RP2040-based boards**, you have to copy the files in [**RP2040 Arduino.h**](Packages_Patches/rp2040/hardware/rp2040/1.4.0/cores/rp2040/Arduino.h) into rp2040 directory (~/.arduino15/packages/rp2040/hardware/rp2040/1.4.0).
+
+Supposing the rp2040 core version is 1.4.0. This file must be copied to replace:
+
+- `~/.arduino15/packages/rp2040/hardware/rp2040/1.4.0/cores/rp2040/Arduino.h`
+
+Whenever a new version is installed, remember to copy this file into the new version directory. For example, new version is x.yy.zz
+This file must be copied to replace:
+
+- `~/.arduino15/packages/rp2040/hardware/rp2040/x.yy.zz/cores/rp2040/Arduino.h`
+
+With core after v1.5.0, this step is not necessary anymore thanks to the PR [Add defs for compatibility #142](https://github.com/earlephilhower/arduino-pico/pull/142).
 
 
 ---
@@ -684,7 +741,7 @@ This is for normal use-cases in which users can only select an SSID from a scann
 
 #### 12.3 Select maximum number of SSIDs in the list
 
-The maximum number of SSIDs in the list is seletable from 2 to 15 (for ESP8266/ESP32-AT shields, from 2-6). If invalid number of SSIDs is selected, the default number of 10 will be used.
+The maximum number of SSIDs in the list is selectable from 2 to 15 (for ESP8266/ESP32-AT shields, from 2-6). If invalid number of SSIDs is selected, the default number of 10 will be used.
 
 
 ```
@@ -709,7 +766,9 @@ The maximum number of SSIDs in the list is seletable from 2 to 15 (for ESP8266/E
 10. [STM32_WiFi_MQTT](examples/STM32_WiFi_MQTT) 
 11. [Teensy_WiFi](examples/Teensy_WiFi)
 12. [Teensy_WiFi_MQTT](examples/Teensy_WiFi_MQTT)
-
+13. [RP2040_WiFi](examples/RP2040_WiFi) **New**
+14. [RP2040_WiFi_MQTT](examples/RP2040_WiFi_MQTT) **New**
+ 
 ---
 ---
 
@@ -772,7 +831,7 @@ If you're already connected to a listed WiFi AP and don't want to change anythin
 
 See this example and modify as necessary
 
-#### 1. To always load [Default Credentials](examples//Credentials.h) and override Config Portal data
+#### 1. To always load [Default Credentials](examples/SAMD_WiFi/Credentials.h) and override Config Portal data
 
 ```
 // Used mostly for development and debugging. FORCES default values to be loaded each run.
@@ -780,7 +839,7 @@ See this example and modify as necessary
 bool LOAD_DEFAULT_CONFIG_DATA = true;
 ```
 
-#### 2. To load [Default Credentials](examples//Credentials.h) when there is no valid Credentials.
+#### 2. To load [Default Credentials](examples/SAMD_WiFi/Credentials.h) when there is no valid Credentials.
 
 Config Portal data input will be override DEFAULT_CONFIG_DATA
 
@@ -1129,7 +1188,7 @@ void loop()
 #define DEBUG_WIFI_WEBSERVER_PORT     Serial
 #define WIFI_GENERIC_DEBUG_OUTPUT     Serial
 
-#define _WIFI_GENERIC_LOGLEVEL_       4
+#define _WIFI_GENERIC_LOGLEVEL_       1
 
 #define DRD_GENERIC_DEBUG             true
 
@@ -1344,12 +1403,29 @@ void loop()
 
 /////////////////////////////////////////////
 
+#define SCAN_WIFI_NETWORKS                  true
+
+// To be able to manually input SSID, not from a scanned SSID lists
+#define MANUAL_SSID_INPUT_ALLOWED           true
+
+/////////////////////////////////////////////
+
 #if (USE_WIFI_CUSTOM && USE_ESP_AT_SHIELD)
-  // ESP-AT can use longer than 2K HTML and DYNAMIC_PARAMETERS
+  // ESP-AT can't use longer than 2K HTML and DYNAMIC_PARAMETERS
   #undef USE_DYNAMIC_PARAMETERS
   #define USE_DYNAMIC_PARAMETERS                   false
   #warning Disable USE_DYNAMIC_PARAMETERS for ESP_AT_SHIELD
+
+  // From 2-6 to keep HTML short for ESP8266-AT. Limited 6 in WiFiEspAT library anyway
+  #define MAX_SSID_IN_LIST                  4
+
+#else
+
+  // From 2-15
+  #define MAX_SSID_IN_LIST                  8
 #endif
+
+/////////////////////////////////////////////
 
 #include <WiFiManager_Generic_Lite_SAMD.h>
 
@@ -1528,7 +1604,7 @@ This is the terminal output when running [**SAMD_WiFi**](examples/SAMD_WiFi) exa
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.3.0
+WiFiManager_Generic_Lite v1.4.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xffffffff
 No doubleResetDetected
@@ -1629,7 +1705,7 @@ FFFFFFFFF
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.3.0
+WiFiManager_Generic_Lite v1.4.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1693,7 +1769,7 @@ HHHHHHHHHH HHHHHHHHHH
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.3.0
+WiFiManager_Generic_Lite v1.4.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1757,7 +1833,7 @@ FF
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.3.0
+WiFiManager_Generic_Lite v1.4.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1813,7 +1889,7 @@ HHHHHHHHH HHHHHHHHHH
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.3.0
+WiFiManager_Generic_Lite v1.4.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d01234
 doubleResetDetected
@@ -1874,7 +1950,7 @@ This is the terminal output when running [**SAMD_WiFi**](examples/SAMD_WiFi) exa
 
 ```
 Start SAMD_WiFi on ITSYBITSY_M4 with Custom using Custom WiFi Library
-WiFiManager_Generic_Lite v1.3.0
+WiFiManager_Generic_Lite v1.4.0
 [ESP_AT] Use ES8266-AT Command
 WiFi shield init done
 [WG] Hostname=SAMD-Master-Controller
@@ -1913,7 +1989,7 @@ F
 
 ```
 Start SAMD_WiFi on ITSYBITSY_M4 with Custom using Custom WiFi Library
-WiFiManager_Generic_Lite v1.3.0
+WiFiManager_Generic_Lite v1.4.0
 [ESP_AT] Use ES8266-AT Command
 WiFi shield init done
 [WG] Hostname=SAMD-Master-Controller
@@ -1969,6 +2045,13 @@ Sometimes, the library will only work if you update the `Generic WiFi module/shi
 ---
 
 ## Releases
+
+### Major Release v1.4.0
+
+1. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Earle Philhower's arduino-pico** core](https://github.com/earlephilhower/arduino-pico).
+2. Add support to RP2040-based boards, such as **Nano_RP2040_Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed).
+3. Update `Packages' Patches`
+4. Add `LibraryPatches` for [**Adafruit_MQTT_Library**](https://github.com/adafruit/Adafruit_MQTT_Library) to fix compiler error for RP2040-based and many other boards.
 
 ### Major Release v1.3.0
 
@@ -2052,11 +2135,15 @@ Submit issues to: [WiFiManager_Generic_Lite issues](https://github.com/khoih-pro
 18. Add support to **Seeeduino SAMD21/SAMD51 boards (SEEED_WIO_TERMINAL, SEEED_FEMTO_M0, SEEED_XIAO_M0, Wio_Lite_MG126, WIO_GPS_BOARD, SEEEDUINO_ZERO, SEEEDUINO_LORAWAN, SEEED_GROVE_UI_WIRELESS, etc.)**
 19. Add Table of Contents and Version String
 20. Use more efficient **FlashStorage_STM32**](https://github.com/khoih-prog/FlashStorage_STM32) and [**FlashStorage_SAMD**](https://github.com/khoih-prog/FlashStorage_SAMD) library versions.
-21. Configurable **Customs HTML Headers**, including Customs Style, Customs Gead Elements, CORS Header
+21. Configurable **Customs HTML Headers**, including Customs Style, Customs Head Elements, CORS Header
 22. Add functions to control Config Portal from software or Virtual Switches.
 23. Permit optionally inputting one set of WiFi SSID/PWD by using `REQUIRE_ONE_SET_SSID_PW == true`
 24. Enforce WiFi Password minimum length of 8 chars
 25. Enable **scan of WiFi networks** for selection in Configuration Portal
+26. Add support to **Arduino Nano RP2040 Connect** using [**Arduino mbed OS for Nano boards**](https://github.com/arduino/ArduinoCore-mbed).
+27. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Earle Philhower's arduino-pico** core](https://github.com/earlephilhower/arduino-pico).
+28. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed)
+29. Add `LibraryPatches` for [**Adafruit_MQTT_Library**](https://github.com/adafruit/Adafruit_MQTT_Library) to fix compiler error for RP2040-based and many other boards.
 
 ---
 ---

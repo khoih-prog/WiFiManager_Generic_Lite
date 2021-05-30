@@ -1,4 +1,4 @@
-/****************************************************************************************************************************
+/*******************************************************************************************************************************
   WiFiManager_Generic_Lite_Debug.h
   For Mega, Teensy, SAM DUE, SAMD and STM32 boards using WIFI_GENERIC modules/shields, 
   using much less code to support boards with smaller memory
@@ -9,7 +9,7 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.3.0
+  Version: 1.4.0
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -22,7 +22,8 @@
   1.1.3   K Hoang      12/04/2021  Fix invalid "blank" Config Data treated as Valid.
   1.2.0   K Hoang      14/04/2021  Optional one set of WiFi Credentials. Enforce WiFi PWD minimum 8 chars  
   1.3.0   Michael H    24/04/2021  Enable scan of WiFi networks for selection in Configuration Portal
- *****************************************************************************************************************************/
+  1.4.0   K Hoang      29/05/2021  Add support to Nano_RP2040_Connect, RASPBERRY_PI_PICO using Arduino mbed or Arduino-pico core
+ ********************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_Debug_h
 #define WiFiManager_Generic_Lite_Debug_h
