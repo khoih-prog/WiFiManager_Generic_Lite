@@ -14,8 +14,8 @@ If you don't find anything, please [open a new issue](https://github.com/khoih-p
 
 Please ensure to specify the following:
 
-* Arduino IDE version (e.g. 1.8.13) or Platform.io version
-* Board Core Version (e.g. Arduino SAMD core v1.8.11, ESP8266 core v2.7.4, etc.)
+* Arduino IDE version (e.g. 1.8.16) or Platform.io version
+* `SAMD` Core Version (e.g. Arduino SAMD core v1.8.11, Adafruit SAMD core v1.7.5, Seeed Studio SAMD v1.8.2)
 * Contextual information (e.g. what you were trying to achieve)
 * Simplest possible steps to reproduce
 * Anything that might be relevant in your opinion, such as:
@@ -26,10 +26,10 @@ Please ensure to specify the following:
 ### Example
 
 ```
-Arduino IDE version: 1.8.13
+Arduino IDE version: 1.8.16
 Arduino SAMD Core Version 1.8.11
 OS: Ubuntu 20.04 LTS
-Linux xy-Inspiron-3593 5.4.0-72-generic #80-Ubuntu SMP Mon Apr 12 17:35:00 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+Linux xy-Inspiron-3593 5.4.0-84-generic #94-Ubuntu SMP Thu Aug 26 20:27:37 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
 
 Context:
 The board couldn't autoreconnect to Local Blynk Server after router power recycling.
@@ -40,6 +40,7 @@ Steps to reproduce:
 3. ...
 4. ...
 ```
+
 
 ### Sending Feature Requests
 
