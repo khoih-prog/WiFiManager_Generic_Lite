@@ -8,20 +8,6 @@
   
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.4.0
-
-  Version Modified By   Date        Comments
-  ------- -----------  ----------   -----------
-  1.0.0   K Hoang      04/02/2021  Initial coding for generic boards using generic WiFi.
-  1.0.1   K Hoang      05/02/2021  Fix bug. Drop Mega support due to marginal memory. 
-  1.0.2   K Hoang      06/02/2021  Add support to STM32F/L/H/G/WB/MP1 using ATWINC1500/WiFi101
-  1.1.0   K Hoang      21/02/2021  Optimize code and use better FlashStorage_SAMD and FlashStorage_STM32. 
-                                   Add customs HTML header feature. Fix bug.
-  1.1.2   K Hoang      30/03/2021  Fix MultiWiFi connection bug.
-  1.1.3   K Hoang      12/04/2021  Fix invalid "blank" Config Data treated as Valid.
-  1.2.0   K Hoang      14/04/2021  Optional one set of WiFi Credentials. Enforce WiFi PWD minimum 8 chars  
-  1.3.0   Michael H    24/04/2021  Enable scan of WiFi networks for selection in Configuration Portal
-  1.4.0   K Hoang      29/05/2021  Add support to Nano_RP2040_Connect, RASPBERRY_PI_PICO using Arduino mbed or Arduino-pico core
   *****************************************************************************************************************************/
 /****************************************************************************************************************************
   You have to modify file ./libraries/Adafruit_MQTT_Library/Adafruit_MQTT.cpp as follows to avoid dtostrf error, if exists

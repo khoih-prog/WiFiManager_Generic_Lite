@@ -1,6 +1,6 @@
 {
   "name": "WiFiManager_Generic_Lite",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "keywords": "wifi, multi-wifi, WiFiNINA, WiFi101, ESP32-AT, ESP8266-AT, Teensy, SAM-DUE, SAMD, STM32, nRF52, rpi-pico, rp2040, nano-rp2040-connect, config-portal, Double-Reset, dynamic-params, LittleFS, FlashStorage-SAMD, FlashStorage-STM32, Credentials, wi-fi, FlashStorage",
   "description": "Library to configure MultiWiFi/Credentials at runtime for Teensy, SAM DUE, SAMD21, SAMD51, STM32F/L/H/G/WB/MP1, nRF52, RP2040-based (Nano RP2040 Connect, RASPBERRY_PI_PICO) boards, etc. using Generic WiFi (WiFiNINA, WiFi101, ESP8266-AT, ESP32-AT, etc.) modules/shields. You can also specify DHCP HostName, static AP and STA IP. Use much less memory compared to full-fledge WiFiManager. Config Portal will be auto-adjusted to match the number of dynamic custom parameters. Optional default Credentials to be autoloaded into Config Portal to use or change instead of manually input. Credentials are saved in LittleFS/InternalFS, (emulated-)EEPROM, FlashStorage_SAMD, FlashStorage_STM32 or DueFlashStorage. New powerful-yet-simple-to-use feature to enable adding dynamic custom parameters from sketch and input using the same Config Portal. DoubleDetectDetector as well as Virtual Switches feature permits entering Config Portal as requested.",
   "authors":
@@ -25,7 +25,7 @@
   "dependencies": 
   [
     {
-      "owner": "khoih.prog",
+      "owner": "khoih-prog",
       "name": "WiFiNINA_Generic",
       "version": "^1.8.13",
       "platforms": ["*"]
@@ -33,17 +33,17 @@
     {
       "owner": "khoih-prog",
       "name": "DoubleResetDetector_Generic",
-      "version": "^1.7.0",
+      "version": "^1.7.3",
       "platforms": ["*"]
     },
     {
-      "owner": "khoih.prog",
+      "owner": "khoih-prog",
       "name": "FlashStorage_SAMD",
-      "version": "^1.2.0",
+      "version": "^1.2.1",
       "platforms": ["*"]
     },
     {
-      "owner": "khoih.prog",
+      "owner": "khoih-prog",
       "name": "FlashStorage_STM32",
       "version": "^1.1.0",
       "platforms": ["*"]
@@ -57,7 +57,7 @@
     {
       "owner": "khoih-prog",
       "name": "WiFiWebServer",
-      "version": "^1.4.0",
+      "version": "^1.4.1",
       "platforms": ["*"]
     },
     {
@@ -65,6 +65,10 @@
       "name": "ESP8266_AT_WebServer",
       "version": "^1.4.0",
       "platforms": ["*"]
+    },
+    {
+      "name": "WiFi101",
+      "version": "https://github.com/khoih-prog/WiFi101"
     },
     {
       "owner": "khoih-prog",
