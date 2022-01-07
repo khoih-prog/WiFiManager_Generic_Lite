@@ -8,7 +8,7 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.4.1
+  Version: 1.5.0
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -22,7 +22,8 @@
   1.2.0   K Hoang      14/04/2021  Optional one set of WiFi Credentials. Enforce WiFi PWD minimum 8 chars  
   1.3.0   Michael H    24/04/2021  Enable scan of WiFi networks for selection in Configuration Portal
   1.4.0   K Hoang      29/05/2021  Add support to Nano_RP2040_Connect, RASPBERRY_PI_PICO using Arduino mbed or Arduino-pico core
-  1.4.1   K Hoang      12/10/2021 Update `platform.ini` and `library.json`
+  1.4.1   K Hoang      12/10/2021  Update `platform.ini` and `library.json`
+  1.5.0   K Hoang      07/01/2022  Configurable WIFI_RECON_INTERVAL. Add support to RP2040 using arduino-pico core
  ********************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_SAMD_h
@@ -41,7 +42,7 @@
   #error This code is intended to run on the SAMD platform! Please check your Tools->Board setting.  
 #endif
 
-#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.4.1"
+#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.5.0"
 
 #if (USE_WIFI_NINA || USE_WIFI101)
   #include <WiFiWebServer.h>
@@ -436,6 +437,16 @@ class WiFiManager_Generic_Lite
   #endif
 #endif
 
+#if !defined(WIFI_RECON_INTERVAL)      
+  #define WIFI_RECON_INTERVAL       0         // default 0s between reconnecting WiFi
+#else
+  #if (WIFI_RECON_INTERVAL < 0)
+    #define WIFI_RECON_INTERVAL     0
+  #elif  (WIFI_RECON_INTERVAL > 600000)
+    #define WIFI_RECON_INTERVAL     600000    // Max 10min
+  #endif
+#endif
+
     void run()
     {
       static int retryTimes = 0;
@@ -447,6 +458,10 @@ class WiFiManager_Generic_Lite
       static unsigned long checkstatus_timeout = 0;
       #define WIFI_STATUS_CHECK_INTERVAL    5000L
       
+      static uint32_t curMillis;
+      
+      curMillis = millis();
+      
       //// New DRD ////
       // Call the double reset detector loop method every so often,
       // so that it can recognise when the timeout expires.
@@ -455,7 +470,7 @@ class WiFiManager_Generic_Lite
       drd->loop();
       //// New DRD ////
          
-      if ( !configuration_mode && (millis() > checkstatus_timeout) )
+      if ( !configuration_mode && (curMillis > checkstatus_timeout) )
       {       
         if (WiFi.status() == WL_CONNECTED)
         {
@@ -475,7 +490,7 @@ class WiFiManager_Generic_Lite
           }
         }
         
-        checkstatus_timeout = millis() + WIFI_STATUS_CHECK_INTERVAL;
+        checkstatus_timeout = curMillis + WIFI_STATUS_CHECK_INTERVAL;
       }    
 
       // Lost connection in running. Give chance to reconfig.
@@ -516,12 +531,31 @@ class WiFiManager_Generic_Lite
           // Not in config mode, try reconnecting before forcing to config mode
           if ( !wifi_connected )
           {
+            
+ 
+#if (WIFI_RECON_INTERVAL > 0)
+
+            static uint32_t lastMillis = 0;
+            
+            if ( (lastMillis == 0) || (curMillis - lastMillis) > WIFI_RECON_INTERVAL )
+            {
+              lastMillis = curMillis;
+              
+              WG_LOGERROR(F("r:WLost.ReconW"));
+               
+              if (connectMultiWiFi(RETRY_TIMES_RECONNECT_WIFI))
+              {
+                WG_LOGERROR(F("r:WOK"));
+              }
+            }
+#else
             WG_LOGERROR(F("r:WLost.ReconW"));
             
             if (connectMultiWiFi(RETRY_TIMES_RECONNECT_WIFI))
             {
               WG_LOGERROR(F("r:WOK"));
             }
+#endif            
           }
         }
       }
@@ -1364,6 +1398,16 @@ class WiFiManager_Generic_Lite
 
     //////////////////////////////////////////////
     
+// Max times to try WiFi per loop() iteration. To avoid blocking issue in loop()
+// Default 1 and minimum 1.
+#if !defined(MAX_NUM_WIFI_RECON_TRIES_PER_LOOP)      
+  #define MAX_NUM_WIFI_RECON_TRIES_PER_LOOP     1
+#else
+  #if (MAX_NUM_WIFI_RECON_TRIES_PER_LOOP < 1)  
+    #define MAX_NUM_WIFI_RECON_TRIES_PER_LOOP     1
+  #endif
+#endif
+
     // New connection logic from v1.2.0
     bool connectMultiWiFi(int retry_time)
     {
@@ -1423,7 +1467,9 @@ class WiFiManager_Generic_Lite
       
       uint8_t numIndexTried = 0;
       
-      while ( !wifi_connected && (numIndexTried++ < NUM_WIFI_CREDENTIALS) )
+      uint8_t numWiFiReconTries = 0;
+     
+      while ( !wifi_connected && (numIndexTried++ < NUM_WIFI_CREDENTIALS) && (numWiFiReconTries++ < MAX_NUM_WIFI_RECON_TRIES_PER_LOOP) )
       {         
         while ( 0 < retry_time )
         {      
