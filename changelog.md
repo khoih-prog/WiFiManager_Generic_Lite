@@ -12,7 +12,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
-  * [Release v1.5.1](#release-v141)
+  * [Release v1.5.1](#release-v151)
   * [Major Release v1.5.0](#major-release-v150)
   * [Release v1.4.1](#release-v141)
   * [Major Release v1.4.0](#major-release-v140)
