@@ -8,7 +8,7 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.5.0
+  Version: 1.5.1
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -24,16 +24,20 @@
   1.4.0   K Hoang      29/05/2021  Add support to Nano_RP2040_Connect, RASPBERRY_PI_PICO using Arduino mbed or Arduino-pico core
   1.4.1   K Hoang      12/10/2021  Update `platform.ini` and `library.json`
   1.5.0   K Hoang      07/01/2022  Configurable WIFI_RECON_INTERVAL. Add support to RP2040 using arduino-pico core
+  1.5.1   K Hoang      26/01/2022  Update to be compatible with new FlashStorage libraries. Add support to more SAMD/STM32 boards
  ********************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_SAMD_h
 #define WiFiManager_Generic_Lite_SAMD_h
 
-#if    ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
-      || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) \
-      || defined(ARDUINO_SAMD_MKRGSM1400) || defined(ARDUINO_SAMD_MKRNB1500) || defined(ARDUINO_SAMD_MKRVIDOR4000) || defined(__SAMD21G18A__) \
-      || defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS) || defined(__SAMD21E18A__) || defined(__SAMD51__) || defined(__SAMD51J20A__) || defined(__SAMD51J19A__) \
-      || defined(__SAMD51G19A__) || defined(__SAMD51P19A__) || defined(__SAMD21G18A__) )
+#if  ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
+    || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) \
+    || defined(ARDUINO_SAMD_MKRGSM1400) || defined(ARDUINO_SAMD_MKRNB1500) || defined(ARDUINO_SAMD_MKRVIDOR4000) \
+    || defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS) || defined(__SAMD51__) || defined(__SAMD51J20A__) \
+    || defined(__SAMD51J19A__) || defined(__SAMD51G19A__) || defined(__SAMD51P19A__)  \
+    || defined(__SAMD21E15A__) || defined(__SAMD21E16A__) || defined(__SAMD21E17A__) || defined(__SAMD21E18A__) \
+    || defined(__SAMD21G15A__) || defined(__SAMD21G16A__) || defined(__SAMD21G17A__) || defined(__SAMD21G18A__) \
+    || defined(__SAMD21J15A__) || defined(__SAMD21J16A__) || defined(__SAMD21J17A__) || defined(__SAMD21J18A__) )
   #if defined(WIFI_GENERIC_USE_SAMD)
     #undef WIFI_GENERIC_USE_SAMD
   #endif
@@ -42,7 +46,16 @@
   #error This code is intended to run on the SAMD platform! Please check your Tools->Board setting.  
 #endif
 
-#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.5.0"
+#ifndef WIFI_MANAGER_GENERIC_LITE_VERSION
+  #define WIFI_MANAGER_GENERIC_LITE_VERSION            "WiFiManager_Generic_Lite v1.5.1"
+
+  #define WIFI_MANAGER_GENERIC_LITE_VERSION_MAJOR      1
+  #define WIFI_MANAGER_GENERIC_LITE_VERSION_MINOR      5
+  #define WIFI_MANAGER_GENERIC_LITE_VERSION_PATCH      1
+
+#define WIFI_MANAGER_GENERIC_LITE_VERSION_INT        1005001
+
+#endif
 
 #if (USE_WIFI_NINA || USE_WIFI101)
   #include <WiFiWebServer.h>
@@ -51,8 +64,7 @@
 #endif
 
 // Include EEPROM-like API for FlashStorage
-//#include <FlashAsEEPROM.h>                //https://github.com/cmaglie/FlashStorage
-#include <FlashAsEEPROM_SAMD.h>                //https://github.com/khoih-prog/FlashStorage_SAMD
+#include <FlashStorage_SAMD.h>                //https://github.com/khoih-prog/FlashStorage_SAMD
 #include <WiFiManager_Generic_Lite_Debug.h>
 
 #ifndef USING_CUSTOMS_STYLE

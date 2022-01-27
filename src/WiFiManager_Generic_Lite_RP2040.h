@@ -8,7 +8,7 @@
 
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
-  Version: 1.5.0
+  Version: 1.5.1
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -24,6 +24,7 @@
   1.4.0   K Hoang      29/05/2021  Add support to Nano_RP2040_Connect, RASPBERRY_PI_PICO using Arduino mbed or Arduino-pico core
   1.4.1   K Hoang      12/10/2021  Update `platform.ini` and `library.json`
   1.5.0   K Hoang      07/01/2022  Configurable WIFI_RECON_INTERVAL. Add support to RP2040 using arduino-pico core
+  1.5.1   K Hoang      26/01/2022  Update to be compatible with new FlashStorage libraries. Add support to more SAMD/STM32 boards
  ********************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_RP2040_h
@@ -39,7 +40,16 @@
   #error This code is intended to run on the RP2040 platform! Please check your Tools->Board setting.  
 #endif
 
-#define WIFI_MANAGER_GENERIC_LITE_VERSION        "WiFiManager_Generic_Lite v1.5.0"
+#ifndef WIFI_MANAGER_GENERIC_LITE_VERSION
+  #define WIFI_MANAGER_GENERIC_LITE_VERSION            "WiFiManager_Generic_Lite v1.5.1"
+
+  #define WIFI_MANAGER_GENERIC_LITE_VERSION_MAJOR      1
+  #define WIFI_MANAGER_GENERIC_LITE_VERSION_MINOR      5
+  #define WIFI_MANAGER_GENERIC_LITE_VERSION_PATCH      1
+
+#define WIFI_MANAGER_GENERIC_LITE_VERSION_INT        1005001
+
+#endif
 
 #if (USE_WIFI_NINA || USE_WIFI101)
   #include <WiFiWebServer.h>
