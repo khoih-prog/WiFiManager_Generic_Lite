@@ -12,6 +12,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Release v1.6.0](#release-v160)
   * [Release v1.5.1](#release-v151)
   * [Major Release v1.5.0](#major-release-v150)
   * [Release v1.4.1](#release-v141)
@@ -30,6 +31,14 @@
 
 
 ## Changelog
+
+### Release v1.6.0
+
+1. Optimize code by passing by `reference` instead of `value`
+2. Optional `Board_Name` in Config Portal. Check [option to remove board name from web page #25](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/25)
+3. Add optional `CONFIG_MODE_LED` to be `ON` when in Config Portal mode. Check [Knowing when configuration mode is on or off #26](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/26)
+4. Add function `isConfigMode()` to signal system is in Config Portal mode.
+5. Update `Packages' Patches`
 
 ### Release v1.5.1
 
