@@ -268,7 +268,7 @@ You can also use this link [![arduino-library-badge](https://www.ardu-badge.com/
 
 1. Install [VS Code](https://code.visualstudio.com/)
 2. Install [PlatformIO](https://platformio.org/platformio-ide)
-3. Install [**WiFiManager_Generic_Lite** library](https://platformio.org/lib/show/11761/WiFiManager_Generic_Lite) by using [Library Manager](https://platformio.org/lib/show/11761/WiFiManager_Generic_Lite/installation). Search for **WiFiManager_Generic_Lite** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
+3. Install [**WiFiManager_Generic_Lite** library](https://registry.platformio.org/libraries/khoih-prog/WiFiManager_Generic_Lite) by using [Library Manager](https://registry.platformio.org/libraries/khoih-prog/WiFiManager_Generic_Lite/installation). Search for **WiFiManager_Generic_Lite** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
 4. Use included [platformio.ini](platformio/platformio.ini) file from examples to ensure that all dependent libraries will installed automatically. Please visit documentation for the other options and examples at [Project Configuration File](https://docs.platformio.org/page/projectconf.html)
 
 ---
@@ -798,10 +798,10 @@ Default is `true`. Just change to `false` to Not using `Board_Name` on Config_Po
 
 Check the examples
 
-https://github.com/khoih-prog/WiFiManager_NINA_Lite/blob/d894548f25b50bf32fc5311bcd1e407ff8cd210e/examples/SAMD_WiFiNINA/SAMD_WiFiNINA.ino#L23-L31
+https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/49c1aff82d2742a2e0b787a24009d2905b76ee3c/examples/RP2040_WiFi/RP2040_WiFi.ino#L22-L30
 
 
-https://github.com/khoih-prog/WiFiManager_NINA_Lite/blob/d894548f25b50bf32fc5311bcd1e407ff8cd210e/examples/SAMD_WiFiNINA/defines.h#L194-L211
+https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/49c1aff82d2742a2e0b787a24009d2905b76ee3c/examples/RP2040_WiFi/defines.h#L191-L208
 
 
 
