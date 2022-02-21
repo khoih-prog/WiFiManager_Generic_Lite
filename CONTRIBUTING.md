@@ -28,7 +28,7 @@ Please ensure to specify the following:
 ```
 Arduino IDE version: 1.8.19
 Nano_RP2040_Connect board
-ArduinoCore-mbed v2.6.1
+ArduinoCore-mbed v2.7.2
 OS: Ubuntu 20.04 LTS
 Linux xy-Inspiron-3593 5.4.0-100-generic #113-Ubuntu SMP Thu Feb 3 18:43:29 UTC 2022 x86_64 x86_64 x86_64 GNU/Linux
 
