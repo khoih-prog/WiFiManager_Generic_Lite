@@ -9,7 +9,7 @@
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
   
-  Version: 1.7.0
+  Version: 1.7.1
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
@@ -19,7 +19,8 @@
   1.5.1   K Hoang      26/01/2022  Update to be compatible with new FlashStorage libraries. Add support to more SAMD/STM32 boards
   1.6.0   K Hoang      26/01/2022  Optional Board_Name in Menu. Optimize code by using passing by reference
                                    Add optional CONFIG_MODE_LED. Add function isConfigMode()
-  1.7.0   K Hoang      27/04/2022  Use WiFiMulti_Generic library for auto-checking / auto-reconnecting MultiWiFi                            
+  1.7.0   K Hoang      27/04/2022  Use WiFiMulti_Generic library for auto-checking / auto-reconnecting MultiWiFi
+  1.7.1   K Hoang      27/04/2022  Optimize code                          
  ********************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_RP2040_h
@@ -36,13 +37,13 @@
 #endif
 
 #ifndef WIFI_MANAGER_GENERIC_LITE_VERSION
-  #define WIFI_MANAGER_GENERIC_LITE_VERSION            "WiFiManager_Generic_Lite v1.7.0"
+  #define WIFI_MANAGER_GENERIC_LITE_VERSION            "WiFiManager_Generic_Lite v1.7.1"
 
   #define WIFI_MANAGER_GENERIC_LITE_VERSION_MAJOR      1
   #define WIFI_MANAGER_GENERIC_LITE_VERSION_MINOR      7
-  #define WIFI_MANAGER_GENERIC_LITE_VERSION_PATCH      0
+  #define WIFI_MANAGER_GENERIC_LITE_VERSION_PATCH      1
 
-#define WIFI_MANAGER_GENERIC_LITE_VERSION_INT          1007000
+  #define WIFI_MANAGER_GENERIC_LITE_VERSION_INT        1007001
 
 #endif
 
@@ -409,8 +410,7 @@ class WiFiManager_Generic_Lite
         hadConfigData = true;
 
 #if (USE_WIFI_NINA || USE_WIFI101)        
-        wifiMulti.addAP(WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid, WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw);
-  			wifiMulti.addAP(WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid, WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw);
+        wifiMulti_addAP();
 #endif
 
         if (connectMultiWiFi(RETRY_TIMES_CONNECT_WIFI))
@@ -1009,6 +1009,22 @@ class WiFiManager_Generic_Lite
       WG_LOGERROR3(F("SSID="), WiFi.SSID(), F(",RSSI="), WiFi.RSSI());
       WG_LOGERROR1(F("IP="), localIP() );
     }
+    
+    //////////////////////////////////////////////
+
+#if (USE_WIFI_NINA || USE_WIFI101)
+
+    void wifiMulti_addAP()    
+    {
+      for (uint8_t index = 0; index < NUM_WIFI_CREDENTIALS; index++)
+      {
+        wifiMulti.addAP(WIFI_GENERIC_config.WiFi_Creds[index].wifi_ssid, WIFI_GENERIC_config.WiFi_Creds[index].wifi_pw);
+  	  }
+  	}  
+#endif
+    
+    //////////////////////////////////////////////
+
 
 #define WIFI_GENERIC_BOARD_TYPE   "WIFI_GENERIC"
 #define WM_NO_CONFIG              "blank"
@@ -1504,8 +1520,7 @@ class WiFiManager_Generic_Lite
 #endif
 
 #if (USE_WIFI_NINA || USE_WIFI101)        
-        wifiMulti.addAP(WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid, WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw);
-  			wifiMulti.addAP(WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid, WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw);
+        wifiMulti_addAP();
 #endif
     }
 
@@ -1987,8 +2002,7 @@ class WiFiManager_Generic_Lite
 #endif
 
 #if (USE_WIFI_NINA || USE_WIFI101)        
-        wifiMulti.addAP(WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid, WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw);
-  			wifiMulti.addAP(WIFI_GENERIC_config.WiFi_Creds[1].wifi_ssid, WIFI_GENERIC_config.WiFi_Creds[1].wifi_pw);
+        wifiMulti_addAP();
 #endif
     }
 

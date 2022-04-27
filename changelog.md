@@ -12,6 +12,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Release v1.7.1](#release-v171)
   * [Release v1.7.0](#release-v170)
   * [Release v1.6.0](#release-v160)
   * [Release v1.5.1](#release-v151)
@@ -32,6 +33,10 @@
 
 
 ## Changelog
+
+### Release v1.7.1
+
+1. Optimize code
 
 ### Release v1.7.0
 
