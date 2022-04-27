@@ -32,8 +32,14 @@
     },
     {
       "owner": "khoih-prog",
+      "name": "WiFiMulti_Generic",
+      "version": ">=1.1.1",
+      "platforms": ["*"]
+    },
+    {
+      "owner": "khoih-prog",
       "name": "DoubleResetDetector_Generic",
-      "version": "^1.8.0",
+      "version": "^1.8.1",
       "platforms": ["*"]
     },
     {
@@ -63,13 +69,13 @@
     {
       "owner": "khoih-prog",
       "name": "WiFiWebServer",
-      "version": "^1.6.1",
+      "version": "^1.8.0",
       "platforms": ["*"]
     },
     {
       "owner": "khoih-prog",
       "name": "ESP8266_AT_WebServer",
-      "version": "^1.5.3",
+      "version": "^1.5.4",
       "platforms": ["*"]
     },
     {
