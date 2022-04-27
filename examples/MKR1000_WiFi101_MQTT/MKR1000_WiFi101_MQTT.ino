@@ -299,7 +299,7 @@ void setup()
 {
   // Debug console
   Serial.begin(115200);
-  while (!Serial);
+  while (!Serial && millis() < 5000);
 
   pinMode(LED_PIN, OUTPUT);
 
@@ -307,6 +307,11 @@ void setup()
 
   Serial.print(F("\nStart MKR1000_WiFi101_MQTT on ")); Serial.print(BOARD_NAME);
   Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
+
+#if (USE_WIFI_NINA || USE_WIFI101)  
+  Serial.println(WIFIMULTI_GENERIC_VERSION);
+#endif
+  
   Serial.println(WIFI_MANAGER_GENERIC_LITE_VERSION);
 
   WiFiManager_Generic = new WiFiManager_Generic_Lite();

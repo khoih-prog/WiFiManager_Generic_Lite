@@ -18,6 +18,7 @@
 #define WIFI_GENERIC_DEBUG_OUTPUT     Serial
 
 #define _WIFI_GENERIC_LOGLEVEL_       1
+#define _WIFIMULTI_LOGLEVEL_          1
 
 #define DRD_GENERIC_DEBUG             true
 
