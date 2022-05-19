@@ -310,7 +310,7 @@
 
 /////////////////////////////////////////////
 
-#include <WiFiManager_Generic_Lite_SAMD.h>
+#include <WiFiManager_Generic_Lite.h>
 
 #define HOST_NAME   "SAMD-MQTT-Controller"
 

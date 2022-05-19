@@ -270,7 +270,7 @@
 
 /////////////////////////////////////////////
 
-#include <WiFiManager_Generic_Lite_STM32.h>
+#include <WiFiManager_Generic_Lite.h>
 
 #define HOST_NAME   "STM32-Master-Controller"
 

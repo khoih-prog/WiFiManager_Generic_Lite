@@ -1,6 +1,6 @@
 /****************************************************************************************************************************
-  RP2040_WiFi_MQTT.ino
-  For RP2040 boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
+  SAMD_WiFiNINA_MQTT.ino
+  For SAMD boards using WiFiNINA modules/shields, using much less code to support boards with smaller memory
   
   WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
   (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 
@@ -9,9 +9,9 @@
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
   *****************************************************************************************************************************/
-
+  
 //  You have to use forked and modified library https://github.com/khoih-prog/Adafruit_MQTT_Library
-
+ 
 #include "defines.h"
 #include "Credentials.h"
 #include "dynamicParams.h"
@@ -33,28 +33,33 @@ uint32_t measuredTemp = 5;
 
 WiFiManager_Generic_Lite* WiFiManager_Generic;
 
-void heartBeatPrint()
+void heartBeatPrint(void)
 {
   static int num = 1;
 
-  if (WiFi.status() == WL_CONNECTED)
-    Serial.print("H");        // H means connected to WiFi
+  if (WiFiManager_Generic->isConfigMode())
+    Serial.print("C");        // C means in Config Mode
   else
   {
-    if (WiFiManager_Generic->isConfigMode())
-      Serial.print("C");        // C means in Config Mode
+    if (WiFi.status() == WL_CONNECTED)
+    {
+      Serial.print("H");        // H means connected to WiFi
+      // Bad bug or RTL8720 => if WiFi lost, WiFi.status() still is WL_CONNECTED and WiFi.RSSI() still OK.
+      // Similar bug in Portenta_H7 without workaround as in Portenta_H7, WiFi.RSSI() => 0
+      //Serial.print(WiFi.RSSI());
+    }
     else
       Serial.print("F");        // F means not connected to WiFi  
   }
 
-  if (num == 40)
+  if (num == 80)
   {
     Serial.println();
     num = 1;
   }
-  else if (num++ % 5 == 0)
+  else if (num++ % 10 == 0)
   {
-    Serial.print(" ");
+    Serial.print(F(" "));
   }
 }
 
@@ -108,13 +113,16 @@ void check_status()
   // Print WiFi hearbeat, Publish MQTT Topic every HEARTBEAT_INTERVAL (5) seconds.
   if ((millis() > checkstatus_timeout) || (checkstatus_timeout == 0))
   {
-    if (WiFi.status() == WL_CONNECTED)
+    if ( !WiFiManager_Generic->isConfigMode() )
     {
-      // MQTT related jobs
-      publishMQTT();
-      subscribeMQTT();
+      if (WiFi.status() == WL_CONNECTED)
+      {
+        // MQTT related jobs
+        publishMQTT();
+        subscribeMQTT();
+      }
     }
-
+    
     heartBeatPrint();
     checkstatus_timeout = millis() + HEARTBEAT_INTERVAL;
   }
@@ -275,35 +283,26 @@ void setup()
   Serial.begin(115200);
   while (!Serial && millis() < 5000);
 
-  pinMode(LED_PIN, OUTPUT);
-
   delay(200);
 
-  Serial.print(F("\nStart RP2040_WiFi_MQTT on ")); Serial.print(BOARD_NAME);
-  Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
-
-#if (USE_WIFI_NINA || USE_WIFI101)  
-  Serial.println(WIFIMULTI_GENERIC_VERSION);
-#endif
-  
+  Serial.print(F("\nStart RTL8720_WiFi_MQTT on ")); Serial.println(BOARD_NAME);
   Serial.println(WIFI_MANAGER_GENERIC_LITE_VERSION);
 
-#if ( USE_WIFI_CUSTOM && USE_ESP_AT_SHIELD )
-    // initialize serial for ESP module
-  EspSerial.begin(115200);
-  // initialize ESP module
-  WiFi.init(&EspSerial);
-
-  Serial.println(F("WiFi shield init done"));
-
-  // check for the presence of the shield
   if (WiFi.status() == WL_NO_SHIELD)
   {
     Serial.println(F("WiFi shield not present"));
     // don't continue
     while (true);
   }
-#endif
+
+  String fv = WiFi.firmwareVersion();
+
+  Serial.print("Current Firmware Version = "); Serial.println(fv);
+  
+  if (fv != LATEST_RTL8720_FIRMWARE) 
+  {
+    Serial.println("Please upgrade the firmware");
+  }
 
   WiFiManager_Generic = new WiFiManager_Generic_Lite();
 
@@ -325,7 +324,7 @@ void setup()
 
   // Set customized DHCP HostName
   WiFiManager_Generic->begin(HOST_NAME);
-  //Or use default Hostname "RP2040-WiFiNINA-XXXXXX"
+  //Or use default Hostname "SAMD-WIFI-XXXXXX"
   //WiFiManager_Generic->begin();
 }
 

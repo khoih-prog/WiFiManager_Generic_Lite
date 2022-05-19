@@ -208,7 +208,7 @@
 
 /////////////////////////////////////////////
 
-#include <WiFiManager_Generic_Lite_RP2040.h>
+#include <WiFiManager_Generic_Lite.h>
 
 #define HOST_NAME   "RP2040-Master-Controller"
 

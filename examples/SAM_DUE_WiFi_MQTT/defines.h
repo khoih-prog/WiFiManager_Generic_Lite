@@ -208,7 +208,7 @@
 
 /////////////////////////////////////////////
 
-#include <WiFiManager_Generic_Lite_DUE.h>
+#include <WiFiManager_Generic_Lite.h>
 
 #define HOST_NAME   "DUE-MQTT-Controller"
 

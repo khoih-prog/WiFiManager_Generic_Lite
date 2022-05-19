@@ -220,7 +220,7 @@
 
 /////////////////////////////////////////////
 
-#include <WiFiManager_Generic_Lite_Teensy.h>
+#include <WiFiManager_Generic_Lite.h>
 
 #define HOST_NAME   "Teensy-MQTT-Controller"
 

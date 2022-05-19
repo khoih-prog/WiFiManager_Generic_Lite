@@ -227,7 +227,7 @@
 
 /////////////////////////////////////////////
 
-#include <WiFiManager_Generic_Lite_nRF52.h>
+#include <WiFiManager_Generic_Lite.h>
 
 #define HOST_NAME   "nRF52-Master-Controller"
 

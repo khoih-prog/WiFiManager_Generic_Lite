@@ -1,13 +1,13 @@
 /****************************************************************************************************************************
   defines.h
-  For nRF52 boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
+  For RTL8720DN, RTL8722DM and RTL8722CSM WiFi shields
   
   WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
   (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 
   configuration/reconfiguration and autoconnect/autoreconnect of WiFi and other services without Hardcoding.
   
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
-  Licensed under MIT license  
+  Licensed under MIT license
  *****************************************************************************************************************************/
 
 #ifndef defines_h
@@ -17,61 +17,30 @@
 #define DEBUG_WIFI_WEBSERVER_PORT     Serial
 #define WIFI_GENERIC_DEBUG_OUTPUT     Serial
 
-#define _WIFI_GENERIC_LOGLEVEL_       1
+#define _WIFI_GENERIC_LOGLEVEL_       4
 #define _WIFIMULTI_LOGLEVEL_          1
 
 #define DRD_GENERIC_DEBUG             true
 
-#if ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
-        defined(NRF52840_FEATHER_SENSE) || defined(NRF52840_ITSYBITSY) || defined(NRF52840_CIRCUITPLAY) || defined(NRF52840_CLUE) || \
-        defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) || defined(NINA_B302_ublox) || defined(NINA_B112_ublox) )
-  #if defined(WIFI_GENERIC_USE_NRF528XX)
-    #undef WIFI_GENERIC_USE_NRF528XX
-    #undef WIFI_USE_NRF528XX
+#if defined(CONFIG_PLATFORM_8721D)
+  #if defined(WIFI_GENERIC_USE_RTL8720)
+    #undef WIFI_GENERIC_USE_RTL8720
+    #undef WIFI_USE_RTL8720
   #endif
-  #define WIFI_GENERIC_USE_NRF528XX      true
-  #define WIFI_USE_NRF528XX          true
+  #define WIFI_GENERIC_USE_RTL8720      true
+  #define WIFI_USE_RTL8720          true
 #else
-  #error This code is intended to run only on the NRF528XX boards ! Please check your Tools->Board setting.
+  #error This code is intended to run only on the RTL8720 boards ! Please check your Tools->Board setting.
 #endif
 
-#if defined(WIFI_GENERIC_USE_NRF528XX)
+#define BOARD_NAME      "Rtlduino RTL8720DN"
 
-  #if defined(NRF52840_FEATHER)
-    #define BOARD_TYPE      "NRF52840_FEATHER"
-  #elif defined(NRF52832_FEATHER)
-    #define BOARD_TYPE      "NRF52832_FEATHER"
-  #elif defined(NRF52840_FEATHER_SENSE)
-    #define BOARD_TYPE      "NRF52840_FEATHER_SENSE"
-  #elif defined(NRF52840_ITSYBITSY)
-    #define BOARD_TYPE      "NRF52840_ITSYBITSY"
-  #elif defined(NRF52840_CIRCUITPLAY)
-    #define BOARD_TYPE      "NRF52840_CIRCUITPLAY"
-  #elif defined(NRF52840_CLUE)
-    #define BOARD_TYPE      "NRF52840_CLUE"
-  #elif defined(NRF52840_METRO)
-    #define BOARD_TYPE      "NRF52840_METRO"
-  #elif defined(NRF52840_PCA10056)
-    #define BOARD_TYPE      "NRF52840_PCA10056"
-  #elif defined(PARTICLE_XENON)
-    #define BOARD_TYPE      "PARTICLE_XENON"
-  #elif defined(NINA_B302_ublox)
-    #define BOARD_TYPE      "NINA_B302_ublox"
-  #elif defined(NINA_B112_ublox)
-    #define BOARD_TYPE      "NINA_B112_ublox"  
-  #elif defined(ARDUINO_NRF52_ADAFRUIT)
-    #define BOARD_TYPE      "ARDUINO_NRF52_ADAFRUIT"
-  #elif defined(NRF52_SERIES)
-    #define BOARD_TYPE      "NRF52_SERIES"
-  #else
-    #define BOARD_TYPE      "NRF52 Unknown"
-  #endif
+///////////////////////////////////////////////////////////////
 
-#endif
-
-#ifndef BOARD_NAME
-  #define BOARD_NAME    BOARD_TYPE
-#endif
+// Start location in EEPROM to store config data. Default 0
+// Config data Size currently is 128 bytes)
+#define EEPROM_START              0
+#define EEPROM_SIZE               (2 * 1024)
 
 /////////////////////////////////////////////
 
@@ -82,65 +51,9 @@
 
 /////////////////////////////////////////////
 
-#define USE_WIFI_NINA             true
+#define USE_WIFI_NINA             false
 #define USE_WIFI101               false
 #define USE_WIFI_CUSTOM           false
-
-#if USE_WIFI_NINA
-
-  #if defined(USE_WIFI101)
-    #undef USE_WIFI101
-  #endif
-  
-  #define USE_WIFI101           false
-
-  #warning Using WIFININA_Generic Library
-  #define SHIELD_TYPE     "WiFiNINA using WiFiNINA_Generic Library"
-
-  #include "WiFiNINA_Pinout_Generic.h"
-  
-#elif USE_WIFI101
-
-  #if defined(USE_WIFI_NINA)
-    #undef USE_WIFI_NINA
-  #endif
-  
-  #define USE_WIFI_NINA           false
-
-  #define SHIELD_TYPE     "WINC1500 using WiFi101 Library"
-  #warning Using WiFi101 Library
-
-#elif USE_WIFI_CUSTOM
-
-  #if defined(USE_WIFI_NINA)
-    #undef USE_WIFI_NINA
-  #endif
-  
-  #define USE_WIFI_NINA           false
-  
-  #if defined(USE_WIFI101)
-    #undef USE_WIFI101
-  #endif
-  
-  #define USE_WIFI101             false
-
-  #define SHIELD_TYPE     "Custom using Custom WiFi Library"
-  #warning Using Custom WiFi Library. You must include here or compile error
-
-  #define EspSerial Serial1
-
-  #include "ESP8266_AT_WebServer.h"
-
-  #define USE_ESP_AT_SHIELD       true
-  #define WiFiWebServer ESP8266_AT_WebServer
-  #define WiFiClient    ESP8266_AT_Client
-  
-#else
-
-  #define SHIELD_TYPE     "Default WiFi using WiFi Library"
-  #warning Using fallback WiFi.h Library defined in WiFiWebServer Library.
-  
-#endif
 
 /////////////////////////////////////////////
 
@@ -187,20 +100,8 @@
 
 /////////////////////////////////////////////
 
-#if (USE_WIFI_CUSTOM && USE_ESP_AT_SHIELD)
-  // ESP-AT can't use longer than 2K HTML and DYNAMIC_PARAMETERS
-  #undef USE_DYNAMIC_PARAMETERS
-  #define USE_DYNAMIC_PARAMETERS                   false
-  #warning Disable USE_DYNAMIC_PARAMETERS for ESP_AT_SHIELD
-
-  // From 2-6 to keep HTML short for ESP8266-AT. Limited 6 in WiFiEspAT library anyway
-  #define MAX_SSID_IN_LIST                  4
-
-#else
-
-  // From 2-15
-  #define MAX_SSID_IN_LIST                  8
-#endif
+// From 2-15
+#define MAX_SSID_IN_LIST                  8
 
 /////////////////////////////////////////////
 
@@ -228,7 +129,7 @@
 
 #include <WiFiManager_Generic_Lite.h>
 
-#define HOST_NAME   "nRF52-MQTT-Controller"
+#define HOST_NAME   "RTL8720-Controller"
 
 #ifdef LED_BUILTIN
   #define LED_PIN     LED_BUILTIN
