@@ -1,8 +1,9 @@
 /*******************************************************************************************************************************
-  WiFiManager_Generic_Lite_SAMD.h
-  For SAMD boards using WIFI_GENERIC modules/shields, using much less code to support boards with smaller memory
+  WiFiManager_Generic_Lite_RTL8720.h
+  
+  For RTL8720DN, RTL8722DM and RTL8722CSM WiFi shields
 
-  WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, SAMD and STM32 boards 
+  WiFiManager_Generic_WM_Lite is a library for the Mega, Teensy, SAM DUE, RTL8720 and STM32 boards 
   (https://github.com/khoih-prog/WiFiManager_Generic_Lite) to enable store Credentials in EEPROM/LittleFS for easy 
   configuration/reconfiguration and autoconnect/autoreconnect of WiFi and other services without Hardcoding.
 
@@ -24,36 +25,33 @@
   1.8.0   K Hoang      18/05/2022  Add support to Ameba Realtek RTL8720DN, RTL8722DM and RTL8722CSM
  ********************************************************************************************************************************/
 
-#ifndef WiFiManager_Generic_Lite_SAMD_h
-#define WiFiManager_Generic_Lite_SAMD_h
+#ifndef WiFiManager_Generic_Lite_RTL8720_h
+#define WiFiManager_Generic_Lite_RTL8720_h
 
-#if  ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
-    || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) \
-    || defined(ARDUINO_SAMD_MKRGSM1400) || defined(ARDUINO_SAMD_MKRNB1500) || defined(ARDUINO_SAMD_MKRVIDOR4000) \
-    || defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS) || defined(__SAMD51__) || defined(__SAMD51J20A__) \
-    || defined(__SAMD51J19A__) || defined(__SAMD51G19A__) || defined(__SAMD51P19A__)  \
-    || defined(__SAMD21E15A__) || defined(__SAMD21E16A__) || defined(__SAMD21E17A__) || defined(__SAMD21E18A__) \
-    || defined(__SAMD21G15A__) || defined(__SAMD21G16A__) || defined(__SAMD21G17A__) || defined(__SAMD21G18A__) \
-    || defined(__SAMD21J15A__) || defined(__SAMD21J16A__) || defined(__SAMD21J17A__) || defined(__SAMD21J18A__) )
-  #if defined(WIFI_GENERIC_USE_SAMD)
-    #undef WIFI_GENERIC_USE_SAMD
+#if defined(CONFIG_PLATFORM_8721D)
+  #if defined(WIFI_GENERIC_USE_RTL8720)
+    #undef WIFI_GENERIC_USE_RTL8720
   #endif
-  #define WIFI_GENERIC_USE_SAMD      true
+  #define WIFI_GENERIC_USE_RTL8720      true
 #else
-  #error This code is intended to run on the SAMD platform! Please check your Tools->Board setting.  
+  #error This code is intended to run on Ameba Realtek RTL8720DN, RTL8722DM and RTL8722CSM platform 
 #endif
 
-#if (USE_WIFI_NINA || USE_WIFI101)
-  #include <WiFiMulti_Generic.h>
-  #include <WiFiWebServer.h>
+// Kludge to suppress warning only in RTL8720
+#define DRD_GENERIC_USE_MBED_PORTENTA				false
 
-  WiFiMulti_Generic wifiMulti;
-#else
-  #warning You have to include another WiFiWebServer, such as ESP8266_AT_WebServer.
-#endif
+// For sys_reset()   
+#include "sys_api.h"
+
+#include <WiFiMulti_Generic.h>
+  
+#include <WiFiWebServer_RTL8720.h>
+
+WiFiMulti_Generic wifiMulti;
 
 // Include EEPROM-like API for FlashStorage
-#include <FlashStorage_SAMD.h>                //https://github.com/khoih-prog/FlashStorage_SAMD
+#include <FlashStorage_RTL8720.h>                //https://github.com/khoih-prog/FlashStorage_RTL8720
+
 #include <WiFiManager_Generic_Lite_Debug.h>
 
 #ifndef USING_CUSTOMS_STYLE
@@ -176,14 +174,17 @@ typedef struct Configuration
 } WIFI_GENERIC_Configuration;
 
 // Currently CONFIG_DATA_SIZE  =   236  = (16 + 96 * 2 + 4 + 24)
-uint16_t CONFIG_DATA_SIZE = sizeof(WIFI_GENERIC_Configuration);
+const uint16_t CONFIG_DATA_SIZE = sizeof(WIFI_GENERIC_Configuration);
+
+// Kludge to suppress warning only in RTL8720. To be change according to CONFIG_DATA_SIZE
+#define CONFIG_DATA_SIZE_DEF			236
 
 extern bool LOAD_DEFAULT_CONFIG_DATA;
 extern WIFI_GENERIC_Configuration defaultConfig;
 
 // -- HTML page fragments
 
-const char WIFI_GENERIC_HTML_HEAD_START[] /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>SAMD_WM_Lite</title>";
+const char WIFI_GENERIC_HTML_HEAD_START[] /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>RTL8720_WM_Lite</title>";
 
 const char WIFI_GENERIC_HTML_HEAD_STYLE[] /*PROGMEM*/ = "<style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>";
 
@@ -286,11 +287,7 @@ class WiFiManager_Generic_Lite
     WiFiManager_Generic_Lite()
     {     
       // check for the presence of the shield
-#if ( USE_WIFI101 || USE_ESP_AT_SHIELD )
       if (WiFi.status() == WL_NO_SHIELD)
-#else
-      if (WiFi.status() == WL_NO_MODULE)
-#endif      
       {
         WG_LOGERROR(F("NoWiFi"));
       }     
@@ -311,7 +308,8 @@ class WiFiManager_Generic_Lite
       }
     }
         
-    bool connectWiFi(const char* ssid, const char* pass)
+    //bool connectWiFi(const char* ssid, const char* pass)
+    bool connectWiFi(char* ssid, char* pass)
     {
       WG_LOGERROR1(F("Con2:"), ssid);
       
@@ -334,8 +332,8 @@ class WiFiManager_Generic_Lite
       return true;
     }
    
-    void begin(const char* ssid,
-               const char* pass )
+    //void begin(const char* ssid, const char* pass)
+    void begin(char* ssid, char* pass)
     {
       WG_LOGERROR(F("conW"));
       connectWiFi(ssid, pass);
@@ -356,7 +354,7 @@ class WiFiManager_Generic_Lite
         String randomNum = String(random(0xFFFFFF), HEX);
         randomNum.toUpperCase();
         
-        String _hostname = "SAMD-WIFI_GENERIC-" + randomNum;
+        String _hostname = "RTL8720-WIFI_GENERIC-" + randomNum;
         _hostname.toUpperCase();
 
         getRFC952_hostname(_hostname.c_str());
@@ -397,10 +395,8 @@ class WiFiManager_Generic_Lite
       if (hadConfigData && noConfigPortal && (!isForcedConfigPortal) )
       {
         hadConfigData = true;
-
-#if (USE_WIFI_NINA || USE_WIFI101)        
+    
         wifiMulti_addAP();
-#endif
 
         if (connectMultiWiFi(RETRY_TIMES_CONNECT_WIFI))
         {
@@ -615,12 +611,8 @@ class WiFiManager_Generic_Lite
     void setHostname()
     {
       if (RFC952_hostname[0] != 0)
-      {
-#if USE_WIFI101
-        WiFi.hostname(RFC952_hostname);
-#elif USE_WIFI_NINA    
-        WiFi.setHostname(RFC952_hostname);
-#endif        
+      {  
+        WiFi.setHostname(RFC952_hostname);    
       }
     }
     
@@ -790,35 +782,12 @@ class WiFiManager_Generic_Lite
     }
     
     //////////////////////////////////////////////
-
+    
     void resetFunc()
-    {    
-      // Best one. Possibly don't need the WDT
-      NVIC_SystemReset();
-      
-#if ( defined(__SAMD51__) || defined(__SAMD51J20A__) || defined(__SAMD51J19A__) || defined(__SAMD51G19A__)  )
-      // For SAMD51
-      // see Table 17-5 Timeout Period (valid values 0-11)
-      WDT->CONFIG.reg = 5; 
-      WDT->CTRLA.reg = WDT_CTRLA_ENABLE;
-      // To check if OK or bit.ENABLE/CLEAR
-      while (WDT->SYNCBUSY.bit.WEN == 1);
-      
-      // use the WDT watchdog timer to force a system reset.
-      WDT->CLEAR.reg= 0x00;
-      // To check if OK or bit.ENABLE/CLEAR
-      while (WDT->SYNCBUSY.bit.WEN == 1);
-#else   
-      // For SAMD21, etc
-      // see Table 17-5 Timeout Period (valid values 0-11)
-      WDT->CONFIG.reg = 5; 
-      WDT->CTRL.reg = WDT_CTRL_ENABLE;
-      while (WDT->STATUS.bit.SYNCBUSY == 1);
-      
-      // use the WDT watchdog timer to force a system reset.
-      WDT->CLEAR.reg= 0x00;
-      while (WDT->STATUS.bit.SYNCBUSY == 1);
-#endif      
+    {   
+      // TODO
+      //sys_cpu_reset();
+      sys_reset();
     }
 
     //////////////////////////////////////
@@ -984,8 +953,6 @@ class WiFiManager_Generic_Lite
     
     //////////////////////////////////////////////
 
-#if (USE_WIFI_NINA || USE_WIFI101)
-
     void wifiMulti_addAP()    
     {
       for (uint8_t index = 0; index < NUM_WIFI_CREDENTIALS; index++)
@@ -993,7 +960,6 @@ class WiFiManager_Generic_Lite
         wifiMulti.addAP(WIFI_GENERIC_config.WiFi_Creds[index].wifi_ssid, WIFI_GENERIC_config.WiFi_Creds[index].wifi_pw);
   	  }
   	}  
-#endif
     
     //////////////////////////////////////////////
 
@@ -1002,15 +968,16 @@ class WiFiManager_Generic_Lite
 #define WM_NO_CONFIG              "blank"
 
 // DRD_FLAG_DATA_SIZE is 4, to store DRD flag, defined in DRD
-#if (EEPROM_SIZE < DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE)
-#error EEPROM_SIZE must be > CONFIG_DATA_SIZE.
+// sizeof(WIFI_GENERIC_Configuration)
+#if (EEPROM_SIZE < DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE_DEF)
+  #error EEPROM_SIZE must be > CONFIG_DATA_SIZE
 #endif
 
 #ifndef EEPROM_START
   #define EEPROM_START     0
   #warning EEPROM_START not defined. Set to 0
 #else
-  #if (EEPROM_START + DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE + FORCED_CONFIG_PORTAL_FLAG_DATA_SIZE > EEPROM_SIZE)
+  #if (EEPROM_START + DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE_DEF + FORCED_CONFIG_PORTAL_FLAG_DATA_SIZE > EEPROM_SIZE)
     #error EPROM_START + DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE + FORCED_CONFIG_PORTAL_FLAG_DATA_SIZE > EEPROM_SIZE. Please adjust.
   #endif
 #endif
@@ -1037,16 +1004,16 @@ class WiFiManager_Generic_Lite
     
       WG_LOGERROR(isPersistent ? F("setForcedCP Persistent") : F("setForcedCP non-Persistent"));
 
-      EEPROM.put(CONFIG_EEPROM_START + CONFIG_DATA_SIZE, readForcedConfigPortalFlag);      
-      EEPROM.commit();
+      FlashStorage.put(CONFIG_EEPROM_START + CONFIG_DATA_SIZE, readForcedConfigPortalFlag);      
+      FlashStorage.commit();
     }
     
     //////////////////////////////////////////////
     
     void clearForcedCP()
     {
-      EEPROM.put(CONFIG_EEPROM_START + CONFIG_DATA_SIZE, 0);     
-      EEPROM.commit();
+      FlashStorage.put(CONFIG_EEPROM_START + CONFIG_DATA_SIZE, 0);     
+      FlashStorage.commit();
     }
     
     //////////////////////////////////////////////
@@ -1057,7 +1024,7 @@ class WiFiManager_Generic_Lite
 
       // Return true if forced CP (0xDEADBEEF read at offset EPROM_START + DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE)
       // => set flag noForcedConfigPortal = false
-      EEPROM.get(CONFIG_EEPROM_START + CONFIG_DATA_SIZE, readForcedConfigPortalFlag);
+      FlashStorage.get(CONFIG_EEPROM_START + CONFIG_DATA_SIZE, readForcedConfigPortalFlag);
      
       // Return true if forced CP (0xDEADBEEF read at offset EPROM_START + DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE)
       // => set flag noForcedConfigPortal = false     
@@ -1083,7 +1050,7 @@ class WiFiManager_Generic_Lite
     
     bool checkDynamicData(void)
     {
-      // It's too bad that emulate EEPROM.read()/write() can only deal with bytes. 
+      // It's too bad that emulate FlashStorage.read()/write() can only deal with bytes. 
       // Have to read/write each byte. To rewrite the library
       
       int checkSum = 0;
@@ -1116,7 +1083,7 @@ class WiFiManager_Generic_Lite
         memset(readBuffer, 0, sizeof(readBuffer));
         
         // Read more than necessary, but OK and easier to code
-        EEPROM.get(offset, readBuffer);
+        FlashStorage.get(offset, readBuffer);
         // NULL terminated
         readBuffer[myMenuItems[i].maxlen] = 0;
    
@@ -1130,7 +1097,7 @@ class WiFiManager_Generic_Lite
         offset += myMenuItems[i].maxlen;    
       }
 
-      EEPROM.get(offset, readCheckSum);
+      FlashStorage.get(offset, readCheckSum);
                   
       WG_LOGERROR3(F("ChkCrR:CrCCsum=0x"), String(checkSum, HEX), F(",CrRCsum=0x"), String(readCheckSum, HEX));
            
@@ -1144,7 +1111,7 @@ class WiFiManager_Generic_Lite
     
     //////////////////////////////////////////////
     
-    bool EEPROM_getDynamicData()
+    bool FlashStorage_getDynamicData()
     {          
       int checkSum = 0;
       int readCheckSum;
@@ -1167,12 +1134,14 @@ class WiFiManager_Generic_Lite
                
         for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++, _pointer++, offset++)
         {
-          *_pointer = EEPROM.read(offset);          
+          //*_pointer = FlashStorage.read(offset);
+          *_pointer = FlashStorage.readByte(offset);
+                
           checkSum += *_pointer;  
         }       
       }
 
-      EEPROM.get(offset, readCheckSum);
+      FlashStorage.get(offset, readCheckSum);
          
       WG_LOGERROR3(F("CrCCSum="), String(checkSum, HEX), F(",CrRCSum="), String(readCheckSum, HEX));
       
@@ -1186,9 +1155,9 @@ class WiFiManager_Generic_Lite
     
     //////////////////////////////////////////////
     
-    void EEPROM_putDynamicData()
+    void FlashStorage_putDynamicData()
     {
-      // It's too bad that emulate EEPROM.read()/writ() can only deal with bytes. 
+      // It's too bad that emulate FlashStorage.read()/writ() can only deal with bytes. 
       // Have to read/write each byte. To rewrite the library          
       int checkSum = 0;
       
@@ -1205,17 +1174,18 @@ class WiFiManager_Generic_Lite
                      
         for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++,_pointer++,offset++)
         {
-          EEPROM.write(offset, *_pointer);
+          //FlashStorage.write(offset, *_pointer);
+          FlashStorage.writeByte(offset, *_pointer);
           
           checkSum += *_pointer;     
         }
       }
 
-      EEPROM.put(offset, checkSum);
+      FlashStorage.put(offset, checkSum);
      
       WG_LOGERROR1(F("CrCCSum=0x"), String(checkSum, HEX));
       
-      EEPROM.commit();
+      FlashStorage.commit();
     }
 
 #endif
@@ -1279,9 +1249,9 @@ class WiFiManager_Generic_Lite
     
     //////////////////////////////////////////////
     
-    bool EEPROM_get()
+    bool FlashStorage_get()
     {      
-      EEPROM.get(CONFIG_EEPROM_START, WIFI_GENERIC_config);
+      FlashStorage.get(CONFIG_EEPROM_START, WIFI_GENERIC_config);
       
       NULLTerminateConfig();
       
@@ -1290,10 +1260,10 @@ class WiFiManager_Generic_Lite
     
     //////////////////////////////////////////////
     
-    void EEPROM_put()
+    void FlashStorage_put()
     {
-      EEPROM.put(CONFIG_EEPROM_START, WIFI_GENERIC_config);
-      EEPROM.commit();      
+      FlashStorage.put(CONFIG_EEPROM_START, WIFI_GENERIC_config);
+      FlashStorage.commit();      
     }
     
     //////////////////////////////////////////////
@@ -1303,17 +1273,15 @@ class WiFiManager_Generic_Lite
       int calChecksum = calcChecksum();
       WIFI_GENERIC_config.checkSum = calChecksum;
       
-      WG_LOGERROR5(F("SaveEEPROM,Sz="), EEPROM.length(), F(",DataSz="), totalDataSize, F(",WCSum=0x"), String(calChecksum, HEX));
+      WG_LOGERROR5(F("SaveEEPROM,Sz="), FlashStorage.length(), F(",DataSz="), totalDataSize, F(",WCSum=0x"), String(calChecksum, HEX));
       
-      EEPROM_put();
+      FlashStorage_put();
       
 #if USE_DYNAMIC_PARAMETERS        
-      EEPROM_putDynamicData();
+      FlashStorage_putDynamicData();
 #endif
-
-#if (USE_WIFI_NINA || USE_WIFI101)        
+   
         wifiMulti_addAP();
-#endif
     }
     
     //////////////////////////////////////////////
@@ -1352,7 +1320,7 @@ class WiFiManager_Generic_Lite
       else
       {   
         // Get config data. If "blank" or NULL, set false flag and exit
-        if (!EEPROM_get())
+        if (!FlashStorage_get())
         {
           return false;
         }
@@ -1375,7 +1343,7 @@ class WiFiManager_Generic_Lite
           {
 #if USE_DYNAMIC_PARAMETERS          
             // CkSum verified, Now get valid config/ dynamic data
-            EEPROM_getDynamicData();
+            FlashStorage_getDynamicData();
             
             WG_LOGERROR(F("Valid Stored Dynamic Data"));
 #endif            
@@ -1468,9 +1436,7 @@ class WiFiManager_Generic_Lite
     }
 
     //////////////////////////////////////////////
-    
-#if (USE_WIFI_NINA || USE_WIFI101)  
-    
+       
     bool connectMultiWiFi(int retry_time)
     {
 			// For general board, this better be 1000 to enable connect the 1st time
@@ -1500,6 +1466,7 @@ class WiFiManager_Generic_Lite
 
 			if ( status == WL_CONNECTED )
 			{
+			  WG_LOGERROR("");
 				WG_LOGERROR1(F("WiFi connected after time: "), i);
 				WG_LOGERROR3(F("SSID:"), WiFi.SSID(), F(",RSSI="), WiFi.RSSI());
 
@@ -1522,150 +1489,7 @@ class WiFiManager_Generic_Lite
 
 			return (status == WL_CONNECTED);
     }
-
-#else
-    
-    //////////////////////////////////////////////
-
-// Max times to try WiFi per loop() iteration. To avoid blocking issue in loop()
-// Default 1 and minimum 1.
-#if !defined(MAX_NUM_WIFI_RECON_TRIES_PER_LOOP)      
-  #define MAX_NUM_WIFI_RECON_TRIES_PER_LOOP     1
-#else
-  #if (MAX_NUM_WIFI_RECON_TRIES_PER_LOOP < 1)  
-    #define MAX_NUM_WIFI_RECON_TRIES_PER_LOOP     1
-  #endif
-#endif
-
-    // New connection logic from v1.2.0
-    bool connectMultiWiFi(int retry_time)
-    {
-      int sleep_time  = 250;
-      int index       = 0;
-      int new_index   = 0;
-      uint8_t status  = WL_IDLE_STATUS;
-                       
-      static int lastConnectedIndex = 255;
-
-      WG_LOGDEBUG(F("ConMultiWifi"));
-      
-      if (static_IP != IPAddress(0, 0, 0, 0))
-      {
-        WG_LOGDEBUG(F("UseStatIP"));
-        WiFi.config(static_IP);
-      }
-      
-      if (lastConnectedIndex != 255)
-      {
-        //  Successive connection, index = ??
-        // Checking if new_index is OK
-        new_index = (lastConnectedIndex + 1) % NUM_WIFI_CREDENTIALS;
-        
-        if ( strlen(WIFI_GENERIC_config.WiFi_Creds[new_index].wifi_pw) >= PASSWORD_MIN_LEN )
-        {    
-          index = new_index;
-          WG_LOGDEBUG3(F("Using index="), index, F(", lastConnectedIndex="), lastConnectedIndex);
-        }
-        else
-        {
-          WG_LOGERROR3(F("Ignore invalid WiFi PW : index="), new_index, F(", PW="), WIFI_GENERIC_config.WiFi_Creds[new_index].wifi_pw);
-          
-          // Using the previous valid index
-          index = lastConnectedIndex;
-        }
-      }
-      else
-      {
-        //  First connection ever, index = 0
-        if ( strlen(WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw) >= PASSWORD_MIN_LEN )
-        {    
-          WG_LOGDEBUG(F("First connection, Using index=0"));
-        }
-        else
-        {
-          WG_LOGERROR3(F("Ignore invalid WiFi PW : index=0, SSID="), WIFI_GENERIC_config.WiFi_Creds[0].wifi_ssid,
-                       F(", PWD="), WIFI_GENERIC_config.WiFi_Creds[0].wifi_pw);
-          
-          // Using the next valid index
-          index = 1;
-        }
-      } 
-         
-      WG_LOGERROR3(F("con2WF:SSID="), WIFI_GENERIC_config.WiFi_Creds[index].wifi_ssid,
-                   F(",PW="), WIFI_GENERIC_config.WiFi_Creds[index].wifi_pw);
-      
-      uint8_t numIndexTried = 0;
-      
-      uint8_t numWiFiReconTries = 0;
-     
-      while ( !wifi_connected && (numIndexTried++ < NUM_WIFI_CREDENTIALS) && (numWiFiReconTries++ < MAX_NUM_WIFI_RECON_TRIES_PER_LOOP) )
-      {         
-        while ( 0 < retry_time )
-        {      
-          WG_LOGDEBUG1(F("Remaining retry_time="), retry_time);
-          
-          status = WiFi.begin(WIFI_GENERIC_config.WiFi_Creds[index].wifi_ssid, WIFI_GENERIC_config.WiFi_Creds[index].wifi_pw); 
-              
-          // Need restart WiFi at beginning of each cycle 
-          if (status == WL_CONNECTED)
-          {
-            wifi_connected = true;          
-            lastConnectedIndex = index;                                     
-            WG_LOGDEBUG1(F("WOK, lastConnectedIndex="), lastConnectedIndex);
-            
-            break;
-          }
-          else
-          {
-            delay(sleep_time);
-            retry_time--;
-          }         
-        }
-        
-        if (status == WL_CONNECTED)
-        {         
-          break;
-        }
-        else
-        {        
-          if (retry_time <= 0)
-          {      
-            WG_LOGERROR3(F("Failed using index="), index, F(", retry_time="), retry_time);
-            retry_time = RETRY_TIMES_CONNECT_WIFI;  
-          }
-          
-          new_index = (index + 1) % NUM_WIFI_CREDENTIALS;
-          
-          // only use new index if valid (len >= PASSWORD_MIN_LEN = 8)
-          if ( strlen(WIFI_GENERIC_config.WiFi_Creds[new_index].wifi_pw) >= PASSWORD_MIN_LEN )
-          {
-            index = new_index;
-          }
-          
-          //WiFi.end();
-        }
-      }
-
-      if (wifi_connected)
-      {
-        WG_LOGERROR(F("con2WF:OK"));
-        
-        WG_LOGERROR1(F("IP="), WiFi.localIP() );
-        
-        displayWiFiData();
-      }
-      else
-      {
-        WG_LOGERROR(F("con2WF:failed"));  
-        // Can't connect, so try another index next time. Faking this index is OK and lost
-        lastConnectedIndex = index;  
-      }
-
-      return wifi_connected;  
-    }
-
-#endif
-   
+  
     //////////////////////////////////////////////
     
     // NEW
@@ -1812,12 +1636,12 @@ class WiFiManager_Generic_Lite
           if ( RFC952_hostname[0] != 0 )
           {
             // Replace only if Hostname is valid
-            result.replace("SAMD_WM_NINA_Lite", RFC952_hostname);
+            result.replace("RTL8720_WM_NINA_Lite", RFC952_hostname);
           }
           else if ( WIFI_GENERIC_config.board_name[0] != 0 )
           {
             // Or replace only if board_name is valid.  Otherwise, keep intact
-            result.replace("SAMD_WM_NINA_Lite", WIFI_GENERIC_config.board_name);
+            result.replace("RTL8720_WM_NINA_Lite", WIFI_GENERIC_config.board_name);
           }
           
           if (hadConfigData)
@@ -1994,7 +1818,7 @@ class WiFiManager_Generic_Lite
         if (number_items_Updated == NUM_CONFIGURABLE_ITEMS)
 #endif 
         {
-          WG_LOGERROR(F("h:UpdEEPROM"));
+          WG_LOGERROR(F("h:Update FlashStorage"));
 
           saveConfigData();
           
@@ -2052,18 +1876,24 @@ class WiFiManager_Generic_Lite
         channel = (millis() % MAX_WIFI_CHANNEL) + 1;
       else
         channel = AP_channel;
+        
+      char channelStr[5];
+      
+      char portalSSID[SSID_MAX_LEN + 1] = "";
+      char portalPASS[PASS_MAX_LEN + 1] = "";
+        
+      sprintf(channelStr,"%d", channel);
+      
+      sprintf(portalSSID,"%s", portal_ssid.c_str());
+      sprintf(portalPASS,"%s", portal_pass.c_str());
 
-      WG_LOGERROR3(F("SSID="), portal_ssid, F(",PW="), portal_pass);
+      WG_LOGERROR3(F("SSID="), portalSSID, F(",PW="), portalPASS);
       WG_LOGERROR3(F("IP="), portal_apIP, F(",CH="), channel);
 
-#if USE_ESP_AT_SHIELD
       // start access point, AP only,default channel 10
-      WiFi.beginAP(portal_ssid.c_str(), channel, portal_pass.c_str(), ENC_TYPE_WPA2_PSK, true);
-#else
-      // start access point, AP only,default channel 10
-      WiFi.beginAP(portal_ssid.c_str(), portal_pass.c_str(), channel);
-#endif
-      
+      //WiFi.beginAP(portal_ssid.c_str(), portal_pass.c_str(), channel);
+      //Set SSID status, 1 hidden, 0 not hidden
+      WiFi.apbegin(portalSSID, portalPASS, channelStr);
 
       if (!server)
       {
@@ -2271,4 +2101,4 @@ class WiFiManager_Generic_Lite
 };
 
 
-#endif    //WiFiManager_Generic_Lite_SAMD_h
+#endif    //WiFiManager_Generic_Lite_RTL8720_h

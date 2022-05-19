@@ -12,6 +12,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Release v1.8.0](#release-v180)
   * [Release v1.7.1](#release-v171)
   * [Release v1.7.0](#release-v170)
   * [Release v1.6.0](#release-v160)
@@ -33,6 +34,13 @@
 
 
 ## Changelog
+
+### Release v1.8.0
+
+1. Add support to Realtek RTL8720DN, RTL8722DM and RTL8722CSM using [AmebaD core](https://github.com/ambiot/ambd_arduino) and [FlashStorage_RTL8720 library](https://github.com/khoih-prog/FlashStorage_RTL8720). RTL8720DN WiFi can use either 2.4GHz or 5GHz band.
+2. Restructure library
+3. Add and Update examples
+4. Update `Packages' Patches`
 
 ### Release v1.7.1
 

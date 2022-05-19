@@ -1,8 +1,8 @@
 {
   "name": "WiFiManager_Generic_Lite",
   "version": "1.7.1",
-  "keywords": "wifi, multi-wifi, WiFiNINA, WiFi101, ESP32-AT, ESP8266-AT, Teensy, SAM-DUE, SAMD, STM32, nRF52, rpi-pico, rp2040, nano-rp2040-connect, config-portal, Double-Reset, dynamic-params, LittleFS, FlashStorage-SAMD, FlashStorage-STM32, Credentials, wi-fi, FlashStorage",
-  "description": "Library to configure MultiWiFi/Credentials at runtime for Teensy, SAM DUE, SAMD21, SAMD51, STM32F/L/H/G/WB/MP1, nRF52, RP2040-based (Nano RP2040 Connect, RASPBERRY_PI_PICO) boards, etc. using Generic WiFi (WiFiNINA, WiFi101, ESP8266-AT, ESP32-AT, etc.) modules/shields. You can also specify DHCP HostName, static AP and STA IP. Use much less memory compared to full-fledge WiFiManager. Config Portal will be auto-adjusted to match the number of dynamic custom parameters. Optional default Credentials to be autoloaded into Config Portal to use or change instead of manually input. Credentials are saved in LittleFS/InternalFS, (emulated-)EEPROM, FlashStorage_SAMD, FlashStorage_STM32 or DueFlashStorage. New powerful-yet-simple-to-use feature to enable adding dynamic custom parameters from sketch and input using the same Config Portal. DoubleDetectDetector as well as Virtual Switches feature permits entering Config Portal as requested. Now using WiFiMulti_Generic library",
+  "keywords": "wifi, multi-wifi, WiFiNINA, WiFi101, Teensy, SAM-DUE, SAMD, STM32, nRF52, rp2040, rtl8720dn, nano-rp2040-connect, config-portal, Double-Reset, dynamic-params, LittleFS, FlashStorage-SAMD, FlashStorage-STM32, Credentials, FlashStorage-RTP8720",
+  "description": "Library to configure MultiWiFi/Credentials at runtime for Teensy, SAM DUE, SAMD21, SAMD51, STM32F/L/H/G/WB/MP1, nRF52, RP2040-based (Nano RP2040 Connect, RP2040) boards, etc. using Generic WiFi (WiFiNINA, WiFi101, ESP8266-AT, ESP32-AT, etc.) modules/shields. You can also specify DHCP HostName, static AP and STA IP. Use much less memory compared to full-fledge WiFiManager. Config Portal will be auto-adjusted to match the number of dynamic custom parameters. Optional default Credentials to be autoloaded into Config Portal to use or change instead of manually input. Credentials are saved in LittleFS/InternalFS, (emulated-)EEPROM, FlashStorage_SAMD, FlashStorage_STM32 or DueFlashStorage. New powerful-yet-simple-to-use feature to enable adding dynamic custom parameters from sketch and input using the same Config Portal. DoubleDetectDetector as well as Virtual Switches feature permits entering Config Portal as requested. Now using WiFiMulti_Generic library",
   "authors":
   {
     "name":  "Khoi Hoang",
@@ -27,7 +27,7 @@
     {
       "owner": "khoih-prog",
       "name": "WiFiNINA_Generic",
-      "version": "^1.8.14-3",
+      "version": "^1.8.14-4",
       "platforms": ["*"]
     },
     {
@@ -41,6 +41,12 @@
       "name": "DoubleResetDetector_Generic",
       "version": "^1.8.1",
       "platforms": ["*"]
+    },
+    {
+      "owner": "khoih-prog",
+      "name": "MultiResetDetector_Generic",
+      "version": "^1.8.1",
+      "platforms": "*"
     },
     {
       "owner": "khoih-prog",
@@ -59,6 +65,12 @@
       "name": "FlashStorage_STM32F1",
       "version": "^1.1.0",
       "platforms": ["*"]
+    },
+    {
+      "owner": "khoih-prog",
+      "name": "FlashStorage_RTL8720",
+      "version": "^1.1.0",
+      "platforms": "*"
     },
     {
       "owner": "sebnil",
@@ -81,6 +93,10 @@
     {
       "name": "WiFi101",
       "version": "https://github.com/khoih-prog/WiFi101"
+    },
+    {
+      "name": "Adafruit_MQTT_Library",
+      "version": "https://github.com/khoih-prog/Adafruit_MQTT_Library"
     },
     {
       "owner": "khoih-prog",

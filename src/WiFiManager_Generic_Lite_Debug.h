@@ -10,18 +10,19 @@
   Built by Khoi Hoang https://github.com/khoih-prog/WiFiManager_Generic_Lite
   Licensed under MIT license
   
-  Version: 1.7.1
+  Version: 1.8.0
 
   Version Modified By   Date        Comments
   ------- -----------  ----------   -----------
   1.0.0   K Hoang      04/02/2021  Initial coding for generic boards using generic WiFi.
   ....
   1.5.0   K Hoang      07/01/2022  Configurable WIFI_RECON_INTERVAL. Add support to RP2040 using arduino-pico core
-  1.5.1   K Hoang      26/01/2022  Update to be compatible with new FlashStorage libraries. Add support to more SAMD/STM32 boards
+  1.5.1   K Hoang      26/01/2022  Update to be compatible with new FlashStorage libraries. Add support to more RTL8720/STM32 boards
   1.6.0   K Hoang      26/01/2022  Optional Board_Name in Menu. Optimize code by using passing by reference
                                    Add optional CONFIG_MODE_LED. Add function isConfigMode()
   1.7.0   K Hoang      27/04/2022  Use WiFiMulti_Generic library for auto-checking / auto-reconnecting MultiWiFi
   1.7.1   K Hoang      27/04/2022  Optimize code
+  1.8.0   K Hoang      18/05/2022  Add support to Ameba Realtek RTL8720DN, RTL8722DM and RTL8722CSM
  ********************************************************************************************************************************/
 
 #ifndef WiFiManager_Generic_Lite_Debug_h

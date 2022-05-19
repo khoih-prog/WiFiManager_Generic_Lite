@@ -15,6 +15,7 @@
 
 ## Table of Contents
 
+* [Important Notes about RTL8720DN](#important-notes-about-RTL8720DN)
 * [Important Notes about Nano_RP2040_Connect](#important-notes-about-nano_rp2040_connect)
 * [Why do we need this WiFiManager_Generic_Lite library](#why-do-we-need-this-wifimanager_generic_lite-library)
   * [Features](#features)
@@ -83,8 +84,10 @@
   * [10. STM32_WiFi_MQTT](examples/STM32_WiFi_MQTT)
   * [11. Teensy_WiFi](examples/Teensy_WiFi)
   * [12. Teensy_WiFi_MQTT](examples/Teensy_WiFi_MQTT)
-  * [13. RP2040_WiFi](examples/RP2040_WiFi) **New**
-  * [14. RP2040_WiFi_MQTT](examples/RP2040_WiFi_MQTT) **New**
+  * [13. RP2040_WiFi](examples/RP2040_WiFi)
+  * [14. RP2040_WiFi_MQTT](examples/RP2040_WiFi_MQTT)
+  * [15. RTL8720_WiFi](examples/RTL8720_WiFi) **New**
+  * [16. RTL8720_WiFi_MQTT](examples/RTL8720_WiFi_MQTT) **New**
 * [So, how it works?](#so-how-it-works)
   * [1. Without SCAN_WIFI_NETWORKS](#1-without-scan_wifi_networks)
   * [2. With SCAN_WIFI_NETWORKS](#2-with-scan_wifi_networks)
@@ -124,6 +127,18 @@
 * [Copyright](#copyright)
 
 ---
+---
+
+### Important Notes about RTL8720DN
+
+#### WiFi.status() bug
+
+The current `AmebaD core v3.1.2` has bug that once WiFi is connected, `WiFi.status()` always reports `WL_CONNECTED` even if WiFi is lost.
+
+There is no workaround yet for this `WiFi.status()` bug because `WiFi.RSSI()` is still keeping the `good` value
+
+Therefore, the auto-reconnect feature for WiFiMulti won't work, until this bug is fixed by Realtek.
+
 ---
 
 ### Important Notes about Nano_RP2040_Connect
@@ -218,6 +233,9 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
 
  8. RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed) or [**Earle Philhower's arduino-pico** core](https://github.com/earlephilhower/arduino-pico).
 
+ 9. **RTL8720DN, RTL8722DM, RTM8722CSM, etc. boards**
+ 
+ 
 ---
 
 #### Currently supported WiFi shields/modules
@@ -242,23 +260,27 @@ This [**WiFiManager_Generic_Lite** library](https://github.com/khoih-prog/WiFiMa
  6. [`Adafruit SAMD core 1.7.10+`](https://www.adafruit.com/) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.). [![GitHub release](https://img.shields.io/github/release/adafruit/ArduinoCore-samd.svg)](https://github.com/adafruit/ArduinoCore-samd/releases/latest)
  7. [`Seeeduino SAMD core 1.8.2+`](https://github.com/Seeed-Studio/ArduinoCore-samd) for SAMD21/SAMD51 boards (XIAO M0, Wio Terminal, etc.). [![Latest release](https://img.shields.io/github/release/Seeed-Studio/ArduinoCore-samd.svg)](https://github.com/Seeed-Studio/ArduinoCore-samd/releases/latest/)
  8. [`Adafruit nRF52 v1.3.0+`](https://www.adafruit.com) for nRF52 boards such as Adafruit NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, **NINA_B302_ublox**, etc. [![GitHub release](https://img.shields.io/github/release/adafruit/Adafruit_nRF52_Arduino.svg)](https://github.com/adafruit/Adafruit_nRF52_Arduino/releases/latest).
- 9. [`Arduino mbed_rp2040 core 3.0.1+`](https://github.com/arduino/ArduinoCore-mbed) for Arduino (Use Arduino Board Manager) RP2040-based boards, such as **Arduino Nano RP2040 Connect, RASPBERRY_PI_PICO, etc.**. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
-10. [`Earle Philhower's arduino-pico core v1.13.3+`](https://github.com/earlephilhower/arduino-pico) for RP2040-based boards such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
-11. [`Functional-Vlpp library v1.0.2+`](https://github.com/khoih-prog/functional-vlpp) to use server's lambda function. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/Functional-Vlpp.svg?)](https://www.ardu-badge.com/Functional-Vlpp)
-12. [`WiFiNINA_Generic library v1.8.14-3+`](https://github.com/khoih-prog/WiFiNINA_Generic). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiNINA_Generic.svg?)](https://www.ardu-badge.com/WiFiNINA_Generic)
-13. [`WiFiWebServer library v1.8.0+`](https://github.com/khoih-prog/WiFiWebServer). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiWebServer.svg?)](https://www.ardu-badge.com/WiFiWebServer)
-14. [`ESP8266_AT_WebServer library v1.5.4+`](https://github.com/khoih-prog/ESP8266_AT_WebServer) to be able to support ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP8266_AT_WebServer.svg?)](https://www.ardu-badge.com/ESP8266_AT_WebServer)
-15. [`ESP_AT_Lib library v1.4.1+`](https://github.com/khoih-prog/ESP_AT_Lib) if using ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_AT_Lib.svg?)](https://www.ardu-badge.com/ESP_AT_Lib).
-16. [`Modified WiFi101 Library v0.16.1+`](https://github.com/khoih-prog/WiFi101) to use SAMD MKR1000, etc. boards with WiFi101.
-17. [`WiFiEspAT library v1.3.2+`](https://github.com/jandrassy/WiFiEspAT) if using ESP8288/ESP32-AT shields. [![GitHub release](https://img.shields.io/github/release/jandrassy/WiFiEspAT.svg)](https://github.com/jandrassy/WiFiEspAT/releases/latest)
-18. [`FlashStorage_SAMD library v1.3.2+`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD21 and SAMD51 boards (ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit Itsy-Bitsy M4, etc.). [![GitHub release](https://img.shields.io/github/release/khoih-prog/FlashStorage_SAMD.svg)](https://github.com/khoih-prog/FlashStorage_SAMD/releases/latest)
-19. [`FlashStorage_STM32F1 library v1.1.0+`](https://github.com/khoih-prog/FlashStorage_STM32F1) for STM32F1/F3 boards. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/FlashStorage_STM32F1.svg?)](https://www.ardu-badge.com/FlashStorage_STM32F1)
-20. [`FlashStorage_STM32 library v1.2.0+`](https://github.com/khoih-prog/FlashStorage_STM32) for STM32F/L/H/G/WB/MP1 boards. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/FlashStorage_STM32.svg?)](https://www.ardu-badge.com/FlashStorage_STM32)
-21. [`DueFlashStorage library v1.0.0+`](https://github.com/sebnil/DueFlashStorage) for SAM DUE. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/DueFlashStorage.svg?)](https://www.ardu-badge.com/DueFlashStorage)
-22. [`Adafruit's LittleFS/InternalFS`](www.adafruit.com) for nRF52
-23. [`DoubleResetDetector_Generic v1.8.1+`](https://github.com/khoih-prog/DoubleResetDetector_Generic). To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/DoubleResetDetector_Generic.svg?)](https://www.ardu-badge.com/DoubleResetDetector_Generic)
-24. [`WiFiMulti_Generic library v1.1.1+`](https://github.com/khoih-prog/WiFiMulti_Generic) to use WiFiMulti function. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiMulti_Generic.svg?)](https://www.ardu-badge.com/WiFiMulti_Generic). **New**
-
+ 9. [`Arduino mbed_rp2040 core 3.1.1+`](https://github.com/arduino/ArduinoCore-mbed) for Arduino (Use Arduino Board Manager) RP2040-based boards, such as **Arduino Nano RP2040 Connect, RASPBERRY_PI_PICO, etc.**. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
+10. [`Earle Philhower's arduino-pico core v2.0.1+`](https://github.com/earlephilhower/arduino-pico) for RP2040-based boards such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
+11. [`Arduino AmebaD core 3.1.2+`](https://github.com/ambiot/ambd_arduino) for Realtek RTL8720DN, RTL8722DM and RTM8722CSM. [![GitHub release](https://img.shields.io/github/release/ambiot/ambd_arduino.svg)](https://github.com/ambiot/ambd_arduino/releases/latest)
+12. [`Functional-Vlpp library v1.0.2+`](https://github.com/khoih-prog/functional-vlpp) to use server's lambda function. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/Functional-Vlpp.svg?)](https://www.ardu-badge.com/Functional-Vlpp)
+13. [`WiFiNINA_Generic library v1.8.14-4+`](https://github.com/khoih-prog/WiFiNINA_Generic). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiNINA_Generic.svg?)](https://www.ardu-badge.com/WiFiNINA_Generic)
+14. [`WiFiWebServer library v1.8.0+`](https://github.com/khoih-prog/WiFiWebServer). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiWebServer.svg?)](https://www.ardu-badge.com/WiFiWebServer)
+15. [`ESP8266_AT_WebServer library v1.5.4+`](https://github.com/khoih-prog/ESP8266_AT_WebServer) to be able to support ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP8266_AT_WebServer.svg?)](https://www.ardu-badge.com/ESP8266_AT_WebServer)
+16. [`ESP_AT_Lib library v1.4.1+`](https://github.com/khoih-prog/ESP_AT_Lib) if using ESP8288/ESP32-AT shields. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_AT_Lib.svg?)](https://www.ardu-badge.com/ESP_AT_Lib).
+17. [`Modified WiFi101 Library v0.16.1+`](https://github.com/khoih-prog/WiFi101) to use SAMD MKR1000, etc. boards with WiFi101.
+18. [`WiFiEspAT library v1.3.2+`](https://github.com/jandrassy/WiFiEspAT) if using ESP8288/ESP32-AT shields. [![GitHub release](https://img.shields.io/github/release/jandrassy/WiFiEspAT.svg)](https://github.com/jandrassy/WiFiEspAT/releases/latest)
+19. [`FlashStorage_SAMD library v1.3.2+`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD21 and SAMD51 boards (ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit Itsy-Bitsy M4, etc.). [![GitHub release](https://img.shields.io/github/release/khoih-prog/FlashStorage_SAMD.svg)](https://github.com/khoih-prog/FlashStorage_SAMD/releases/latest)
+20. [`FlashStorage_STM32F1 library v1.1.0+`](https://github.com/khoih-prog/FlashStorage_STM32F1) for STM32F1/F3 boards. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/FlashStorage_STM32F1.svg?)](https://www.ardu-badge.com/FlashStorage_STM32F1)
+21. [`FlashStorage_STM32 library v1.2.0+`](https://github.com/khoih-prog/FlashStorage_STM32) for STM32F/L/H/G/WB/MP1 boards. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/FlashStorage_STM32.svg?)](https://www.ardu-badge.com/FlashStorage_STM32)
+22. [`DueFlashStorage library v1.0.0+`](https://github.com/sebnil/DueFlashStorage) for SAM DUE. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/DueFlashStorage.svg?)](https://www.ardu-badge.com/DueFlashStorage)
+23. [`Adafruit's LittleFS/InternalFS`](www.adafruit.com) for nRF52
+24. [`DoubleResetDetector_Generic v1.8.1+`](https://github.com/khoih-prog/DoubleResetDetector_Generic). To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/DoubleResetDetector_Generic.svg?)](https://www.ardu-badge.com/DoubleResetDetector_Generic)
+25. [`MultiResetDetector_Generic v1.8.1+`](https://github.com/khoih-prog/MultiResetDetector_Generic). To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/MultiResetDetector_Generic.svg?)](https://www.ardu-badge.com/MultiResetDetector_Generic)
+26. [`WiFiMulti_Generic library v1.1.1+`](https://github.com/khoih-prog/WiFiMulti_Generic) to use WiFiMulti function. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/WiFiMulti_Generic.svg?)](https://www.ardu-badge.com/WiFiMulti_Generic). **New**
+27. [`FlashStorage_RTL8720 library v1.1.0+`](https://github.com/khoih-prog/FlashStorage_RTL8720). [![GitHub release](https://img.shields.io/github/release/khoih-prog/FlashStorage_RTL8720.svg)](https://github.com/khoih-prog/FlashStorage_RTL8720/releases/latest)
+28. [`Modified Adafruit_MQTT_Library v2.4.2+`](https://github.com/khoih-prog/Adafruit_MQTT_Library) to use MQTT examples for many boards.
+ 
 
 ---
 
@@ -392,13 +414,13 @@ Whenever the above-mentioned compiler error issue is fixed with the new Arduino 
 
 #### 5. For Adafruit SAMD boards
  
- ***To be able to compile, run and automatically detect and display BOARD_NAME on Adafruit SAMD (Itsy-Bitsy M4, etc) boards***, you have to copy the whole [Adafruit SAMD Packages_Patches](Packages_Patches/adafruit/hardware/samd/1.7.9) directory into Adafruit samd directory (~/.arduino15/packages/adafruit/hardware/samd/1.7.9). 
+ ***To be able to compile, run and automatically detect and display BOARD_NAME on Adafruit SAMD (Itsy-Bitsy M4, etc) boards***, you have to copy the whole [Adafruit SAMD Packages_Patches](Packages_Patches/adafruit/hardware/samd/1.7.10) directory into Adafruit samd directory (~/.arduino15/packages/adafruit/hardware/samd/1.7.10). 
 
-Supposing the Adafruit SAMD core version is 1.7.9. This file must be copied into the directory:
+Supposing the Adafruit SAMD core version is 1.7.10. This file must be copied into the directory:
 
-- `~/.arduino15/packages/adafruit/hardware/samd/1.7.9/platform.txt`
-- `~/.arduino15/packages/adafruit/hardware/samd/1.7.9/cores/arduino/Print.h`
-- `~/.arduino15/packages/adafruit/hardware/samd/1.7.9/cores/arduino/Print.cpp`
+- `~/.arduino15/packages/adafruit/hardware/samd/1.7.10/platform.txt`
+- `~/.arduino15/packages/adafruit/hardware/samd/1.7.10/cores/arduino/Print.h`
+- `~/.arduino15/packages/adafruit/hardware/samd/1.7.10/cores/arduino/Print.cpp`
 
 Whenever a new version is installed, remember to copy this file into the new version directory. For example, new version is x.yy.zz
 This file must be copied into the directory:
@@ -500,12 +522,12 @@ With core after v1.5.0, this step is not necessary anymore thanks to the PR [Add
 
 #### 9. For Portenta_H7 boards using Arduino IDE in Linux
 
-  **To be able to upload firmware to Portenta_H7 using Arduino IDE in Linux (Ubuntu, etc.)**, you have to copy the file [portenta_post_install.sh](Packages_Patches/arduino/hardware/mbed_portenta/3.0.0/portenta_post_install.sh) into mbed_portenta directory (~/.arduino15/packages/arduino/hardware/mbed_portenta/3.0.0/portenta_post_install.sh). 
+  **To be able to upload firmware to Portenta_H7 using Arduino IDE in Linux (Ubuntu, etc.)**, you have to copy the file [portenta_post_install.sh](Packages_Patches/arduino/hardware/mbed_portenta/3.1.1/portenta_post_install.sh) into mbed_portenta directory (~/.arduino15/packages/arduino/hardware/mbed_portenta/3.1.1/portenta_post_install.sh). 
   
   Then run the following command using `sudo`
   
 ```
-$ cd ~/.arduino15/packages/arduino/hardware/mbed_portenta/3.0.0
+$ cd ~/.arduino15/packages/arduino/hardware/mbed_portenta/3.1.1
 $ chmod 755 portenta_post_install.sh
 $ sudo ./portenta_post_install.sh
 ```
@@ -518,9 +540,9 @@ This will create the file `/etc/udev/rules.d/49-portenta_h7.rules` as follows:
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="035b", GROUP="plugdev", MODE="0666"
 ```
 
-Supposing the ArduinoCore-mbed core version is 3.0.0. Now only one file must be copied into the directory:
+Supposing the ArduinoCore-mbed core version is 3.1.1. Now only one file must be copied into the directory:
 
-- `~/.arduino15/packages/arduino/hardware/mbed_portenta/3.0.0/portenta_post_install.sh`
+- `~/.arduino15/packages/arduino/hardware/mbed_portenta/3.1.1/portenta_post_install.sh`
 
 Whenever a new version is installed, remember to copy this files into the new version directory. For example, new version is x.yy.zz
 
@@ -599,12 +621,12 @@ This file must be copied into the directory:
 - Include in your sketch
 
 ```cpp
-// Must be before #include <WiFiManager_Generic_Lite_SAMD.h>
+// Must be before #include <WiFiManager_Generic_Lite.h>
 // Start location in EEPROM to store config data. Default 0
 // Config data Siz, not including your custom data, currently is 84 bytes)
 #define EEPROM_START      0
 
-#include <WiFiManager_Generic_Lite_SAMD.h>
+#include <WiFiManager_Generic_Lite.h>
 
 WiFiManager_Generic_Lite* WiFiManager_Generic;
 ```
@@ -620,7 +642,7 @@ WiFiManager_Generic_Lite* WiFiManager_Generic;
 
 /////////////// Start dynamic Credentials ///////////////
 
-//Defined in <WiFiManager_Generic_Lite_SAMD.h>
+//Defined in <WiFiManager_Generic_Lite.h>
 /**************************************
   #define MAX_ID_LEN                5
   #define MAX_DISPLAY_NAME_LEN      16
@@ -855,10 +877,10 @@ Default is `true`. Just change to `false` to Not using `Board_Name` on Config_Po
 
 Check the examples
 
-https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/49c1aff82d2742a2e0b787a24009d2905b76ee3c/examples/RP2040_WiFi/RP2040_WiFi.ino#L22-L30
+https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/24dd98c1e60ceefd59fdb5fdbede2ef5e7de0771/examples/RP2040_WiFi/RP2040_WiFi.ino#L22-L30
 
 
-https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/49c1aff82d2742a2e0b787a24009d2905b76ee3c/examples/RP2040_WiFi/defines.h#L191-L208
+https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/24dd98c1e60ceefd59fdb5fdbede2ef5e7de0771/examples/RP2040_WiFi/defines.h#L192-L209
 
 
 
@@ -879,8 +901,10 @@ https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/49c1aff82d2742a2e0b7
 10. [STM32_WiFi_MQTT](examples/STM32_WiFi_MQTT) 
 11. [Teensy_WiFi](examples/Teensy_WiFi)
 12. [Teensy_WiFi_MQTT](examples/Teensy_WiFi_MQTT)
-13. [RP2040_WiFi](examples/RP2040_WiFi) **New**
-14. [RP2040_WiFi_MQTT](examples/RP2040_WiFi_MQTT) **New**
+13. [RP2040_WiFi](examples/RP2040_WiFi)
+14. [RP2040_WiFi_MQTT](examples/RP2040_WiFi_MQTT)
+15. [RTL8720_WiFi](examples/RTL8720_WiFi) **New**
+16. [RTL8720_WiFi_MQTT](examples/RTL8720_WiFi_MQTT) **New**
  
 ---
 ---
@@ -1049,7 +1073,7 @@ Example of [Default dynamicParams](examples/SAMD_WiFi/dynamicParams.h)
 
 /////////////// Start dynamic Credentials ///////////////
 
-//Defined in <WiFiManager_Generic_Lite_SAMD.h>
+//Defined in <WiFiManager_Generic_Lite.h>
 /**************************************
   #define MAX_ID_LEN                5
   #define MAX_DISPLAY_NAME_LEN      16
@@ -1142,21 +1166,21 @@ Please take a look at other examples, as well.
 
 #### 1. File [SAMD_WiFi.ino](examples/SAMD_WiFi/SAMD_WiFi.ino)
 
-https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/7c28601d1f12a5c92ca8338d1a5acaefb006ee18/examples/SAMD_WiFi/SAMD_WiFi.ino#L13-L167
+https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/24dd98c1e60ceefd59fdb5fdbede2ef5e7de0771/examples/SAMD_WiFi/SAMD_WiFi.ino#L13-L167
 
 
 ---
 
 #### 2. File [defines.h](examples/SAMD_WiFi/defines.h)
 
-https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/7c28601d1f12a5c92ca8338d1a5acaefb006ee18/examples/SAMD_WiFi/defines.h#L13-L307
+https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/24dd98c1e60ceefd59fdb5fdbede2ef5e7de0771/examples/SAMD_WiFi/defines.h#L13-L307
 
 
 ---
 
 #### 3. File [Credentials.h](examples/SAMD_WiFi/Credentials.h)
 
-https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/7c28601d1f12a5c92ca8338d1a5acaefb006ee18/examples/SAMD_WiFi/Credentials.h#L13-L89
+https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/24dd98c1e60ceefd59fdb5fdbede2ef5e7de0771/examples/SAMD_WiFi/Credentials.h#L13-L89
 
 
 ---
@@ -1164,7 +1188,7 @@ https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/7c28601d1f12a5c92ca8
 #### 4. File [dynamicParams.h](examples/SAMD_WiFi/dynamicParams.h)
 
 
-https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/7c28601d1f12a5c92ca8338d1a5acaefb006ee18/examples/SAMD_WiFi/dynamicParams.h#L13-L74
+https://github.com/khoih-prog/WiFiManager_Generic_Lite/blob/24dd98c1e60ceefd59fdb5fdbede2ef5e7de0771/examples/SAMD_WiFi/dynamicParams.h#L13-L74
 
 
 ---
@@ -1181,7 +1205,7 @@ This is the terminal output when running [**SAMD_WiFi**](examples/SAMD_WiFi) exa
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.7.1
+WiFiManager_Generic_Lite v1.8.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xffffffff
 No doubleResetDetected
@@ -1282,7 +1306,7 @@ CCCCCCCCC
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.7.1
+WiFiManager_Generic_Lite v1.8.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1335,7 +1359,7 @@ HHHHHHHHHH HHHHHHHHHH
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.7.1
+WiFiManager_Generic_Lite v1.8.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1399,7 +1423,7 @@ CCCC
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.7.1
+WiFiManager_Generic_Lite v1.8.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -1449,7 +1473,7 @@ HHHHHHHHH HHHHHHHHHH
 
 ```
 Start SAMD_WiFi on SAMD_NANO_33_IOT with WiFiNINA using WiFiNINA_Generic Library
-WiFiManager_Generic_Lite v1.7.1
+WiFiManager_Generic_Lite v1.8.0
 [WG] Hostname=SAMD-Master-Controller
 Flag read = 0xd0d01234
 doubleResetDetected
@@ -1510,7 +1534,7 @@ This is the terminal output when running [**SAMD_WiFi**](examples/SAMD_WiFi) exa
 
 ```
 Start SAMD_WiFi on ITSYBITSY_M4 with Custom using Custom WiFi Library
-WiFiManager_Generic_Lite v1.7.1
+WiFiManager_Generic_Lite v1.8.0
 [ESP_AT] Use ES8266-AT Command
 WiFi shield init done
 [WG] Hostname=SAMD-Master-Controller
@@ -1549,7 +1573,7 @@ C
 
 ```
 Start SAMD_WiFi on ITSYBITSY_M4 with Custom using Custom WiFi Library
-WiFiManager_Generic_Lite v1.7.1
+WiFiManager_Generic_Lite v1.8.0
 [ESP_AT] Use ES8266-AT Command
 WiFi shield init done
 [WG] Hostname=SAMD-Master-Controller
@@ -1654,6 +1678,7 @@ Submit issues to: [WiFiManager_Generic_Lite issues](https://github.com/khoih-pro
 37. Add optional `CONFIG_MODE_LED` to be `ON` when in Config Portal mode.
 38. Add function `isConfigMode()` to signal system is in Config Portal mode
 39. Use [WiFiMulti_Generic](https://github.com/khoih-prog/WiFiMulti_Generic) library to connect to the best of **multi-WiFi APs**, with **auto-checking / auto-reconnecting** features when WiFi connection is lost.
+40. Add support to Realtek RTL8720DN, RTL8722DM and RTL8722CSM using [AmebaD core](https://github.com/ambiot/ambd_arduino) and [FlashStorage_RTL8720 library](https://github.com/khoih-prog/FlashStorage_RTL8720). RTL8720DN WiFi can use either 2.4GHz or 5GHz band.
 
 
 ---
