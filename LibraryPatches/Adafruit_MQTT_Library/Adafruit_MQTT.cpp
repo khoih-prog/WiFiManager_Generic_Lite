@@ -35,8 +35,8 @@ extern char* ultoa(unsigned long value, char *string, int radix);
 //#if defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_ARCH_SAMD)
 #if !( ESP32 || ESP8266 || defined(CORE_TEENSY) || defined(STM32F1) || defined(STM32F2) || defined(STM32F3) || defined(STM32F4) || defined(STM32F7) || \
      ( defined(ARDUINO_ARCH_RP2040) && !defined(ARDUINO_ARCH_MBED) ) || ARDUINO_ARCH_SEEED_SAMD || ( defined(SEEED_WIO_TERMINAL) || defined(SEEED_XIAO_M0) || \
-       defined(SEEED_FEMTO_M0) || defined(Wio_Lite_MG126) || defined(WIO_GPS_BOARD) || defined(SEEEDUINO_ZERO) || defined(SEEEDUINO_LORAWAN) || defined(WIO_LTE_CAT) || \
-       defined(SEEED_GROVE_UI_WIRELESS) ) ) 
+       defined(SEEED_FEMTO_M0) || defined(Wio_Lite_MG126) || defined(WIO_GPS_BOARD) || defined(SEEEDUINO_ZERO) || defined(SEEEDUINO_LORAWAN) || \
+       defined(WIO_LTE_CAT) || defined(SEEED_GROVE_UI_WIRELESS) ) ) 
 static char *dtostrf(double val, signed char width, unsigned char prec, char *sout)
 {
   char fmt[20];
@@ -46,16 +46,22 @@ static char *dtostrf(double val, signed char width, unsigned char prec, char *so
 }
 #endif
 
-#if defined(ESP8266)
-int strncasecmp(const char *str1, const char *str2, int len) {
+#if ( defined(ESP8266) || defined(CONFIG_PLATFORM_8721D) )
+int strncasecmp(const char *str1, const char *str2, int len) 
+{
   int d = 0;
-  while (len--) {
+  
+  while (len--) 
+  {
     int c1 = tolower(*str1++);
     int c2 = tolower(*str2++);
-    if (((d = c1 - c2) != 0) || (c2 == '\0')) {
+    
+    if (((d = c1 - c2) != 0) || (c2 == '\0')) 
+    {
       return d;
     }
   }
+  
   return 0;
 }
 #endif
@@ -770,19 +776,21 @@ uint16_t Adafruit_MQTT::publishPacket(uint8_t *packet, const char *topic,
   // Calculate additional bytes for length field (if any)
   uint16_t additionalLen = packetAdditionalLen(len + bLen);
 
-  // Payload length. When maxPacketLen provided is 0, let's
+  // Payload remaining length. When maxPacketLen provided is 0, let's
   // assume buffer is big enough. Fingers crossed.
-  if (maxPacketLen == 0 || (len + bLen + 2 + additionalLen <= maxPacketLen)) {
-    len += bLen + additionalLen;
-  } else {
+  // 2 + additionalLen: header byte + remaining length field (from 1 to 4 bytes)
+  // len = topic size field + value (string)
+  // bLen = buffer size
+  if (!(maxPacketLen == 0 ||
+        (len + bLen + 2 + additionalLen <= maxPacketLen))) {
     // If we make it here, we got a pickle: the payload is not going
     // to fit in the packet buffer. Instead of corrupting memory, let's
     // do something less damaging by reducing the bLen to what we are
     // able to accomodate. Alternatively, consider using a bigger
     // maxPacketLen.
     bLen = maxPacketLen - (len + 2 + packetAdditionalLen(maxPacketLen));
-    len = maxPacketLen - 4;
   }
+  len += bLen; // remaining len excludes header byte & length field
 
   // Now you can start generating the packet!
   p[0] = MQTT_CTRL_PUBLISH << 4 | qos << 1;
