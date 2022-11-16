@@ -6,6 +6,11 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](#Contributing)
 [![GitHub issues](https://img.shields.io/github/issues/khoih-prog/WiFiManager_Generic_Lite.svg)](http://github.com/khoih-prog/WiFiManager_Generic_Lite/issues)
 
+<a href="https://www.buymeacoffee.com/khoihprog6" title="Donate to my libraries using BuyMeACoffee"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Donate to my libraries using BuyMeACoffee" style="height: 50px !important;width: 181px !important;" ></a>
+<a href="https://www.buymeacoffee.com/khoihprog6" title="Donate to my libraries using BuyMeACoffee"><img src="https://img.shields.io/badge/buy%20me%20a%20coffee-donate-orange.svg?logo=buy-me-a-coffee&logoColor=FFDD00" style="height: 20px !important;width: 200px !important;" ></a>
+<a href="https://profile-counter.glitch.me/khoih-prog/count.svg" title="Total khoih-prog Visitor count"><img src="https://profile-counter.glitch.me/khoih-prog/count.svg" style="height: 30px;width: 200px;"></a>
+<a href="https://profile-counter.glitch.me/khoih-prog-WiFiManager_Generic_Lite/count.svg" title="WiFiManager_Generic_Lite Visitor count"><img src="https://profile-counter.glitch.me/khoih-prog-WiFiManager_Generic_Lite/count.svg" style="height: 30px;width: 200px;"></a>
+
 ---
 ---
 
@@ -54,8 +59,8 @@
 ### Release v1.6.0
 
 1. Optimize code by passing by `reference` instead of `value`
-2. Optional `Board_Name` in Config Portal. Check [option to remove board name from web page #25](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/25)
-3. Add optional `CONFIG_MODE_LED` to be `ON` when in Config Portal mode. Check [Knowing when configuration mode is on or off #26](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/26)
+2. Optional `Board_Name` in Config Portal. Check [option to remove board name from web page #25](https://github.com/khoih-prog/WiFiManager_Generic_Lite/issues/25)
+3. Add optional `CONFIG_MODE_LED` to be `ON` when in Config Portal mode. Check [Knowing when configuration mode is on or off #26](https://github.com/khoih-prog/WiFiManager_Generic_Lite/issues/26)
 4. Add function `isConfigMode()` to signal system is in Config Portal mode.
 5. Update `Packages' Patches`
 
@@ -69,8 +74,8 @@
 ### Major Release v1.5.0
 
 1. Add support to RP2040-based boards, such as **NANO_RP2040_CONNECT**, using [**Earle Philhower's arduino-pico** core](https://github.com/earlephilhower/arduino-pico)
-2. Fix the blocking issue in loop(). Check [retries block the main loop #18](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/18)
-3. Configurable `WIFI_RECON_INTERVAL`. Check [retries block the main loop #18](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/18#issuecomment-1006197561)
+2. Fix the blocking issue in loop(). Check [retries block the main loop #18](https://github.com/khoih-prog/WiFiManager_Generic_Lite/issues/18)
+3. Configurable `WIFI_RECON_INTERVAL`. Check [retries block the main loop #18](https://github.com/khoih-prog/WiFiManager_Generic_Lite/issues/18#issuecomment-1006197561)
 4. Update `Packages' Patches`
 
 ### Release v1.4.1
@@ -87,7 +92,7 @@
 
 ### Major Release v1.3.0
 
-1. Enable scan of WiFi networks for selection in Configuration Portal. Check [PR for v1.3.0 - Enable scan of WiFi networks #10](https://github.com/khoih-prog/WiFiManager_NINA_Lite/pull/10). Now you can select optional **SCAN_WIFI_NETWORKS**, **MANUAL_SSID_INPUT_ALLOWED** to be able to manually input SSID, not only from a scanned SSID lists and **MAX_SSID_IN_LIST** (from 2-6 for ESP8266-AT or 2-15 for other)
+1. Enable scan of WiFi networks for selection in Configuration Portal. Check [PR for v1.3.0 - Enable scan of WiFi networks #10](https://github.com/khoih-prog/WiFiManager_Generic_Lite/pull/10). Now you can select optional **SCAN_WIFI_NETWORKS**, **MANUAL_SSID_INPUT_ALLOWED** to be able to manually input SSID, not only from a scanned SSID lists and **MAX_SSID_IN_LIST** (from 2-6 for ESP8266-AT or 2-15 for other)
 2. Minor enhancement to not display garbage when data is invalid
 3. Tested with new [Arduino Core for STM32 v2.0.0](https://github.com/stm32duino/Arduino_Core_STM32) and add support to new STM32L5 boards.
 
@@ -100,13 +105,13 @@
 
 ### Release v1.1.3
 
-1. Fix invalid "blank" or NULL Config Data treated as Valid. Check [WiFiManager connection attempt to unconfigured ("blank") SSID after restart on SAMD #8](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/8)
+1. Fix invalid "blank" or NULL Config Data treated as Valid. Check [WiFiManager connection attempt to unconfigured ("blank") SSID after restart on SAMD #8](https://github.com/khoih-prog/WiFiManager_Generic_Lite/issues/8)
 2. Fix compiler warnings.
 
 ### Release v1.1.2
 
-1. Fix MultiWiFi connection bug. Check [SAMD MultiWiFi issues when first WiFi SSID configured in CP is invalid or not available #6](https://github.com/khoih-prog/WiFiManager_NINA_Lite/issues/6)
-2. Bump up to version v1.1.2 to sync with [WiFiManager_NINA_Lite](https://github.com/khoih-prog/WiFiManager_NINA_Lite)
+1. Fix MultiWiFi connection bug. Check [SAMD MultiWiFi issues when first WiFi SSID configured in CP is invalid or not available #6](https://github.com/khoih-prog/WiFiManager_Generic_Lite/issues/6)
+2. Bump up to version v1.1.2 to sync with [WiFiManager_Generic_Lite](https://github.com/khoih-prog/WiFiManager_Generic_Lite)
 
 ### Major Release v1.1.0
 
